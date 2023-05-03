@@ -1,0 +1,3 @@
+
+class BdfProperties:
+    pass
