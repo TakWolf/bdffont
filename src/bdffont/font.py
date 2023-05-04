@@ -28,6 +28,9 @@ class BdfFont:
     # Glyph objects using code point indexing.
     code_point_to_glyph: dict[int, BdfGlyph]
 
+    # Comments.
+    comments: list[str]
+
     def __init__(
             self,
             name: str,
@@ -35,6 +38,7 @@ class BdfFont:
             bounding_box: (int, int, int, int),
             properties: BdfProperties = None,
             glyphs: list[BdfGlyph] = None,
+            comments: list[str] = None,
     ):
         self.spec_version = '2.1'
         self.name = name
@@ -48,6 +52,10 @@ class BdfFont:
             self.code_point_to_glyph = {}
         else:
             self.code_point_to_glyph = {glyph.code_point: glyph for glyph in glyphs}
+        if comments is None:
+            self.comments = []
+        else:
+            self.comments = comments
 
     def get_point_size(self) -> int:
         return self.size[0]
@@ -129,11 +137,15 @@ class BdfFont:
     def encode(self) -> str:
         lines = []
         lines.append(f'STARTFONT {self.spec_version}')
+        for comment in self.comments:
+            lines.append(f'COMMENT {comment}')
         lines.append(f'FONT {self.name}')
         lines.append(f'SIZE {self.size[0]} {self.size[1]} {self.size[2]}')
         lines.append(f'FONTBOUNDINGBOX {self.bounding_box[0]} {self.bounding_box[1]} {self.bounding_box[2]} {self.bounding_box[3]}')
 
         lines.append(f'STARTPROPERTIES {len(self.properties)}')
+        for comment in self.properties.comments:
+            lines.append(f'COMMENT {comment}')
         for word, value in self.properties.items():
             if isinstance(value, str):
                 lines.append(f'{word} "{value}"')
@@ -147,6 +159,8 @@ class BdfFont:
         for code_point in alphabet:
             glyph = self.code_point_to_glyph[code_point]
             lines.append(f'STARTCHAR {glyph.name}')
+            for comment in glyph.comments:
+                lines.append(f'COMMENT {comment}')
             lines.append(f'ENCODING {code_point}')
             lines.append(f'SWIDTH {glyph.s_width[0]} {glyph.s_width[1]}')
             lines.append(f'DWIDTH {glyph.d_width[0]} {glyph.d_width[1]}')

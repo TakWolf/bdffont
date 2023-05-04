@@ -4,6 +4,9 @@ from bdffont import common
 
 
 class BdfProperties(UserDict):
+    # Comments.
+    comments: list[str] = []
+
     def __getitem__(self, word: str) -> str | int:
         common.check_word(word)
         return super().__getitem__(word)

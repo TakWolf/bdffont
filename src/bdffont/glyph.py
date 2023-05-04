@@ -37,6 +37,9 @@ class BdfGlyph:
     # The bitmap object.
     bitmap: list[list[int]]
 
+    # Comments.
+    comments: list[str]
+
     def __init__(
             self,
             name: str,
@@ -45,6 +48,7 @@ class BdfGlyph:
             d_width: (int, int),
             bbx: (int, int, int, int),
             bitmap: list[list[int]] = None,
+            comments: list[str] = None,
     ):
         self.name = name
         self.code_point = code_point
@@ -55,3 +59,7 @@ class BdfGlyph:
             self.bitmap = []
         else:
             self.bitmap = bitmap
+        if comments is None:
+            self.comments = []
+        else:
+            self.comments = comments
