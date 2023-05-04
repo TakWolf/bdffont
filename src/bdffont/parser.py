@@ -24,7 +24,7 @@ def _decode_tail_to_ints(tail: str) -> list[int]:
 
 def _decode_properties_value(tail: str) -> str | int:
     if tail.startswith('"') and tail.endswith('"'):
-        value = tail.removeprefix('"').removesuffix('"').replace('""', '"')
+        value = tail.removeprefix('"').removesuffix('"')
     else:
         value = int(tail)
     return value

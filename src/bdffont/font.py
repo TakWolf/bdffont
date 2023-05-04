@@ -136,7 +136,6 @@ class BdfFont:
         lines.append(f'STARTPROPERTIES {len(self.properties)}')
         for word, value in self.properties.items():
             if isinstance(value, str):
-                value = value.replace('"', '""')
                 lines.append(f'{word} "{value}"')
             else:
                 lines.append(f'{word} {value}')
