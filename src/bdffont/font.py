@@ -112,6 +112,9 @@ class BdfFont:
     def set_bounding_box_origin_y(self, y: int):
         self.size[3] = y
 
+    def get_glyph(self, code_point: int) -> BdfGlyph:
+        return self.code_point_to_glyph.get(code_point, None)
+
     def add_glyph(self, glyph: BdfGlyph):
         if glyph.code_point in self.code_point_to_glyph:
             common.raise_glyph_already_exists_exception(glyph.code_point)
