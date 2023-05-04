@@ -125,3 +125,53 @@ class BdfFont:
 
     def remove_glyph(self, code_point: int) -> BdfGlyph:
         return self.code_point_to_glyph.pop(code_point, None)
+
+    def encode(self) -> str:
+        lines = []
+        lines.append(f'STARTFONT {self.spec_version}')
+        lines.append(f'FONT {self.name}')
+        lines.append(f'SIZE {self.size[0]} {self.size[1]} {self.size[2]}')
+        lines.append(f'FONTBOUNDINGBOX {self.bounding_box[0]} {self.bounding_box[1]} {self.bounding_box[2]} {self.bounding_box[3]}')
+
+        lines.append(f'STARTPROPERTIES {len(self.properties)}')
+        for word, value in self.properties.items():
+            if isinstance(value, str):
+                value = value.replace('"', '""')
+                lines.append(f'{word} "{value}"')
+            else:
+                lines.append(f'{word} {value}')
+        lines.append('ENDPROPERTIES')
+
+        alphabet = list(self.code_point_to_glyph.keys())
+        alphabet.sort()
+        lines.append(f'CHARS {len(alphabet)}')
+        for code_point in alphabet:
+            glyph = self.code_point_to_glyph[code_point]
+            lines.append(f'STARTCHAR {glyph.name}')
+            lines.append(f'ENCODING {code_point}')
+            lines.append(f'SWIDTH {glyph.s_width[0]} {glyph.s_width[1]}')
+            lines.append(f'DWIDTH {glyph.d_width[0]} {glyph.d_width[1]}')
+            lines.append(f'BBX {glyph.bbx[0]} {glyph.bbx[1]} {glyph.bbx[2]} {glyph.bbx[3]}')
+            lines.append('BITMAP')
+            for bitmap_row in glyph.bitmap:
+                binary_text = ''
+                for alpha in bitmap_row:
+                    if alpha == 0:
+                        binary_text += '0'
+                    else:
+                        binary_text += '1'
+                remainder = len(binary_text) % 8
+                if remainder > 0:
+                    for _ in range(8 - remainder):
+                        binary_text += '0'
+                format_string = '{:0' + str(len(binary_text) // 4) + 'X}'
+                lines.append(format_string.format(int(binary_text, 2)))
+            lines.append('ENDCHAR')
+
+        lines.append('ENDFONT')
+        lines.append('')
+        return '\n'.join(lines)
+
+    def save(self, file_path):
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write(self.encode())
