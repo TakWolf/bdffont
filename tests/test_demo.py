@@ -66,6 +66,16 @@ def test_example():
     assert glyph.bounding_box_origin_x == 2
     assert glyph.bounding_box_origin_y == 12
     assert len(glyph.bitmap) == 6
+    glyph_data = [
+        '_###____',
+        '_###____',
+        '_###____',
+        '_##_____',
+        '###_____',
+        '##______',
+    ]
+    for i, bitmap_row in enumerate(glyph.bitmap):
+        assert ''.join(map(str, bitmap_row)).replace('0', '_').replace('1', '#') == glyph_data[i]
     font.save(os.path.join(outputs_dir, 'example-output.bdf'))
 
 
