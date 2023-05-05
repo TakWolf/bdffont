@@ -29,6 +29,21 @@ def test_example():
     assert font.bounding_box_origin_x == -2
     assert font.bounding_box_origin_y == -6
     assert len(font.properties) == 19
+    assert font.properties.foundry == 'Adobe'
+    assert font.properties['FAMILY'] == 'Helvetica'
+    assert font.properties.weight_name == 'Bold'
+    assert font.properties.slant == 'R'
+    assert font.properties['SETWIDTH_NAME'] == 'Normal'
+    assert font.properties['ADD_STYLE_NAME'] == ''
+    assert font.properties['PIXEL_SIZE'] == 24
+    assert font.properties.point_size == 240
+    assert font.properties.resolution_x == 75
+    assert font.properties.resolution_y == 75
+    assert font.properties['SPACING'] == 'P'
+    assert font.properties['AVERAGE_WIDTH'] == 65
+    assert font.properties['CHARSET_REGISTRY'] == 'ISO8859'
+    assert font.properties['CHARSET_ENCODING'] == '1'
+    assert font.properties['MIN_SPACE'] == 4
     assert font.properties.font_ascent == 21
     assert font.properties.font_descent == 7
     assert font.properties.copyright == 'Copyright (c) 1987 Adobe Systems, Inc.'
