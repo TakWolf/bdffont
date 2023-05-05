@@ -179,9 +179,9 @@ class BdfFont:
             for comment in glyph.comments:
                 lines.append(f'COMMENT {comment}')
             lines.append(f'ENCODING {code_point}')
-            lines.append(f'SWIDTH {glyph.s_width[0]} {glyph.s_width[1]}')
-            lines.append(f'DWIDTH {glyph.d_width[0]} {glyph.d_width[1]}')
-            lines.append(f'BBX {glyph.bbx[0]} {glyph.bbx[1]} {glyph.bbx[2]} {glyph.bbx[3]}')
+            lines.append(f'SWIDTH {glyph.scalable_width[0]} {glyph.scalable_width[1]}')
+            lines.append(f'DWIDTH {glyph.device_width[0]} {glyph.device_width[1]}')
+            lines.append(f'BBX {glyph.bounding_box[0]} {glyph.bounding_box[1]} {glyph.bounding_box[2]} {glyph.bounding_box[3]}')
             lines.append('BITMAP')
             for bitmap_row in glyph.get_padding_bitmap():
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'

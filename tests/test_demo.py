@@ -52,9 +52,19 @@ def test_example():
     glyph = font.get_glyph(39)
     assert glyph.name == 'quoteright'
     assert glyph.code_point == 39
-    assert glyph.s_width == (223, 0)
-    assert glyph.d_width == (5, 0)
-    assert glyph.bbx == (4, 6, 2, 12)
+    assert glyph.scalable_width == (223, 0)
+    assert glyph.scalable_width_x == 223
+    assert glyph.scalable_width_y == 0
+    assert glyph.device_width == (5, 0)
+    assert glyph.device_width_x == 5
+    assert glyph.device_width_y == 0
+    assert glyph.bounding_box == (4, 6, 2, 12)
+    assert glyph.bounding_box_size == (4, 6)
+    assert glyph.bounding_box_width == 4
+    assert glyph.bounding_box_height == 6
+    assert glyph.bounding_box_origin == (2, 12)
+    assert glyph.bounding_box_origin_x == 2
+    assert glyph.bounding_box_origin_y == 12
     assert len(glyph.bitmap) == 6
     font.save(os.path.join(outputs_dir, 'example-output.bdf'))
 

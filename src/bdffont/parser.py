@@ -70,9 +70,9 @@ def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[li
 
 def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     code_point = None
-    s_width = None
-    d_width = None
-    bbx = None
+    scalable_width = None
+    device_width = None
+    bounding_box = None
     bitmap = None
     comments = []
     while line_params := _next_word_line(lines):
@@ -81,13 +81,13 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
             code_point = int(tail)
         elif word == 'SWIDTH':
             tokens = _convert_tail_to_ints(tail)
-            s_width = tokens[0], tokens[1]
+            scalable_width = tokens[0], tokens[1]
         elif word == 'DWIDTH':
             tokens = _convert_tail_to_ints(tail)
-            d_width = tokens[0], tokens[1]
+            device_width = tokens[0], tokens[1]
         elif word == 'BBX':
             tokens = _convert_tail_to_ints(tail)
-            bbx = tokens[0], tokens[1], tokens[2], tokens[3]
+            bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == 'COMMENT':
             comments.append(tail)
         elif word == 'BITMAP' or word == 'ENDCHAR':
@@ -95,13 +95,13 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
                 bitmap = _decode_bitmap_segment(lines, comments)
             if code_point is None:
                 raise BdfMissingLine('ENCODING')
-            if s_width is None:
+            if scalable_width is None:
                 raise BdfMissingLine('SWIDTH')
-            if d_width is None:
+            if device_width is None:
                 raise BdfMissingLine('DWIDTH')
-            if bbx is None:
+            if bounding_box is None:
                 raise BdfMissingLine('BBX')
-            return BdfGlyph(name, code_point, s_width, d_width, bbx, bitmap, comments)
+            return BdfGlyph(name, code_point, scalable_width, device_width, bounding_box, bitmap, comments)
     raise BdfMissingLine('ENDCHAR')
 
 

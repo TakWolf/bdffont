@@ -1,11 +1,9 @@
 
 class BdfGlyph:
     # Up to 14 characters (no blanks) of descriptive name of the glyph.
-    # Example: quoteright
     name: str
 
     # Code point in Unicode.
-    # Example: 39
     code_point: int
 
     # The scalable width in x and y of character. Scalable widths are in units of 1/1000th of the size of
@@ -16,18 +14,17 @@ class BdfGlyph:
     # where r is the device resolution in pixels per inch. The result is a real number giving the ideal print
     # width in device pixels. The actual device width must of course be an integral number of device pixels and
     # is given in the next entry. The s_width y value should always be zero for a standard X font.
-    s_width: (int, int)
+    scalable_width: (int, int)
 
     # The width in x and y of the character in device units. Like the s_width, this width information is a vector
     # indicating the position of the next character’s origin relative to the origin of this character. Note that
     # the d_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal device-independent width
     # given by s_width in order to improve its typographic characteristics on a display. The d_width y value should
     # always be zero for a standard X font.
-    d_width: (int, int)
+    device_width: (int, int)
 
-    # The width in x (BBw), height in y (BBh), and x and y displacement (BBox, BBoy) of the lower left corner from
-    # the origin of the character.
-    bbx: (int, int, int, int)
+    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
+    bounding_box: (int, int, int, int)
 
     # The bitmap object.
     bitmap: list[list[int]]
@@ -39,17 +36,17 @@ class BdfGlyph:
             self,
             name: str,
             code_point: int,
-            s_width: (int, int),
-            d_width: (int, int),
-            bbx: (int, int, int, int),
+            scalable_width: (int, int),
+            device_width: (int, int),
+            bounding_box: (int, int, int, int),
             bitmap: list[list[int]] = None,
             comments: list[str] = None,
     ):
         self.name = name
         self.code_point = code_point
-        self.s_width = s_width
-        self.d_width = d_width
-        self.bbx = bbx
+        self.scalable_width = scalable_width
+        self.device_width = device_width
+        self.bounding_box = bounding_box
         if bitmap is None:
             self.bitmap = []
         else:
@@ -58,6 +55,88 @@ class BdfGlyph:
             self.comments = []
         else:
             self.comments = comments
+
+    @property
+    def scalable_width_x(self) -> int:
+        return self.scalable_width[0]
+
+    @scalable_width_x.setter
+    def scalable_width_x(self, value: int):
+        self.scalable_width[0] = value
+
+    @property
+    def scalable_width_y(self) -> int:
+        return self.scalable_width[1]
+
+    @scalable_width_y.setter
+    def scalable_width_y(self, value: int):
+        self.scalable_width[1] = value
+
+    @property
+    def device_width_x(self) -> int:
+        return self.device_width[0]
+
+    @device_width_x.setter
+    def device_width_x(self, value: int):
+        self.device_width[0] = value
+
+    @property
+    def device_width_y(self) -> int:
+        return self.device_width[1]
+
+    @device_width_y.setter
+    def device_width_y(self, value: int):
+        self.device_width[1] = value
+
+    @property
+    def bounding_box_size(self) -> (int, int):
+        return self.bounding_box[0], self.bounding_box[1]
+
+    @bounding_box_size.setter
+    def bounding_box_size(self, value: (int, int)):
+        self.bounding_box[0] = value[0]
+        self.bounding_box[1] = value[1]
+
+    @property
+    def bounding_box_width(self) -> int:
+        return self.bounding_box[0]
+
+    @bounding_box_width.setter
+    def bounding_box_width(self, value: int):
+        self.bounding_box[0] = value
+
+    @property
+    def bounding_box_height(self) -> int:
+        return self.bounding_box[1]
+
+    @bounding_box_height.setter
+    def bounding_box_height(self, value: int):
+        self.bounding_box[1] = value
+
+    @property
+    def bounding_box_origin(self) -> (int, int):
+        return self.bounding_box[2], self.bounding_box[3]
+
+    @bounding_box_origin.setter
+    def bounding_box_origin(self, value: (int, int)):
+        self.bounding_box[2] = value[0]
+        self.bounding_box[3] = value[1]
+
+    @property
+    def bounding_box_origin_x(self) -> int:
+        return self.bounding_box[2]
+
+    @bounding_box_origin_x.setter
+    def bounding_box_origin_x(self, value: int):
+        self.bounding_box[2] = value
+
+    @property
+    def bounding_box_origin_y(self) -> int:
+        return self.bounding_box[3]
+
+    @bounding_box_origin_y.setter
+    def bounding_box_origin_y(self, value: int):
+        self.bounding_box[3] = value
 
     def get_padding_bitmap(self) -> list[list[int]]:
         padding_bitmap = []
