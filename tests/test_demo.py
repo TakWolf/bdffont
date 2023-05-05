@@ -5,7 +5,7 @@ from bdffont import BdfFont
 from tests import assets_dir, outputs_dir
 
 
-def load_bdf(bdf_file_name: str | bytes | os.PathLike[str] | os.PathLike[bytes]) -> (BdfFont, str):
+def load_bdf(bdf_file_name: str | bytes | os.PathLike[str] | os.PathLike[bytes]) -> tuple[BdfFont, str]:
     bdf_file_path = os.path.join(assets_dir, bdf_file_name)
     with open(bdf_file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()

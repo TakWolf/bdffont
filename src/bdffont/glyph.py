@@ -14,17 +14,17 @@ class BdfGlyph:
     # where r is the device resolution in pixels per inch. The result is a real number giving the ideal print
     # width in device pixels. The actual device width must of course be an integral number of device pixels and
     # is given in the next entry. The s_width y value should always be zero for a standard X font.
-    scalable_width: (int, int)
+    scalable_width: tuple[int, int]
 
     # The width in x and y of the character in device units. Like the s_width, this width information is a vector
     # indicating the position of the next character’s origin relative to the origin of this character. Note that
     # the d_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal device-independent width
     # given by s_width in order to improve its typographic characteristics on a display. The d_width y value should
     # always be zero for a standard X font.
-    device_width: (int, int)
+    device_width: tuple[int, int]
 
     # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
-    bounding_box: (int, int, int, int)
+    bounding_box: tuple[int, int, int, int]
 
     # The bitmap object.
     bitmap: list[list[int]]
@@ -36,9 +36,9 @@ class BdfGlyph:
             self,
             name: str,
             code_point: int,
-            scalable_width: (int, int),
-            device_width: (int, int),
-            bounding_box: (int, int, int, int),
+            scalable_width: tuple[int, int],
+            device_width: tuple[int, int],
+            bounding_box: tuple[int, int, int, int],
             bitmap: list[list[int]] = None,
             comments: list[str] = None,
     ):
@@ -62,7 +62,7 @@ class BdfGlyph:
 
     @scalable_width_x.setter
     def scalable_width_x(self, value: int):
-        self.scalable_width[0] = value
+        self.scalable_width = (value, self.scalable_width[1])
 
     @property
     def scalable_width_y(self) -> int:
@@ -70,7 +70,7 @@ class BdfGlyph:
 
     @scalable_width_y.setter
     def scalable_width_y(self, value: int):
-        self.scalable_width[1] = value
+        self.scalable_width = (self.scalable_width[0], value)
 
     @property
     def device_width_x(self) -> int:
@@ -78,7 +78,7 @@ class BdfGlyph:
 
     @device_width_x.setter
     def device_width_x(self, value: int):
-        self.device_width[0] = value
+        self.device_width = (value, self.device_width[1])
 
     @property
     def device_width_y(self) -> int:
@@ -86,16 +86,15 @@ class BdfGlyph:
 
     @device_width_y.setter
     def device_width_y(self, value: int):
-        self.device_width[1] = value
+        self.device_width = (self.device_width[0], value)
 
     @property
-    def bounding_box_size(self) -> (int, int):
+    def bounding_box_size(self) -> tuple[int, int]:
         return self.bounding_box[0], self.bounding_box[1]
 
     @bounding_box_size.setter
-    def bounding_box_size(self, value: (int, int)):
-        self.bounding_box[0] = value[0]
-        self.bounding_box[1] = value[1]
+    def bounding_box_size(self, value: tuple[int, int]):
+        self.bounding_box = (value[0], value[1], self.bounding_box[2], self.bounding_box[3])
 
     @property
     def bounding_box_width(self) -> int:
@@ -103,7 +102,7 @@ class BdfGlyph:
 
     @bounding_box_width.setter
     def bounding_box_width(self, value: int):
-        self.bounding_box[0] = value
+        self.bounding_box = (value, self.bounding_box[1], self.bounding_box[2], self.bounding_box[3])
 
     @property
     def bounding_box_height(self) -> int:
@@ -111,16 +110,15 @@ class BdfGlyph:
 
     @bounding_box_height.setter
     def bounding_box_height(self, value: int):
-        self.bounding_box[1] = value
+        self.bounding_box = (self.bounding_box[0], value, self.bounding_box[2], self.bounding_box[3])
 
     @property
-    def bounding_box_origin(self) -> (int, int):
+    def bounding_box_origin(self) -> tuple[int, int]:
         return self.bounding_box[2], self.bounding_box[3]
 
     @bounding_box_origin.setter
-    def bounding_box_origin(self, value: (int, int)):
-        self.bounding_box[2] = value[0]
-        self.bounding_box[3] = value[1]
+    def bounding_box_origin(self, value: tuple[int, int]):
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value[0], value[1])
 
     @property
     def bounding_box_origin_x(self) -> int:
@@ -128,7 +126,7 @@ class BdfGlyph:
 
     @bounding_box_origin_x.setter
     def bounding_box_origin_x(self, value: int):
-        self.bounding_box[2] = value
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value, self.bounding_box[3])
 
     @property
     def bounding_box_origin_y(self) -> int:
@@ -136,7 +134,7 @@ class BdfGlyph:
 
     @bounding_box_origin_y.setter
     def bounding_box_origin_y(self, value: int):
-        self.bounding_box[3] = value
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], self.bounding_box[2], value)
 
     def get_padding_bitmap(self) -> list[list[int]]:
         padding_bitmap = []

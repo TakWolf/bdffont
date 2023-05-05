@@ -8,7 +8,7 @@ from bdffont.glyph import BdfGlyph
 from bdffont.error import BdfGlyphExists, BdfMissingLine, BdfValueIncorrect
 
 
-def _next_word_line(lines: Iterator[str]) -> (str, str):
+def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
     while True:
         try:
             line = next(lines)

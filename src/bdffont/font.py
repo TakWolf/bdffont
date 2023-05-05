@@ -16,11 +16,11 @@ class BdfFont:
 
     # The point size of the characters, the x resolution, and the y resolution of the device for which these characters were intended.
     # Names: point_size, x_dpi, y_dpi
-    size: (int, int, int)
+    size: tuple[int, int, int]
 
     # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
     # Names: bounding_box_width, bounding_box_height, bounding_box_origin_x, bounding_box_origin_y
-    bounding_box: (int, int, int, int)
+    bounding_box: tuple[int, int, int, int]
 
     # Some optional extended properties.
     properties: BdfProperties
@@ -34,8 +34,8 @@ class BdfFont:
     def __init__(
             self,
             name: str,
-            size: (int, int, int),
-            bounding_box: (int, int, int, int),
+            size: tuple[int, int, int],
+            bounding_box: tuple[int, int, int, int],
             properties: BdfProperties = None,
             glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
@@ -63,16 +63,15 @@ class BdfFont:
 
     @point_size.setter
     def point_size(self, value: int):
-        self.size[0] = value
+        self.size = (value, self.size[1], self.size[2])
 
     @property
-    def xy_dpi(self) -> (int, int):
+    def xy_dpi(self) -> tuple[int, int]:
         return self.size[1], self.size[2]
 
     @xy_dpi.setter
-    def xy_dpi(self, value: (int, int)):
-        self.size[1] = value[0]
-        self.size[2] = value[1]
+    def xy_dpi(self, value: tuple[int, int]):
+        self.size = (self.size[0], value[0], value[1])
 
     @property
     def x_dpi(self) -> int:
@@ -80,7 +79,7 @@ class BdfFont:
 
     @x_dpi.setter
     def x_dpi(self, value: int):
-        self.size[1] = value
+        self.size = (self.size[0], value, self.size[2])
 
     @property
     def y_dpi(self) -> int:
@@ -88,16 +87,15 @@ class BdfFont:
 
     @y_dpi.setter
     def y_dpi(self, value: int):
-        self.size[2] = value
+        self.size = (self.size[0], self.size[1], value)
 
     @property
-    def bounding_box_size(self) -> (int, int):
+    def bounding_box_size(self) -> tuple[int, int]:
         return self.bounding_box[0], self.bounding_box[1]
 
     @bounding_box_size.setter
-    def bounding_box_size(self, value: (int, int)):
-        self.bounding_box[0] = value[0]
-        self.bounding_box[1] = value[1]
+    def bounding_box_size(self, value: tuple[int, int]):
+        self.bounding_box = (value[0], value[1], self.bounding_box[2], self.bounding_box[3])
 
     @property
     def bounding_box_width(self) -> int:
@@ -105,7 +103,7 @@ class BdfFont:
 
     @bounding_box_width.setter
     def bounding_box_width(self, value: int):
-        self.bounding_box[0] = value
+        self.bounding_box = (value, self.bounding_box[1], self.bounding_box[2], self.bounding_box[3])
 
     @property
     def bounding_box_height(self) -> int:
@@ -113,16 +111,15 @@ class BdfFont:
 
     @bounding_box_height.setter
     def bounding_box_height(self, value: int):
-        self.bounding_box[1] = value
+        self.bounding_box = (self.bounding_box[0], value, self.bounding_box[2], self.bounding_box[3])
 
     @property
-    def bounding_box_origin(self) -> (int, int):
+    def bounding_box_origin(self) -> tuple[int, int]:
         return self.bounding_box[2], self.bounding_box[3]
 
     @bounding_box_origin.setter
-    def bounding_box_origin(self, value: (int, int)):
-        self.bounding_box[2] = value[0]
-        self.bounding_box[3] = value[1]
+    def bounding_box_origin(self, value: tuple[int, int]):
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value[0], value[1])
 
     @property
     def bounding_box_origin_x(self) -> int:
@@ -130,7 +127,7 @@ class BdfFont:
 
     @bounding_box_origin_x.setter
     def bounding_box_origin_x(self, value: int):
-        self.bounding_box[2] = value
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value, self.bounding_box[3])
 
     @property
     def bounding_box_origin_y(self) -> int:
@@ -138,9 +135,9 @@ class BdfFont:
 
     @bounding_box_origin_y.setter
     def bounding_box_origin_y(self, value: int):
-        self.bounding_box[3] = value
+        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], self.bounding_box[2], value)
 
-    def get_glyph(self, code_point: int) -> BdfGlyph:
+    def get_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.get(code_point, None)
 
     def add_glyph(self, glyph: BdfGlyph):
@@ -151,7 +148,7 @@ class BdfFont:
     def set_glyph(self, glyph: BdfGlyph):
         self.code_point_to_glyph[glyph.code_point] = glyph
 
-    def remove_glyph(self, code_point: int) -> BdfGlyph:
+    def remove_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.pop(code_point, None)
 
     def encode(self) -> list[str]:
