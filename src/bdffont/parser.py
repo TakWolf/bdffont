@@ -1,4 +1,5 @@
 import re
+from typing import Iterator
 
 from bdffont import common
 from bdffont.font import BdfFont
@@ -6,10 +7,10 @@ from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
 
 
-def _next_word_line(lines) -> (str, str):
+def _next_word_line(lines: Iterator[str]) -> (str, str):
     while True:
         try:
-            line: str = next(lines)
+            line = next(lines)
         except StopIteration:
             return None
         line = line.strip()
@@ -38,7 +39,7 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _decode_properties_segment(lines, count: int) -> BdfProperties:
+def _decode_properties_segment(lines: Iterator[str], count: int) -> BdfProperties:
     properties = BdfProperties()
     while line_params := _next_word_line(lines):
         word, tail = line_params
@@ -53,7 +54,7 @@ def _decode_properties_segment(lines, count: int) -> BdfProperties:
     common.raise_word_line_not_closed('STARTPROPERTIES', 'ENDPROPERTIES')
 
 
-def _decode_bitmap_segment(lines, comments) -> list[list[int]]:
+def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[list[int]]:
     bitmap = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
@@ -66,7 +67,7 @@ def _decode_bitmap_segment(lines, comments) -> list[list[int]]:
     common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
 
 
-def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
+def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     code_point = None
     s_width = None
     d_width = None
@@ -103,7 +104,7 @@ def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
     common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
 
 
-def _decode_font_segment(lines) -> BdfFont:
+def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
     name = None
     size = None
     bounding_box = None
