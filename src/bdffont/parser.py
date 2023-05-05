@@ -24,13 +24,13 @@ def _next_word_line(lines) -> (str, str):
         return word, tail
 
 
-def _decode_tail_to_ints(tail: str) -> list[int]:
+def _convert_tail_to_ints(tail: str) -> list[int]:
     tokens = re.split(r" +", tail)
     ints = [int(token) for token in tokens]
     return ints
 
 
-def _decode_properties_value(tail: str) -> str | int:
+def _convert_tail_to_properties_value(tail: str) -> str | int:
     if tail.startswith('"') and tail.endswith('"'):
         value = tail.removeprefix('"').removesuffix('"')
     else:
@@ -49,7 +49,7 @@ def _decode_properties_segment(lines, count: int) -> BdfProperties:
         elif word == 'COMMENT':
             properties.comments.append(tail)
         else:
-            properties[word] = _decode_properties_value(tail)
+            properties[word] = _convert_tail_to_properties_value(tail)
     common.raise_word_line_not_closed('STARTPROPERTIES', 'ENDPROPERTIES')
 
 
@@ -78,13 +78,13 @@ def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
         if word == 'ENCODING':
             code_point = int(tail)
         elif word == 'SWIDTH':
-            tokens = _decode_tail_to_ints(tail)
+            tokens = _convert_tail_to_ints(tail)
             s_width = tokens[0], tokens[1]
         elif word == 'DWIDTH':
-            tokens = _decode_tail_to_ints(tail)
+            tokens = _convert_tail_to_ints(tail)
             d_width = tokens[0], tokens[1]
         elif word == 'BBX':
-            tokens = _decode_tail_to_ints(tail)
+            tokens = _convert_tail_to_ints(tail)
             bbx = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == 'COMMENT':
             comments.append(tail)
@@ -117,10 +117,10 @@ def _decode_font_segment(lines) -> BdfFont:
         if word == 'FONT':
             name = tail
         elif word == 'SIZE':
-            tokens = _decode_tail_to_ints(tail)
+            tokens = _convert_tail_to_ints(tail)
             size = tokens[0], tokens[1], tokens[2]
         elif word == 'FONTBOUNDINGBOX':
-            tokens = _decode_tail_to_ints(tail)
+            tokens = _convert_tail_to_ints(tail)
             bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == 'STARTPROPERTIES':
             properties = _decode_properties_segment(lines, int(tail))
