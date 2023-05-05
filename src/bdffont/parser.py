@@ -6,14 +6,22 @@ from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
 
 
-def _decode_word_line(line: str) -> (str, str):
-    tokens = re.split(r" +", line, 1)
-    word = tokens[0]
-    if len(tokens) >= 2:
-        tail = tokens[1]
-    else:
-        tail = None
-    return word, tail
+def _next_word_line(lines) -> (str, str):
+    while True:
+        try:
+            line: str = next(lines)
+        except StopIteration:
+            return None
+        line = line.strip()
+        if line == '':
+            continue
+        tokens = re.split(r" +", line, 1)
+        word = tokens[0]
+        if len(tokens) < 2:
+            tail = None
+        else:
+            tail = tokens[1]
+        return word, tail
 
 
 def _decode_tail_to_ints(tail: str) -> list[int]:
@@ -32,8 +40,8 @@ def _decode_properties_value(tail: str) -> str | int:
 
 def _decode_properties_segment(lines, count: int) -> BdfProperties:
     properties = BdfProperties()
-    while (line := next(lines, None).strip()) is not None:
-        word, tail = _decode_word_line(line)
+    while line_params := _next_word_line(lines):
+        word, tail = line_params
         if word == 'ENDPROPERTIES':
             if count != len(properties):
                 common.raise_word_value_incorrect_exception('STARTPROPERTIES')
@@ -47,14 +55,14 @@ def _decode_properties_segment(lines, count: int) -> BdfProperties:
 
 def _decode_bitmap_segment(lines, comments) -> list[list[int]]:
     bitmap = []
-    while (line := next(lines, None).strip()) is not None:
-        word, tail = _decode_word_line(line)
+    while line_params := _next_word_line(lines):
+        word, tail = line_params
         if word == 'ENDCHAR':
             return bitmap
         elif word == 'COMMENT':
             comments.append(tail)
         elif word != '':
-            bitmap.append([int(c) for c in bin(int('1' + line, 16))[3:]])
+            bitmap.append([int(c) for c in bin(int('1' + word, 16))[3:]])
     common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
 
 
@@ -65,8 +73,8 @@ def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
     bbx = None
     bitmap = None
     comments = []
-    while (line := next(lines, None).strip()) is not None:
-        word, tail = _decode_word_line(line)
+    while line_params := _next_word_line(lines):
+        word, tail = line_params
         if word == 'ENCODING':
             code_point = int(tail)
         elif word == 'SWIDTH':
@@ -104,8 +112,8 @@ def _decode_font_segment(lines) -> BdfFont:
     glyphs = []
     alphabet = set()
     comments = []
-    while (line := next(lines, None).strip()) is not None:
-        word, tail = _decode_word_line(line)
+    while line_params := _next_word_line(lines):
+        word, tail = line_params
         if word == 'FONT':
             name = tail
         elif word == 'SIZE':
@@ -143,8 +151,8 @@ def _decode_font_segment(lines) -> BdfFont:
 
 def decode_bdf(text) -> BdfFont:
     lines = iter(text.split('\n'))
-    while (line := next(lines, None).strip()) is not None:
-        word, tail = _decode_word_line(line)
+    while line_params := _next_word_line(lines):
+        word, tail = line_params
         if word == 'STARTFONT':
             font = _decode_font_segment(lines)
             font.spec_version = tail
