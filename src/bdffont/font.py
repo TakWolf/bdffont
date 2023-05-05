@@ -14,12 +14,10 @@ class BdfFont:
 
     # The point size of the characters, the x resolution, and the y resolution of the device for which these characters were intended.
     # Names: point_size, x_dpi, y_dpi
-    # Example: 16 75 75
     size: (int, int, int)
 
-    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin. (In pixels.)
+    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
     # Names: bounding_box_width, bounding_box_height, bounding_box_origin_x, bounding_box_origin_y
-    # Example: 16 16 0 -2
     bounding_box: (int, int, int, int)
 
     # Some optional extended properties.
