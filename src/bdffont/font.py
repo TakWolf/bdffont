@@ -1,3 +1,5 @@
+import os
+
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
 from bdffont.error import BdfGlyphExists
@@ -195,6 +197,6 @@ class BdfFont:
     def encode_str(self) -> str:
         return '\n'.join(self.encode())
 
-    def save(self, file_path):
+    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(self.encode_str())

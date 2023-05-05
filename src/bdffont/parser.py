@@ -1,3 +1,4 @@
+import os
 import re
 from typing import Iterator
 
@@ -168,6 +169,6 @@ def decode_bdf_str(text: str) -> BdfFont:
     return decode_bdf(iter(text.split('\n')))
 
 
-def load_bdf(file_path) -> BdfFont:
+def load_bdf(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]) -> BdfFont:
     with open(file_path, 'r', encoding='utf-8') as file:
         return decode_bdf(iter(file.readlines()))
