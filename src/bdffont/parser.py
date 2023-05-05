@@ -4,7 +4,7 @@ from typing import Iterator
 from bdffont.font import BdfFont
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfGlyphExists, BdfMissingLine, BdfWordNotClosed, BdfValueIncorrect
+from bdffont.error import BdfGlyphExists, BdfMissingLine, BdfValueIncorrect
 
 
 def _next_word_line(lines: Iterator[str]) -> (str, str):
@@ -51,7 +51,7 @@ def _decode_properties_segment(lines: Iterator[str], count: int) -> BdfPropertie
             properties.comments.append(tail)
         else:
             properties[word] = _convert_tail_to_properties_value(tail)
-    raise BdfWordNotClosed('STARTPROPERTIES', 'ENDPROPERTIES')
+    raise BdfMissingLine('ENDPROPERTIES')
 
 
 def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[list[int]]:
@@ -64,7 +64,7 @@ def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[li
             comments.append(tail)
         elif word != '':
             bitmap.append([int(c) for c in bin(int('1' + word, 16))[3:]])
-    raise BdfWordNotClosed('STARTCHAR', 'ENDCHAR')
+    raise BdfMissingLine('ENDCHAR')
 
 
 def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
@@ -101,7 +101,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
             if bbx is None:
                 raise BdfMissingLine('BBX')
             return BdfGlyph(name, code_point, s_width, d_width, bbx, bitmap, comments)
-    raise BdfWordNotClosed('STARTCHAR', 'ENDCHAR')
+    raise BdfMissingLine('ENDCHAR')
 
 
 def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
@@ -147,7 +147,7 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
             if glyph_count != len(glyphs) or glyph_count != len(alphabet):
                 raise BdfValueIncorrect('CHARS')
             return BdfFont(name, size, bounding_box, properties, glyphs, comments)
-    raise BdfWordNotClosed('STARTFONT', 'ENDFONT')
+    raise BdfMissingLine('ENDFONT')
 
 
 def decode_bdf(lines: Iterator[str]) -> BdfFont:

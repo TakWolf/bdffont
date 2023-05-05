@@ -19,16 +19,6 @@ class BdfMissingLine(BdfException):
         super().__init__(f"Missing line '{word}'")
 
 
-class BdfWordNotClosed(BdfException):
-    start_word: str
-    end_word: str
-
-    def __init__(self, start_word: str, end_word: str):
-        self.start_word = start_word
-        self.end_word = end_word
-        super().__init__(f"'{start_word}' not closed with '{end_word}'")
-
-
 class BdfValueIncorrect(BdfException):
     word: str
 
