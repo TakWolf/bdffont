@@ -1,20 +1,32 @@
 from collections import UserDict
 
-from bdffont import common
+from bdffont.error import BdfPropertiesIllegalKey, BdfPropertiesIllegalValue
+
+
+def _check_key(key: str):
+    if not key.isupper():
+        raise BdfPropertiesIllegalKey(f'Properties key must be upper')
+    if not key.replace('_', '').isalpha():
+        raise BdfPropertiesIllegalKey(f"Illegal properties key '{key}'")
+
+
+def _check_value(value: str | int):
+    if not isinstance(value, str) and not isinstance(value, int):
+        raise BdfPropertiesIllegalValue("Properties value must be 'str' or 'int'")
 
 
 class BdfProperties(UserDict):
     # Comments.
     comments: list[str] = []
 
-    def __getitem__(self, word: str) -> str | int:
-        common.check_word(word)
-        return super().__getitem__(word)
+    def __getitem__(self, key: str) -> str | int:
+        _check_key(key)
+        return super().__getitem__(key)
 
-    def __setitem__(self, word: str, value: str | int):
-        common.check_word(word)
-        common.check_properties_value(value)
-        super().__setitem__(word, value)
+    def __setitem__(self, key: str, value: str | int):
+        _check_key(key)
+        _check_value(value)
+        super().__setitem__(key, value)
 
     def get_default_char(self) -> int:
         return self['DEFAULT_CHAR']

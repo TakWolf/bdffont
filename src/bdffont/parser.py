@@ -1,10 +1,10 @@
 import re
 from typing import Iterator
 
-from bdffont import common
 from bdffont.font import BdfFont
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
+from bdffont.error import BdfGlyphExists, BdfMissingLine, BdfWordNotClosed, BdfValueIncorrect
 
 
 def _next_word_line(lines: Iterator[str]) -> (str, str):
@@ -45,13 +45,13 @@ def _decode_properties_segment(lines: Iterator[str], count: int) -> BdfPropertie
         word, tail = line_params
         if word == 'ENDPROPERTIES':
             if count != len(properties):
-                common.raise_word_value_incorrect_exception('STARTPROPERTIES')
+                raise BdfValueIncorrect('STARTPROPERTIES')
             return properties
         elif word == 'COMMENT':
             properties.comments.append(tail)
         else:
             properties[word] = _convert_tail_to_properties_value(tail)
-    common.raise_word_line_not_closed('STARTPROPERTIES', 'ENDPROPERTIES')
+    raise BdfWordNotClosed('STARTPROPERTIES', 'ENDPROPERTIES')
 
 
 def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[list[int]]:
@@ -64,7 +64,7 @@ def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[li
             comments.append(tail)
         elif word != '':
             bitmap.append([int(c) for c in bin(int('1' + word, 16))[3:]])
-    common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
+    raise BdfWordNotClosed('STARTCHAR', 'ENDCHAR')
 
 
 def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
@@ -93,15 +93,15 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
             if word == 'BITMAP':
                 bitmap = _decode_bitmap_segment(lines, comments)
             if code_point is None:
-                common.raise_missing_word_line_exception('ENCODING')
+                raise BdfMissingLine('ENCODING')
             if s_width is None:
-                common.raise_missing_word_line_exception('SWIDTH')
+                raise BdfMissingLine('SWIDTH')
             if d_width is None:
-                common.raise_missing_word_line_exception('DWIDTH')
+                raise BdfMissingLine('DWIDTH')
             if bbx is None:
-                common.raise_missing_word_line_exception('BBX')
+                raise BdfMissingLine('BBX')
             return BdfGlyph(name, code_point, s_width, d_width, bbx, bitmap, comments)
-    common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
+    raise BdfWordNotClosed('STARTCHAR', 'ENDCHAR')
 
 
 def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
@@ -130,24 +130,24 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
         elif word == 'STARTCHAR':
             glyph = _decode_glyph_segment(lines, tail)
             if glyph.code_point in alphabet:
-                common.raise_glyph_already_exists_exception(glyph.code_point)
+                raise BdfGlyphExists(glyph.code_point)
             glyphs.append(glyph)
             alphabet.add(glyph.code_point)
         elif word == 'COMMENT':
             comments.append(tail)
         elif word == 'ENDFONT':
             if name is None:
-                common.raise_missing_word_line_exception('FONT')
+                raise BdfMissingLine('FONT')
             if size is None:
-                common.raise_missing_word_line_exception('SIZE')
+                raise BdfMissingLine('SIZE')
             if bounding_box is None:
-                common.raise_missing_word_line_exception('FONTBOUNDINGBOX')
+                raise BdfMissingLine('FONTBOUNDINGBOX')
             if glyph_count is None:
-                common.raise_missing_word_line_exception('CHARS')
+                raise BdfMissingLine('CHARS')
             if glyph_count != len(glyphs) or glyph_count != len(alphabet):
-                common.raise_word_value_incorrect_exception('CHARS')
+                raise BdfValueIncorrect('CHARS')
             return BdfFont(name, size, bounding_box, properties, glyphs, comments)
-    common.raise_word_line_not_closed('STARTFONT', 'ENDFONT')
+    raise BdfWordNotClosed('STARTFONT', 'ENDFONT')
 
 
 def decode_bdf(lines: Iterator[str]) -> BdfFont:
@@ -157,7 +157,7 @@ def decode_bdf(lines: Iterator[str]) -> BdfFont:
             font = _decode_font_segment(lines)
             font.spec_version = tail
             return font
-    common.raise_missing_word_line_exception('STARTFONT')
+    raise BdfMissingLine('STARTFONT')
 
 
 def decode_bdf_str(text: str) -> BdfFont:

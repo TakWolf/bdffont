@@ -1,6 +1,6 @@
-from bdffont import common
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
+from bdffont.error import BdfGlyphExists
 
 
 class BdfFont:
@@ -125,7 +125,7 @@ class BdfFont:
 
     def add_glyph(self, glyph: BdfGlyph):
         if glyph.code_point in self.code_point_to_glyph:
-            common.raise_glyph_already_exists_exception(glyph.code_point)
+            raise BdfGlyphExists(glyph.code_point)
         self.code_point_to_glyph[glyph.code_point] = glyph
 
     def set_glyph(self, glyph: BdfGlyph):
