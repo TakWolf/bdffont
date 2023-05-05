@@ -63,7 +63,8 @@ def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[li
         elif word == 'COMMENT':
             comments.append(tail)
         elif word != '':
-            bitmap.append([int(c) for c in bin(int('1' + word, 16))[3:]])
+            bin_format = '{:0' + str(len(word) * 4) + 'b}'
+            bitmap.append([int(c) for c in bin_format.format(int(word, 16))])
     raise BdfMissingLine('ENDCHAR')
 
 

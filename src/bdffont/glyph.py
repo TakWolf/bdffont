@@ -58,3 +58,19 @@ class BdfGlyph:
             self.comments = []
         else:
             self.comments = comments
+
+    def get_padding_bitmap(self) -> list[list[int]]:
+        padding_bitmap = []
+        for bitmap_row in self.bitmap:
+            padding_bitmap_row = []
+            for alpha in bitmap_row:
+                if alpha == 0:
+                    padding_bitmap_row.append(0)
+                else:
+                    padding_bitmap_row.append(1)
+            remainder = len(bitmap_row) % 8
+            if remainder > 0:
+                for _ in range(8 - remainder):
+                    padding_bitmap_row.append(0)
+            padding_bitmap.append(padding_bitmap_row)
+        return padding_bitmap

@@ -165,19 +165,9 @@ class BdfFont:
             lines.append(f'DWIDTH {glyph.d_width[0]} {glyph.d_width[1]}')
             lines.append(f'BBX {glyph.bbx[0]} {glyph.bbx[1]} {glyph.bbx[2]} {glyph.bbx[3]}')
             lines.append('BITMAP')
-            for bitmap_row in glyph.bitmap:
-                binary_text = ''
-                for alpha in bitmap_row:
-                    if alpha == 0:
-                        binary_text += '0'
-                    else:
-                        binary_text += '1'
-                remainder = len(binary_text) % 8
-                if remainder > 0:
-                    for _ in range(8 - remainder):
-                        binary_text += '0'
-                format_string = '{:0' + str(len(binary_text) // 4) + 'X}'
-                lines.append(format_string.format(int(binary_text, 2)))
+            for bitmap_row in glyph.get_padding_bitmap():
+                hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
+                lines.append(hex_format.format(int(''.join(map(str, bitmap_row)), 2)))
             lines.append('ENDCHAR')
 
         lines.append('ENDFONT')
