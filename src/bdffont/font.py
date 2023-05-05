@@ -135,8 +135,9 @@ class BdfFont:
         return self.code_point_to_glyph.pop(code_point, None)
 
     def encode(self) -> str:
-        lines = []
-        lines.append(f'STARTFONT {self.spec_version}')
+        lines = [
+            f'STARTFONT {self.spec_version}',
+        ]
         for comment in self.comments:
             lines.append(f'COMMENT {comment}')
         lines.append(f'FONT {self.name}')
@@ -148,16 +149,14 @@ class BdfFont:
             lines.append(f'COMMENT {comment}')
         for word, value in self.properties.items():
             if isinstance(value, str):
-                lines.append(f'{word} "{value}"')
-            else:
-                lines.append(f'{word} {value}')
+                value = f'"{value}"'
+            lines.append(f'{word} {value}')
         lines.append('ENDPROPERTIES')
 
-        alphabet = list(self.code_point_to_glyph.keys())
+        alphabet = list(self.code_point_to_glyph.items())
         alphabet.sort()
         lines.append(f'CHARS {len(alphabet)}')
-        for code_point in alphabet:
-            glyph = self.code_point_to_glyph[code_point]
+        for code_point, glyph in alphabet:
             lines.append(f'STARTCHAR {glyph.name}')
             for comment in glyph.comments:
                 lines.append(f'COMMENT {comment}')
