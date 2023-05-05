@@ -35,7 +35,10 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     if tail.startswith('"') and tail.endswith('"'):
         value = tail.removeprefix('"').removesuffix('"')
     else:
-        value = int(tail)
+        try:
+            value = int(tail)
+        except ValueError:
+            value = tail
     return value
 
 
