@@ -134,7 +134,7 @@ class BdfFont:
     def remove_glyph(self, code_point: int) -> BdfGlyph:
         return self.code_point_to_glyph.pop(code_point, None)
 
-    def encode(self) -> str:
+    def encode(self) -> list[str]:
         lines = [
             f'STARTFONT {self.spec_version}',
         ]
@@ -182,8 +182,11 @@ class BdfFont:
 
         lines.append('ENDFONT')
         lines.append('')
-        return '\n'.join(lines)
+        return lines
+
+    def encode_str(self) -> str:
+        return '\n'.join(self.encode())
 
     def save(self, file_path):
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(self.encode())
+            file.write(self.encode_str())

@@ -8,8 +8,8 @@ def test_encode_and_decode():
     bdf_file_path = os.path.join(assets_dir, 'example.bdf')
     with open(bdf_file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
-    font = bdffont.decode_bdf(bdf_text)
-    assert font.encode() == bdf_text
+    font = bdffont.decode_bdf_str(bdf_text)
+    assert font.encode_str() == bdf_text
 
 
 def test_load_and_save():

@@ -150,8 +150,7 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
     common.raise_word_line_not_closed('STARTFONT', 'ENDFONT')
 
 
-def decode_bdf(text) -> BdfFont:
-    lines = iter(text.split('\n'))
+def decode_bdf(lines: Iterator[str]) -> BdfFont:
     while line_params := _next_word_line(lines):
         word, tail = line_params
         if word == 'STARTFONT':
@@ -161,6 +160,10 @@ def decode_bdf(text) -> BdfFont:
     common.raise_missing_word_line_exception('STARTFONT')
 
 
+def decode_bdf_str(text: str) -> BdfFont:
+    return decode_bdf(iter(text.split('\n')))
+
+
 def load_bdf(file_path) -> BdfFont:
     with open(file_path, 'r', encoding='utf-8') as file:
-        return decode_bdf(file.read())
+        return decode_bdf(iter(file.readlines()))
