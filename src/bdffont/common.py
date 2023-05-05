@@ -23,5 +23,5 @@ def raise_word_value_incorrect_exception(word: str):
     raise Exception(f"'{word}' value incorrect")
 
 
-def raise_word_line_not_closeed(start_word: str, end_word: str):
+def raise_word_line_not_closed(start_word: str, end_word: str):
     raise Exception(f"'{start_word}' not closed with '{end_word}'")

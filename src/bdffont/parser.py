@@ -42,7 +42,7 @@ def _decode_properties_segment(lines, count: int) -> BdfProperties:
             properties.comments.append(tail)
         else:
             properties[word] = _decode_properties_value(tail)
-    common.raise_word_line_not_closeed('STARTPROPERTIES', 'ENDPROPERTIES')
+    common.raise_word_line_not_closed('STARTPROPERTIES', 'ENDPROPERTIES')
 
 
 def _decode_bitmap_segment(lines, comments) -> list[list[int]]:
@@ -55,7 +55,7 @@ def _decode_bitmap_segment(lines, comments) -> list[list[int]]:
             comments.append(tail)
         elif word != '':
             bitmap.append([int(c) for c in bin(int('1' + line, 16))[3:]])
-    common.raise_word_line_not_closeed('STARTCHAR', 'ENDCHAR')
+    common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
 
 
 def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
@@ -92,7 +92,7 @@ def _decode_glyph_segment(lines, name: str) -> BdfGlyph:
             if bbx is None:
                 common.raise_missing_word_line_exception('BBX')
             return BdfGlyph(name, code_point, s_width, d_width, bbx, bitmap, comments)
-    common.raise_word_line_not_closeed('STARTCHAR', 'ENDCHAR')
+    common.raise_word_line_not_closed('STARTCHAR', 'ENDCHAR')
 
 
 def _decode_font_segment(lines) -> BdfFont:
@@ -138,7 +138,7 @@ def _decode_font_segment(lines) -> BdfFont:
             if glyph_count != len(glyphs) or glyph_count != len(alphabet):
                 common.raise_word_value_incorrect_exception('CHARS')
             return BdfFont(name, size, bounding_box, properties, glyphs, comments)
-    common.raise_word_line_not_closeed('STARTFONT', 'ENDFONT')
+    common.raise_word_line_not_closed('STARTFONT', 'ENDFONT')
 
 
 def decode_bdf(text) -> BdfFont:
