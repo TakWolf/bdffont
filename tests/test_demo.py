@@ -1,7 +1,7 @@
 import os
 
 import bdffont
-from examples import assets_dir, build_dir
+from tests import assets_dir, outputs_dir
 
 
 def load_bdf(bdf_file_name):
@@ -31,10 +31,10 @@ def test_example():
     assert glyph.d_width == (5, 0)
     assert glyph.bbx == (4, 6, 2, 12)
     assert len(glyph.bitmap) == 6
-    font.save(os.path.join(build_dir, 'example-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'example-output.bdf'))
 
 
 def test_unifont():
     font = load_bdf('unifont-15.0.01.bdf')[0]
     font = bdffont.decode_bdf(iter(font.encode()))
-    font.save(os.path.join(build_dir, 'unifont-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'unifont-output.bdf'))

@@ -17,7 +17,7 @@ import os
 
 import bdffont
 from bdffont import BdfGlyph
-from examples import assets_dir, build_dir
+from examples import assets_dir, outputs_dir
 
 
 def main():
@@ -52,7 +52,7 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0],
         ],
     ))
-    font.save(os.path.join(build_dir, 'my.bdf'))
+    font.save(os.path.join(outputs_dir, 'example-output.bdf'))
 
 
 if __name__ == '__main__':
