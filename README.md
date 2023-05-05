@@ -22,11 +22,11 @@ from examples import assets_dir, outputs_dir
 
 def main():
     font = bdffont.load_bdf(os.path.join(assets_dir, 'example.bdf'))
-    font.properties.set_font_version('1.0.0')
-    font.properties.set_font_ascent(7)
-    font.properties.set_font_descent(2)
-    font.properties.set_x_height(5)
-    font.properties.set_cap_height(7)
+    font.properties.font_version = '1.0.0'
+    font.properties.font_ascent = 7
+    font.properties.font_descent = 2
+    font.properties.x_height = 5
+    font.properties.cap_height = 7
     font.add_glyph(BdfGlyph(
         name='A',
         code_point=ord('A'),

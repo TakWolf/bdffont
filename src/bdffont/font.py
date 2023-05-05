@@ -57,68 +57,88 @@ class BdfFont:
         else:
             self.comments = comments
 
-    def get_point_size(self) -> int:
+    @property
+    def point_size(self) -> int:
         return self.size[0]
 
-    def set_point_size(self, point_size: int):
-        self.size[0] = point_size
+    @point_size.setter
+    def point_size(self, value: int):
+        self.size[0] = value
 
-    def get_xy_dpi(self) -> (int, int):
+    @property
+    def xy_dpi(self) -> (int, int):
         return self.size[1], self.size[2]
 
-    def set_xy_dpi(self, x_dpi: int, y_dpi: int):
-        self.size[1] = x_dpi
-        self.size[2] = y_dpi
+    @xy_dpi.setter
+    def xy_dpi(self, value: (int, int)):
+        self.size[1] = value[0]
+        self.size[2] = value[1]
 
-    def get_x_dpi(self) -> int:
+    @property
+    def x_dpi(self) -> int:
         return self.size[1]
 
-    def set_x_dpi(self, x_dpi: int):
-        self.size[1] = x_dpi
+    @x_dpi.setter
+    def x_dpi(self, value: int):
+        self.size[1] = value
 
-    def get_y_dpi(self) -> int:
+    @property
+    def y_dpi(self) -> int:
         return self.size[2]
 
-    def set_y_dpi(self, y_dpi: int):
-        self.size[2] = y_dpi
+    @y_dpi.setter
+    def y_dpi(self, value: int):
+        self.size[2] = value
 
-    def get_bounding_box_size(self) -> (int, int):
-        return self.size[0], self.size[1]
+    @property
+    def bounding_box_size(self) -> (int, int):
+        return self.bounding_box[0], self.bounding_box[1]
 
-    def set_bounding_box_size(self, width: int, height: int):
-        self.size[0] = width
-        self.size[1] = height
+    @bounding_box_size.setter
+    def bounding_box_size(self, value: (int, int)):
+        self.bounding_box[0] = value[0]
+        self.bounding_box[1] = value[1]
 
-    def get_bounding_box_width(self) -> int:
-        return self.size[0]
+    @property
+    def bounding_box_width(self) -> int:
+        return self.bounding_box[0]
 
-    def set_bounding_box_width(self, width: int):
-        self.size[0] = width
+    @bounding_box_width.setter
+    def bounding_box_width(self, value: int):
+        self.bounding_box[0] = value
 
-    def get_bounding_box_height(self) -> int:
-        return self.size[1]
+    @property
+    def bounding_box_height(self) -> int:
+        return self.bounding_box[1]
 
-    def set_bounding_box_height(self, height: int):
-        self.size[1] = height
+    @bounding_box_height.setter
+    def bounding_box_height(self, value: int):
+        self.bounding_box[1] = value
 
-    def get_bounding_box_origin(self) -> (int, int):
-        return self.size[2], self.size[3]
+    @property
+    def bounding_box_origin(self) -> (int, int):
+        return self.bounding_box[2], self.bounding_box[3]
 
-    def set_bounding_box_origin(self, x: int, y: int):
-        self.size[2] = x
-        self.size[3] = y
+    @bounding_box_origin.setter
+    def bounding_box_origin(self, value: (int, int)):
+        self.bounding_box[2] = value[0]
+        self.bounding_box[3] = value[1]
 
-    def get_bounding_box_origin_x(self) -> int:
-        return self.size[2]
+    @property
+    def bounding_box_origin_x(self) -> int:
+        return self.bounding_box[2]
 
-    def set_bounding_box_origin_x(self, x: int):
-        self.size[2] = x
+    @bounding_box_origin_x.setter
+    def bounding_box_origin_x(self, value: int):
+        self.bounding_box[2] = value
 
-    def get_bounding_box_origin_y(self) -> int:
-        return self.size[3]
+    @property
+    def bounding_box_origin_y(self) -> int:
+        return self.bounding_box[3]
 
-    def set_bounding_box_origin_y(self, y: int):
-        self.size[3] = y
+    @bounding_box_origin_y.setter
+    def bounding_box_origin_y(self, value: int):
+        self.bounding_box[3] = value
 
     def get_glyph(self, code_point: int) -> BdfGlyph:
         return self.code_point_to_glyph.get(code_point, None)

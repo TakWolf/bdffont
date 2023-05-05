@@ -17,12 +17,22 @@ def test_example():
     assert font.encode_str() == bdf_text
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
     assert font.size == (24, 75, 75)
+    assert font.point_size == 24
+    assert font.xy_dpi == (75, 75)
+    assert font.x_dpi == 75
+    assert font.y_dpi == 75
     assert font.bounding_box == (9, 24, -2, -6)
+    assert font.bounding_box_size == (9, 24)
+    assert font.bounding_box_width == 9
+    assert font.bounding_box_height == 24
+    assert font.bounding_box_origin == (-2, -6)
+    assert font.bounding_box_origin_x == -2
+    assert font.bounding_box_origin_y == -6
     assert len(font.properties) == 19
-    assert font.properties.get_font_ascent() == 21
-    assert font.properties.get_font_descent() == 7
-    assert font.properties.get_copyright() == 'Copyright (c) 1987 Adobe Systems, Inc.'
-    assert font.properties.get_notice() == 'Helvetica is a registered trademark of Linotype Inc.'
+    assert font.properties.font_ascent == 21
+    assert font.properties.font_descent == 7
+    assert font.properties.copyright == 'Copyright (c) 1987 Adobe Systems, Inc.'
+    assert font.properties.notice == 'Helvetica is a registered trademark of Linotype Inc.'
     assert len(font.code_point_to_glyph) == 2
     glyph = font.get_glyph(39)
     assert glyph.name == 'quoteright'
