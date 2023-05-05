@@ -16,7 +16,7 @@ def _next_word_line(lines: Iterator[str]) -> (str, str):
         line = line.strip()
         if line == '':
             continue
-        tokens = re.split(r" +", line, 1)
+        tokens = re.split(r' +', line, 1)
         word = tokens[0]
         if len(tokens) < 2:
             tail = None
@@ -26,7 +26,7 @@ def _next_word_line(lines: Iterator[str]) -> (str, str):
 
 
 def _convert_tail_to_ints(tail: str) -> list[int]:
-    tokens = re.split(r" +", tail)
+    tokens = re.split(r' +', tail)
     ints = [int(token) for token in tokens]
     return ints
 
