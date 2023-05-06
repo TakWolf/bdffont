@@ -10,7 +10,7 @@ def print_bdf(file_name: str):
     alphabet.sort()
     print(f'##### {file_name}')
     for code_point, glyph in alphabet:
-        print(f'-> {code_point} {glyph.bounding_box}')
+        print(f'-> U+{code_point:04X} {chr(code_point)} {glyph.bounding_box}')
         for bitmap_row in glyph.bitmap:
             print(''.join(map(str, bitmap_row)).replace('0', '__').replace('1', '**'))
         print()
