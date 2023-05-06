@@ -27,9 +27,9 @@ class BdfValueIncorrect(BdfException):
         super().__init__(f"'{word}' value incorrect")
 
 
-class BdfPropertiesIllegalKey(BdfException):
+class BdfIllegalPropertiesKey(BdfException):
     pass
 
 
-class BdfPropertiesIllegalValue(BdfException):
+class BdfIllegalPropertiesValue(BdfException):
     pass

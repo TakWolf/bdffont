@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
-from bdffont.error import BdfPropertiesIllegalKey, BdfPropertiesIllegalValue
+from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def test_font():
@@ -119,11 +119,11 @@ def test_properties():
 
     with pytest.raises(Exception) as info:
         properties['abc'] = 'def'
-    assert info.type == BdfPropertiesIllegalKey
+    assert info.type == BdfIllegalPropertiesKey
 
     with pytest.raises(Exception) as info:
         properties['TEST_KEY'] = float(1.2)
-    assert info.type == BdfPropertiesIllegalValue
+    assert info.type == BdfIllegalPropertiesValue
 
 
 def test_glyph():

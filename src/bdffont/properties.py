@@ -1,18 +1,18 @@
 from collections import UserDict
 
-from bdffont.error import BdfPropertiesIllegalKey, BdfPropertiesIllegalValue
+from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def _check_key(key: str):
     if not key.isupper():
-        raise BdfPropertiesIllegalKey(f'Properties key must be upper')
+        raise BdfIllegalPropertiesKey(f'Properties key must be upper')
     if not key.replace('_', '').isalpha():
-        raise BdfPropertiesIllegalKey(f"Illegal properties key '{key}'")
+        raise BdfIllegalPropertiesKey(f"Illegal properties key '{key}'")
 
 
 def _check_value(value: str | int):
     if not isinstance(value, str) and not isinstance(value, int):
-        raise BdfPropertiesIllegalValue("Properties value must be 'str' or 'int'")
+        raise BdfIllegalPropertiesValue("Properties value must be 'str' or 'int'")
 
 
 class BdfProperties(UserDict):
