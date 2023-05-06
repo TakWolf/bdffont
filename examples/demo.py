@@ -7,6 +7,9 @@ from examples import assets_dir, outputs_dir
 
 def main():
     font = bdffont.load_bdf(os.path.join(assets_dir, 'example.bdf'))
+    font.name = 'my-new-font'
+    font.bounding_box_size = 16, 16
+    font.bounding_box_offset = 0, -2
     font.properties.font_version = '1.0.0'
     font.properties.font_ascent = 7
     font.properties.font_descent = 2
@@ -17,7 +20,8 @@ def main():
         code_point=ord('A'),
         scalable_width=(500, 0),
         device_width=(8, 0),
-        bounding_box=(8, 16, 0, -2),
+        bounding_box_size=(8, 16),
+        bounding_box_offset=(0, -2),
         bitmap=[
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],

@@ -14,13 +14,19 @@ class BdfFont:
     # Example: -Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1
     name: str
 
-    # The point size of the characters, the x resolution, and the y resolution of the device for which these characters were intended.
-    # Names: point_size, x_dpi, y_dpi
-    size: tuple[int, int, int]
+    # The point size of the characters.
+    point_size: int
 
-    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
-    # Names: bounding_box_width, bounding_box_height, bounding_box_origin_x, bounding_box_origin_y
-    bounding_box: tuple[int, int, int, int]
+    # The x resolution, and the y resolution of the device for which these characters were intended.
+    dpi_x: int
+    dpi_y: int
+
+    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin
+    # of the character.
+    bounding_box_width: int
+    bounding_box_height: int
+    bounding_box_offset_x: int
+    bounding_box_offset_y: int
 
     # Some optional extended properties.
     properties: BdfProperties
@@ -34,106 +40,61 @@ class BdfFont:
     def __init__(
             self,
             name: str,
-            size: tuple[int, int, int],
-            bounding_box: tuple[int, int, int, int],
+            point_size: int,
+            dpi_xy: tuple[int, int],
+            bounding_box_size: tuple[int, int],
+            bounding_box_offset: tuple[int, int],
             properties: BdfProperties = None,
             glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
     ):
-        if properties is None:
-            properties = BdfProperties()
-        if glyphs is None:
-            glyphs = []
-        if comments is None:
-            comments = []
-
         self.spec_version = '2.1'
         self.name = name
-        self.size = size
-        self.bounding_box = bounding_box
+        self.point_size = point_size
+        self.dpi_x, self.dpi_y = dpi_xy
+        self.bounding_box_width, self.bounding_box_height = bounding_box_size
+        self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
+        if properties is None:
+            properties = BdfProperties()
         self.properties = properties
+        if glyphs is None:
+            glyphs = []
         self.code_point_to_glyph = {glyph.code_point: glyph for glyph in glyphs}
+        if comments is None:
+            comments = []
         self.comments = comments
 
     @property
-    def point_size(self) -> int:
-        return self.size[0]
+    def dpi_xy(self) -> tuple[int, int]:
+        return self.dpi_x, self.dpi_y
 
-    @point_size.setter
-    def point_size(self, value: int):
-        self.size = (value, self.size[1], self.size[2])
-
-    @property
-    def xy_dpi(self) -> tuple[int, int]:
-        return self.size[1], self.size[2]
-
-    @xy_dpi.setter
-    def xy_dpi(self, value: tuple[int, int]):
-        self.size = (self.size[0], value[0], value[1])
-
-    @property
-    def x_dpi(self) -> int:
-        return self.size[1]
-
-    @x_dpi.setter
-    def x_dpi(self, value: int):
-        self.size = (self.size[0], value, self.size[2])
-
-    @property
-    def y_dpi(self) -> int:
-        return self.size[2]
-
-    @y_dpi.setter
-    def y_dpi(self, value: int):
-        self.size = (self.size[0], self.size[1], value)
+    @dpi_xy.setter
+    def dpi_xy(self, value: tuple[int, int]):
+        self.dpi_x, self.dpi_y = value
 
     @property
     def bounding_box_size(self) -> tuple[int, int]:
-        return self.bounding_box[0], self.bounding_box[1]
+        return self.bounding_box_width, self.bounding_box_height
 
     @bounding_box_size.setter
     def bounding_box_size(self, value: tuple[int, int]):
-        self.bounding_box = (value[0], value[1], self.bounding_box[2], self.bounding_box[3])
+        self.bounding_box_width, self.bounding_box_height = value
 
     @property
-    def bounding_box_width(self) -> int:
-        return self.bounding_box[0]
+    def bounding_box_offset(self) -> tuple[int, int]:
+        return self.bounding_box_offset_x, self.bounding_box_offset_y
 
-    @bounding_box_width.setter
-    def bounding_box_width(self, value: int):
-        self.bounding_box = (value, self.bounding_box[1], self.bounding_box[2], self.bounding_box[3])
-
-    @property
-    def bounding_box_height(self) -> int:
-        return self.bounding_box[1]
-
-    @bounding_box_height.setter
-    def bounding_box_height(self, value: int):
-        self.bounding_box = (self.bounding_box[0], value, self.bounding_box[2], self.bounding_box[3])
+    @bounding_box_offset.setter
+    def bounding_box_offset(self, value: tuple[int, int]):
+        self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
     @property
-    def bounding_box_origin(self) -> tuple[int, int]:
-        return self.bounding_box[2], self.bounding_box[3]
+    def bounding_box(self) -> tuple[int, int, int, int]:
+        return self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y
 
-    @bounding_box_origin.setter
-    def bounding_box_origin(self, value: tuple[int, int]):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value[0], value[1])
-
-    @property
-    def bounding_box_origin_x(self) -> int:
-        return self.bounding_box[2]
-
-    @bounding_box_origin_x.setter
-    def bounding_box_origin_x(self, value: int):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value, self.bounding_box[3])
-
-    @property
-    def bounding_box_origin_y(self) -> int:
-        return self.bounding_box[3]
-
-    @bounding_box_origin_y.setter
-    def bounding_box_origin_y(self, value: int):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], self.bounding_box[2], value)
+    @bounding_box.setter
+    def bounding_box(self, value: tuple[int, int, int, int]):
+        self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
     def get_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.get(code_point, None)
@@ -156,8 +117,8 @@ class BdfFont:
         for comment in self.comments:
             lines.append(f'COMMENT {comment}')
         lines.append(f'FONT {self.name}')
-        lines.append(f'SIZE {self.size[0]} {self.size[1]} {self.size[2]}')
-        lines.append(f'FONTBOUNDINGBOX {self.bounding_box[0]} {self.bounding_box[1]} {self.bounding_box[2]} {self.bounding_box[3]}')
+        lines.append(f'SIZE {self.point_size} {self.dpi_x} {self.dpi_y}')
+        lines.append(f'FONTBOUNDINGBOX {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
 
         lines.append(f'STARTPROPERTIES {len(self.properties)}')
         for comment in self.properties.comments:
@@ -176,9 +137,9 @@ class BdfFont:
             for comment in glyph.comments:
                 lines.append(f'COMMENT {comment}')
             lines.append(f'ENCODING {code_point}')
-            lines.append(f'SWIDTH {glyph.scalable_width[0]} {glyph.scalable_width[1]}')
-            lines.append(f'DWIDTH {glyph.device_width[0]} {glyph.device_width[1]}')
-            lines.append(f'BBX {glyph.bounding_box[0]} {glyph.bounding_box[1]} {glyph.bounding_box[2]} {glyph.bounding_box[3]}')
+            lines.append(f'SWIDTH {glyph.scalable_width_x} {glyph.scalable_width_y}')
+            lines.append(f'DWIDTH {glyph.device_width_x} {glyph.device_width_y}')
+            lines.append(f'BBX {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}')
             lines.append('BITMAP')
             for bitmap_row in glyph.get_padded_bitmap():
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'

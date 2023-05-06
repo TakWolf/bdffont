@@ -14,17 +14,23 @@ class BdfGlyph:
     # where r is the device resolution in pixels per inch. The result is a real number giving the ideal print
     # width in device pixels. The actual device width must of course be an integral number of device pixels and
     # is given in the next entry. The s_width y value should always be zero for a standard X font.
-    scalable_width: tuple[int, int]
+    scalable_width_x: int
+    scalable_width_y: int
 
     # The width in x and y of the character in device units. Like the s_width, this width information is a vector
     # indicating the position of the next character’s origin relative to the origin of this character. Note that
     # the d_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal device-independent width
     # given by s_width in order to improve its typographic characteristics on a display. The d_width y value should
     # always be zero for a standard X font.
-    device_width: tuple[int, int]
+    device_width_x: int
+    device_width_y: int
 
-    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin of the character.
-    bounding_box: tuple[int, int, int, int]
+    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin
+    # of the character.
+    bounding_box_width: int
+    bounding_box_height: int
+    bounding_box_offset_x: int
+    bounding_box_offset_y: int
 
     # The bitmap object.
     bitmap: list[list[int]]
@@ -38,102 +44,63 @@ class BdfGlyph:
             code_point: int,
             scalable_width: tuple[int, int],
             device_width: tuple[int, int],
-            bounding_box: tuple[int, int, int, int],
+            bounding_box_size: tuple[int, int],
+            bounding_box_offset: tuple[int, int],
             bitmap: list[list[int]] = None,
             comments: list[str] = None,
     ):
-        if bitmap is None:
-            bitmap = []
-        if comments is None:
-            comments = []
-
         self.name = name
         self.code_point = code_point
-        self.scalable_width = scalable_width
-        self.device_width = device_width
-        self.bounding_box = bounding_box
+        self.scalable_width_x, self.scalable_width_y = scalable_width
+        self.device_width_x, self.device_width_y = device_width
+        self.bounding_box_width, self.bounding_box_height = bounding_box_size
+        self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
+        if bitmap is None:
+            bitmap = []
         self.bitmap = bitmap
+        if comments is None:
+            comments = []
         self.comments = comments
 
     @property
-    def scalable_width_x(self) -> int:
-        return self.scalable_width[0]
+    def scalable_width(self) -> tuple[int, int]:
+        return self.scalable_width_x, self.scalable_width_y
 
-    @scalable_width_x.setter
-    def scalable_width_x(self, value: int):
-        self.scalable_width = (value, self.scalable_width[1])
-
-    @property
-    def scalable_width_y(self) -> int:
-        return self.scalable_width[1]
-
-    @scalable_width_y.setter
-    def scalable_width_y(self, value: int):
-        self.scalable_width = (self.scalable_width[0], value)
+    @scalable_width.setter
+    def scalable_width(self, value: tuple[int, int]):
+        self.scalable_width_x, self.scalable_width_y = value
 
     @property
-    def device_width_x(self) -> int:
-        return self.device_width[0]
+    def device_width(self) -> tuple[int, int]:
+        return self.device_width_x, self.device_width_y
 
-    @device_width_x.setter
-    def device_width_x(self, value: int):
-        self.device_width = (value, self.device_width[1])
-
-    @property
-    def device_width_y(self) -> int:
-        return self.device_width[1]
-
-    @device_width_y.setter
-    def device_width_y(self, value: int):
-        self.device_width = (self.device_width[0], value)
+    @device_width.setter
+    def device_width(self, value: tuple[int, int]):
+        self.device_width_x, self.device_width_y = value
 
     @property
     def bounding_box_size(self) -> tuple[int, int]:
-        return self.bounding_box[0], self.bounding_box[1]
+        return self.bounding_box_width, self.bounding_box_height
 
     @bounding_box_size.setter
     def bounding_box_size(self, value: tuple[int, int]):
-        self.bounding_box = (value[0], value[1], self.bounding_box[2], self.bounding_box[3])
+        self.bounding_box_width, self.bounding_box_height = value
 
     @property
-    def bounding_box_width(self) -> int:
-        return self.bounding_box[0]
+    def bounding_box_offset(self) -> tuple[int, int]:
+        return self.bounding_box_offset_x, self.bounding_box_offset_y
 
-    @bounding_box_width.setter
-    def bounding_box_width(self, value: int):
-        self.bounding_box = (value, self.bounding_box[1], self.bounding_box[2], self.bounding_box[3])
-
-    @property
-    def bounding_box_height(self) -> int:
-        return self.bounding_box[1]
-
-    @bounding_box_height.setter
-    def bounding_box_height(self, value: int):
-        self.bounding_box = (self.bounding_box[0], value, self.bounding_box[2], self.bounding_box[3])
+    @bounding_box_offset.setter
+    def bounding_box_offset(self, value: tuple[int, int]):
+        self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
     @property
-    def bounding_box_origin(self) -> tuple[int, int]:
-        return self.bounding_box[2], self.bounding_box[3]
+    def bounding_box(self) -> tuple[int, int, int, int]:
+        return self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y
 
-    @bounding_box_origin.setter
-    def bounding_box_origin(self, value: tuple[int, int]):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value[0], value[1])
-
-    @property
-    def bounding_box_origin_x(self) -> int:
-        return self.bounding_box[2]
-
-    @bounding_box_origin_x.setter
-    def bounding_box_origin_x(self, value: int):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], value, self.bounding_box[3])
-
-    @property
-    def bounding_box_origin_y(self) -> int:
-        return self.bounding_box[3]
-
-    @bounding_box_origin_y.setter
-    def bounding_box_origin_y(self, value: int):
-        self.bounding_box = (self.bounding_box[0], self.bounding_box[1], self.bounding_box[2], value)
+    @bounding_box.setter
+    def bounding_box(self, value: tuple[int, int, int, int]):
+        self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
     def get_padded_bitmap(self) -> list[list[int]]:
         padded_bitmap = []
