@@ -7,9 +7,9 @@ from bdffont.error import BdfMissingLine, BdfValueIncorrect
 from tests import assets_dir
 
 
-def load_damaged_bdf(bdf_file_name: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
-    bdf_file_path = os.path.join(assets_dir, 'damaged', bdf_file_name)
-    bdffont.load_bdf(bdf_file_path)
+def load_damaged_bdf(file_name: str):
+    file_path = os.path.join(assets_dir, 'damaged', file_name)
+    bdffont.load_bdf(file_path)
 
 
 def test_not_a_bdf():
