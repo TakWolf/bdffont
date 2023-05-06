@@ -107,7 +107,16 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
                 raise BdfMissingLine('DWIDTH')
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfMissingLine('BBX')
-            return BdfGlyph(name, code_point, scalable_width, device_width, bounding_box_size, bounding_box_offset, bitmap, comments)
+            return BdfGlyph(
+                name,
+                code_point,
+                scalable_width,
+                device_width,
+                bounding_box_size,
+                bounding_box_offset,
+                bitmap,
+                comments,
+            )
     raise BdfMissingLine('ENDCHAR')
 
 
@@ -157,7 +166,16 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
                 raise BdfMissingLine('CHARS')
             if glyph_count != len(glyphs) or glyph_count != len(alphabet):
                 raise BdfValueIncorrect('CHARS')
-            return BdfFont(name, point_size, dpi_xy, bounding_box_size, bounding_box_offset, properties, glyphs, comments)
+            return BdfFont(
+                name,
+                point_size,
+                dpi_xy,
+                bounding_box_size,
+                bounding_box_offset,
+                properties,
+                glyphs,
+                comments,
+            )
     raise BdfMissingLine('ENDFONT')
 
 
