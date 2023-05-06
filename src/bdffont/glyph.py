@@ -42,19 +42,18 @@ class BdfGlyph:
             bitmap: list[list[int]] = None,
             comments: list[str] = None,
     ):
+        if bitmap is None:
+            bitmap = []
+        if comments is None:
+            comments = []
+
         self.name = name
         self.code_point = code_point
         self.scalable_width = scalable_width
         self.device_width = device_width
         self.bounding_box = bounding_box
-        if bitmap is None:
-            self.bitmap = []
-        else:
-            self.bitmap = bitmap
-        if comments is None:
-            self.comments = []
-        else:
-            self.comments = comments
+        self.bitmap = bitmap
+        self.comments = comments
 
     @property
     def scalable_width_x(self) -> int:

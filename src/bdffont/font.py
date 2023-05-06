@@ -40,22 +40,20 @@ class BdfFont:
             glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
     ):
+        if properties is None:
+            properties = BdfProperties()
+        if glyphs is None:
+            glyphs = []
+        if comments is None:
+            comments = []
+
         self.spec_version = '2.1'
         self.name = name
         self.size = size
         self.bounding_box = bounding_box
-        if properties is None:
-            self.properties = BdfProperties()
-        else:
-            self.properties = properties
-        if glyphs is None:
-            self.code_point_to_glyph = {}
-        else:
-            self.code_point_to_glyph = {glyph.code_point: glyph for glyph in glyphs}
-        if comments is None:
-            self.comments = []
-        else:
-            self.comments = comments
+        self.properties = properties
+        self.code_point_to_glyph = {glyph.code_point: glyph for glyph in glyphs}
+        self.comments = comments
 
     @property
     def point_size(self) -> int:
