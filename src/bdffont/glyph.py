@@ -135,18 +135,18 @@ class BdfGlyph:
     def bounding_box_origin_y(self, value: int):
         self.bounding_box = (self.bounding_box[0], self.bounding_box[1], self.bounding_box[2], value)
 
-    def get_padding_bitmap(self) -> list[list[int]]:
-        padding_bitmap = []
+    def get_padded_bitmap(self) -> list[list[int]]:
+        padded_bitmap = []
         for bitmap_row in self.bitmap:
-            padding_bitmap_row = []
+            padded_bitmap_row = []
             for alpha in bitmap_row:
                 if alpha == 0:
-                    padding_bitmap_row.append(0)
+                    padded_bitmap_row.append(0)
                 else:
-                    padding_bitmap_row.append(1)
+                    padded_bitmap_row.append(1)
             remainder = len(bitmap_row) % 8
             if remainder > 0:
                 for _ in range(8 - remainder):
-                    padding_bitmap_row.append(0)
-            padding_bitmap.append(padding_bitmap_row)
-        return padding_bitmap
+                    padded_bitmap_row.append(0)
+            padded_bitmap.append(padded_bitmap_row)
+        return padded_bitmap

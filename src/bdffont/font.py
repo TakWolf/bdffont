@@ -180,7 +180,7 @@ class BdfFont:
             lines.append(f'DWIDTH {glyph.device_width[0]} {glyph.device_width[1]}')
             lines.append(f'BBX {glyph.bounding_box[0]} {glyph.bounding_box[1]} {glyph.bounding_box[2]} {glyph.bounding_box[3]}')
             lines.append('BITMAP')
-            for bitmap_row in glyph.get_padding_bitmap():
+            for bitmap_row in glyph.get_padded_bitmap():
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 lines.append(hex_format.format(int(''.join(map(str, bitmap_row)), 2)))
             lines.append('ENDCHAR')
