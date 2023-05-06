@@ -82,5 +82,9 @@ def test_example():
 
 def test_unifont():
     font = load_bdf('unifont-15.0.01.bdf')[0]
-    font = bdffont.decode_bdf(iter(font.encode()))
     font.save(os.path.join(outputs_dir, 'unifont-output.bdf'))
+
+
+def test_galmuri9():
+    font = load_bdf('galmuri9.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'galmuri9-output.bdf'))
