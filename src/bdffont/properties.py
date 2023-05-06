@@ -29,136 +29,136 @@ class BdfProperties(UserDict):
         super().__setitem__(key, value)
 
     @property
-    def default_char(self) -> int:
-        return self['DEFAULT_CHAR']
+    def default_char(self) -> int | None:
+        return self.get('DEFAULT_CHAR', None)
 
     @default_char.setter
     def default_char(self, value: int):
         self['DEFAULT_CHAR'] = value
 
     @property
-    def font_ascent(self) -> int:
-        return self['FONT_ASCENT']
+    def font_ascent(self) -> int | None:
+        return self.get('FONT_ASCENT', None)
 
     @font_ascent.setter
     def font_ascent(self, value: int):
         self['FONT_ASCENT'] = value
 
     @property
-    def font_descent(self) -> int:
-        return self['FONT_DESCENT']
+    def font_descent(self) -> int | None:
+        return self.get('FONT_DESCENT', None)
 
     @font_descent.setter
     def font_descent(self, value: int):
         self['FONT_DESCENT'] = value
 
     @property
-    def cap_height(self) -> int:
-        return self['CAP_HEIGHT']
+    def cap_height(self) -> int | None:
+        return self.get('CAP_HEIGHT', None)
 
     @cap_height.setter
     def cap_height(self, value: int):
         self['CAP_HEIGHT'] = value
 
     @property
-    def x_height(self) -> int:
-        return self['X_HEIGHT']
+    def x_height(self) -> int | None:
+        return self.get('X_HEIGHT', None)
 
     @x_height.setter
     def x_height(self, value: int):
         self['X_HEIGHT'] = value
 
     @property
-    def point_size(self) -> int:
-        return self['POINT_SIZE']
+    def point_size(self) -> int | None:
+        return self.get('POINT_SIZE', None)
 
     @point_size.setter
     def point_size(self, value: int):
         self['POINT_SIZE'] = value
 
     @property
-    def resolution_x(self) -> int:
-        return self['RESOLUTION_X']
+    def resolution_x(self) -> int | None:
+        return self.get('RESOLUTION_X', None)
 
     @resolution_x.setter
     def resolution_x(self, value: int):
         self['RESOLUTION_X'] = value
 
     @property
-    def resolution_y(self) -> int:
-        return self['RESOLUTION_Y']
+    def resolution_y(self) -> int | None:
+        return self.get('RESOLUTION_Y', None)
 
     @resolution_y.setter
     def resolution_y(self, value: int):
         self['RESOLUTION_Y'] = value
 
     @property
-    def face_name(self) -> str:
-        return self['FACE_NAME']
+    def face_name(self) -> str | None:
+        return self.get('FACE_NAME', None)
 
     @face_name.setter
     def face_name(self, value: str):
         self['FACE_NAME'] = value
 
     @property
-    def font(self) -> str:
-        return self['FONT']
+    def font(self) -> str | None:
+        return self.get('FONT', None)
 
     @font.setter
     def font(self, value: str):
         self['FONT'] = value
 
     @property
-    def font_version(self) -> str:
-        return self['FONT_VERSION']
+    def font_version(self) -> str | None:
+        return self.get('FONT_VERSION', None)
 
     @font_version.setter
     def font_version(self, value: str):
         self['FONT_VERSION'] = value
 
     @property
-    def family_name(self) -> str:
-        return self['FAMILY_NAME']
+    def family_name(self) -> str | None:
+        return self.get('FAMILY_NAME', None)
 
     @family_name.setter
     def family_name(self, value: str):
         self['FAMILY_NAME'] = value
 
     @property
-    def slant(self) -> str:
-        return self['SLANT']
+    def slant(self) -> str | None:
+        return self.get('SLANT', None)
 
     @slant.setter
     def slant(self, value: str):
         self['SLANT'] = value
 
     @property
-    def weight_name(self) -> str:
-        return self['WEIGHT_NAME']
+    def weight_name(self) -> str | None:
+        return self.get('WEIGHT_NAME', None)
 
     @weight_name.setter
     def weight_name(self, value: str):
         self['WEIGHT_NAME'] = value
 
     @property
-    def foundry(self) -> str:
-        return self['FOUNDRY']
+    def foundry(self) -> str | None:
+        return self.get('FOUNDRY', None)
 
     @foundry.setter
     def foundry(self, value: str):
         self['FOUNDRY'] = value
 
     @property
-    def copyright(self) -> str:
-        return self['COPYRIGHT']
+    def copyright(self) -> str | None:
+        return self.get('COPYRIGHT', None)
 
     @copyright.setter
     def copyright(self, value: str):
         self['COPYRIGHT'] = value
 
     @property
-    def notice(self) -> str:
-        return self['NOTICE']
+    def notice(self) -> str | None:
+        return self.get('NOTICE', None)
 
     @notice.setter
     def notice(self, value: str):

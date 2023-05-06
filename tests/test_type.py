@@ -40,70 +40,87 @@ def test_font():
 def test_properties():
     properties = BdfProperties()
 
+    assert properties.default_char is None
     properties.default_char = 1
     assert properties.default_char == 1
     assert 'DEFAULT_CHAR' in properties
 
+    assert properties.font_ascent is None
     properties.font_ascent = 2
     assert properties.font_ascent == 2
     assert 'FONT_ASCENT' in properties
 
+    assert properties.font_descent is None
     properties.font_descent = 3
     assert properties.font_descent == 3
     assert 'FONT_DESCENT' in properties
 
+    assert properties.cap_height is None
     properties.cap_height = 4
     assert properties.cap_height == 4
     assert 'CAP_HEIGHT' in properties
 
+    assert properties.x_height is None
     properties.x_height = 5
     assert properties.x_height == 5
     assert 'X_HEIGHT' in properties
 
+    assert properties.point_size is None
     properties.point_size = 6
     assert properties.point_size == 6
     assert 'POINT_SIZE' in properties
 
+    assert properties.resolution_x is None
     properties.resolution_x = 7
     assert properties.resolution_x == 7
     assert 'RESOLUTION_X' in properties
 
+    assert properties.resolution_y is None
     properties.resolution_y = 8
     assert properties.resolution_y == 8
     assert 'RESOLUTION_Y' in properties
 
+    assert properties.face_name is None
     properties.face_name = 'A'
     assert properties.face_name == 'A'
     assert 'FACE_NAME' in properties
 
+    assert properties.font is None
     properties.font = 'B'
     assert properties.font == 'B'
     assert 'FONT' in properties
 
+    assert properties.font_version is None
     properties.font_version = '1.2.3'
     assert properties.font_version == '1.2.3'
     assert 'FONT_VERSION' in properties
 
+    assert properties.family_name is None
     properties.family_name = 'C'
     assert properties.family_name == 'C'
     assert 'FAMILY_NAME' in properties
 
+    assert properties.slant is None
     properties.slant = 'D'
     assert properties.slant == 'D'
     assert 'SLANT' in properties
 
+    assert properties.weight_name is None
     properties.weight_name = 'E'
     assert properties.weight_name == 'E'
     assert 'WEIGHT_NAME' in properties
 
+    assert properties.foundry is None
     properties.foundry = 'F'
     assert properties.foundry == 'F'
     assert 'FOUNDRY' in properties
 
+    assert properties.copyright is None
     properties.copyright = 'G'
     assert properties.copyright == 'G'
     assert 'COPYRIGHT' in properties
 
+    assert properties.notice is None
     properties.notice = 'H'
     assert properties.notice == 'H'
     assert 'NOTICE' in properties
