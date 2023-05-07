@@ -17,7 +17,20 @@ def _check_value(value: str | int):
 
 class BdfProperties(UserDict):
     # Comments.
-    comments: list[str] = []
+    comments: list[str]
+
+    def __init__(
+            self,
+            kvs: dict[str, str | int] = None,
+            comments: list[str] = None,
+    ):
+        super().__init__()
+        if kvs is not None:
+            for key, value in kvs.items():
+                self[key] = value
+        if comments is None:
+            comments = []
+        self.comments = comments
 
     def __getitem__(self, key: str) -> str | int:
         _check_key(key)

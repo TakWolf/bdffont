@@ -15,16 +15,26 @@ pip install bdffont
 ```python
 import os
 
-import bdffont
-from bdffont import BdfGlyph
-from examples import assets_dir, outputs_dir
+from bdffont import BdfFont, BdfProperties, BdfGlyph
+from examples import outputs_dir
 
 
 def main():
-    font = bdffont.load_bdf(os.path.join(assets_dir, 'example.bdf'))
-    font.name = 'my-new-font'
-    font.bounding_box_size = 16, 16
-    font.bounding_box_offset = 0, -2
+    font = BdfFont(
+        name='my-font',
+        point_size=16,
+        dpi_xy=(75, 75),
+        bounding_box_size=(16, 16),
+        bounding_box_offset=(0, -2),
+        properties=BdfProperties({
+            'PARAM_1': 1,
+            'PARAM_2': '2',
+        }),
+        comments=[
+            'This is a comment.',
+            'This is a comment, too.',
+        ],
+    )
     font.properties.font_version = '1.0.0'
     font.properties.font_ascent = 7
     font.properties.font_descent = 2
@@ -56,7 +66,7 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0],
         ],
     ))
-    font.save(os.path.join(outputs_dir, 'example-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'my-font.bdf'))
 
 
 if __name__ == '__main__':
