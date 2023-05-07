@@ -43,12 +43,12 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _decode_properties_segment(lines: Iterator[str], count: int) -> BdfProperties:
+def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bool) -> BdfProperties:
     properties = BdfProperties()
     while line_params := _next_word_line(lines):
         word, tail = line_params
         if word == 'ENDPROPERTIES':
-            if count != len(properties):
+            if strict_mode and count != len(properties):
                 raise BdfValueIncorrect('STARTPROPERTIES')
             return properties
         elif word == 'COMMENT':
@@ -120,7 +120,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     raise BdfMissingLine('ENDCHAR')
 
 
-def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
+def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
     name = None
     point_size = None
     dpi_xy = None
@@ -144,7 +144,7 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
         elif word == 'STARTPROPERTIES':
-            properties = _decode_properties_segment(lines, int(tail))
+            properties = _decode_properties_segment(lines, int(tail), strict_mode)
         elif word == 'CHARS':
             glyph_count = int(tail)
         elif word == 'STARTCHAR':
@@ -164,7 +164,7 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
                 raise BdfMissingLine('FONTBOUNDINGBOX')
             if glyph_count is None:
                 raise BdfMissingLine('CHARS')
-            if glyph_count != len(glyphs) or glyph_count != len(alphabet):
+            if strict_mode and (glyph_count != len(glyphs) or glyph_count != len(alphabet)):
                 raise BdfValueIncorrect('CHARS')
             return BdfFont(
                 name,
@@ -179,20 +179,23 @@ def _decode_font_segment(lines: Iterator[str]) -> BdfFont:
     raise BdfMissingLine('ENDFONT')
 
 
-def decode_bdf(lines: Iterator[str]) -> BdfFont:
+def decode_bdf(lines: Iterator[str], strict_mode: bool = False) -> BdfFont:
     while line_params := _next_word_line(lines):
         word, tail = line_params
         if word == 'STARTFONT':
-            font = _decode_font_segment(lines)
+            font = _decode_font_segment(lines, strict_mode)
             font.spec_version = tail
             return font
     raise BdfMissingLine('STARTFONT')
 
 
-def decode_bdf_str(text: str) -> BdfFont:
-    return decode_bdf(iter(text.split('\n')))
+def decode_bdf_str(text: str, strict_mode: bool = False) -> BdfFont:
+    return decode_bdf(iter(text.split('\n')), strict_mode)
 
 
-def load_bdf(file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]) -> BdfFont:
+def load_bdf(
+        file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+        strict_mode: bool = False,
+) -> BdfFont:
     with open(file_path, 'r', encoding='utf-8') as file:
-        return decode_bdf(iter(file.readlines()))
+        return decode_bdf(iter(file.readlines()), strict_mode)

@@ -7,9 +7,9 @@ from bdffont.error import BdfMissingLine, BdfValueIncorrect
 from tests import assets_dir
 
 
-def load_damaged_bdf(file_name: str):
+def load_damaged_bdf(file_name: str, strict_mode: bool = False):
     file_path = os.path.join(assets_dir, 'damaged', file_name)
-    bdffont.load_bdf(file_path)
+    bdffont.load_bdf(file_path, strict_mode=strict_mode)
 
 
 def test_not_a_bdf():
@@ -58,14 +58,16 @@ def test_no_line_end_font():
 
 
 def test_incorrect_properties_count():
+    load_damaged_bdf('incorrect_properties_count.bdf')
     with pytest.raises(Exception) as info:
-        load_damaged_bdf('incorrect_properties_count.bdf')
+        load_damaged_bdf('incorrect_properties_count.bdf', strict_mode=True)
     assert info.type == BdfValueIncorrect
     assert info.value.word == 'STARTPROPERTIES'
 
 
 def test_incorrect_chars_count():
+    load_damaged_bdf('incorrect_chars_count.bdf')
     with pytest.raises(Exception) as info:
-        load_damaged_bdf('incorrect_chars_count.bdf')
+        load_damaged_bdf('incorrect_chars_count.bdf', strict_mode=True)
     assert info.type == BdfValueIncorrect
     assert info.value.word == 'CHARS'
