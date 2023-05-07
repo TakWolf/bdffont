@@ -45,6 +45,13 @@ def test_no_line_end_properties():
         load_damaged_bdf('no_line_end_properties.bdf')
 
 
+def test_no_line_chars():
+    with pytest.raises(Exception) as info:
+        load_damaged_bdf('no_line_chars.bdf')
+    assert info.type == BdfMissingLine
+    assert info.value.word == 'CHARS'
+
+
 def test_no_line_end_char():
     with pytest.raises(Exception):
         load_damaged_bdf('no_line_end_char.bdf')
