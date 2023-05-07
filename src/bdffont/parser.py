@@ -58,15 +58,13 @@ def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bo
     raise BdfMissingLine('ENDPROPERTIES')
 
 
-def _decode_bitmap_segment(lines: Iterator[str], comments: list[str]) -> list[list[int]]:
+def _decode_bitmap_segment(lines: Iterator[str]) -> list[list[int]]:
     bitmap = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
         if word == 'ENDCHAR':
             return bitmap
-        elif word == 'COMMENT':
-            comments.append(tail)
-        elif word != '':
+        else:
             bin_format = '{:0' + str(len(word) * 4) + 'b}'
             bitmap.append([int(c) for c in bin_format.format(int(word, 16))])
     raise BdfMissingLine('ENDCHAR')
@@ -98,7 +96,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
             comments.append(tail)
         elif word == 'BITMAP' or word == 'ENDCHAR':
             if word == 'BITMAP':
-                bitmap = _decode_bitmap_segment(lines, comments)
+                bitmap = _decode_bitmap_segment(lines)
             if code_point is None:
                 raise BdfMissingLine('ENCODING')
             if scalable_width is None:
