@@ -31,11 +31,11 @@ class BdfFont:
     # Some optional extended properties.
     properties: BdfProperties
 
-    # Glyph objects using code point indexing.
-    code_point_to_glyph: dict[int, BdfGlyph]
-
     # Comments.
     comments: list[str]
+
+    # Glyph objects using code point indexing.
+    code_point_to_glyph: dict[int, BdfGlyph]
 
     def __init__(
             self,
@@ -45,7 +45,6 @@ class BdfFont:
             bounding_box_size: tuple[int, int],
             bounding_box_offset: tuple[int, int],
             properties: BdfProperties = None,
-            glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
     ):
         self.spec_version = '2.1'
@@ -57,12 +56,10 @@ class BdfFont:
         if properties is None:
             properties = BdfProperties()
         self.properties = properties
-        if glyphs is None:
-            glyphs = []
-        self.code_point_to_glyph = {glyph.code_point: glyph for glyph in glyphs}
         if comments is None:
             comments = []
         self.comments = comments
+        self.code_point_to_glyph = {}
 
     @property
     def dpi_xy(self) -> tuple[int, int]:
@@ -103,6 +100,10 @@ class BdfFont:
         if glyph.code_point in self.code_point_to_glyph:
             raise BdfGlyphExists(glyph.code_point)
         self.code_point_to_glyph[glyph.code_point] = glyph
+
+    def add_glyphs(self, glyphs: list[BdfGlyph]):
+        for glyph in glyphs:
+            self.add_glyph(glyph)
 
     def set_glyph(self, glyph: BdfGlyph):
         self.code_point_to_glyph[glyph.code_point] = glyph

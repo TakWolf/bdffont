@@ -5,7 +5,7 @@ from typing import Iterator
 from bdffont.font import BdfFont
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfGlyphExists, BdfMissingLine, BdfValueIncorrect
+from bdffont.error import BdfMissingLine, BdfValueIncorrect
 
 
 def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
@@ -127,9 +127,8 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
     bounding_box_size = None
     bounding_box_offset = None
     properties = None
-    glyph_count = None
+    glyphs_count = None
     glyphs = []
-    alphabet = set()
     comments = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
@@ -146,13 +145,9 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
         elif word == 'STARTPROPERTIES':
             properties = _decode_properties_segment(lines, int(tail), strict_mode)
         elif word == 'CHARS':
-            glyph_count = int(tail)
+            glyphs_count = int(tail)
         elif word == 'STARTCHAR':
-            glyph = _decode_glyph_segment(lines, tail)
-            if glyph.code_point in alphabet:
-                raise BdfGlyphExists(glyph.code_point)
-            glyphs.append(glyph)
-            alphabet.add(glyph.code_point)
+            glyphs.append(_decode_glyph_segment(lines, tail))
         elif word == 'COMMENT':
             comments.append(tail)
         elif word == 'ENDFONT':
@@ -162,20 +157,21 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
                 raise BdfMissingLine('SIZE')
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfMissingLine('FONTBOUNDINGBOX')
-            if glyph_count is None:
+            if glyphs_count is None:
                 raise BdfMissingLine('CHARS')
-            if strict_mode and (glyph_count != len(glyphs) or glyph_count != len(alphabet)):
+            if strict_mode and glyphs_count != len(glyphs):
                 raise BdfValueIncorrect('CHARS')
-            return BdfFont(
+            font = BdfFont(
                 name,
                 point_size,
                 dpi_xy,
                 bounding_box_size,
                 bounding_box_offset,
                 properties,
-                glyphs,
                 comments,
             )
+            font.add_glyphs(glyphs)
+            return font
     raise BdfMissingLine('ENDFONT')
 
 
