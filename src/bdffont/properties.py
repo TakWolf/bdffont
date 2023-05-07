@@ -6,7 +6,7 @@ from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 def _check_key(key: str):
     if not key.isupper():
         raise BdfIllegalPropertiesKey(f'Properties key must be upper')
-    if not key.replace('_', '').isalpha():
+    if not key.replace('_', '').isalnum():
         raise BdfIllegalPropertiesKey(f"Illegal properties key '{key}'")
 
 
