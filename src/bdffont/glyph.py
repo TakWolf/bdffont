@@ -17,20 +17,20 @@ class BdfGlyph:
         :param code_point:
             Code point in Unicode.
         :param scalable_width:
-            The scalable width in x and y of character. Scalable widths are in units of 1/1000th of the size of
-            the character. If the size of the character is p points, the width information must be scaled by p/1000
-            to get the width of the character in printer’s points. This width information should be considered as a
-            vector indicating the position of the next character’s origin relative to the origin of this character.
-            To convert the scalable width to the width in device pixels, multiply s_width times p/1000 times r/72,
-            where r is the device resolution in pixels per inch. The result is a real number giving the ideal print
-            width in device pixels. The actual device width must of course be an integral number of device pixels and
-            is given in the next entry. The s_width y value should always be zero for a standard X font.
+            The scalable width in x and y of character. Scalable widths are in units of 1/1000th of the size of the
+            character. If the size of the character is p points, the width information must be scaled by p/1000 to
+            get the width of the character in printer’s points. This width information should be considered as a vector
+            indicating the position of the next character’s origin relative to the origin of this character.
+            To convert the scalable width to the width in device pixels, multiply scalable_width times p/1000 times
+            r/72, where r is the device resolution in pixels per inch. The result is a real number giving the ideal
+            print width in device pixels. The actual device width must of course be an integral number of device pixels
+            and is given in the next entry. The scalable_width y value should always be zero for a standard X font.
         :param device_width:
-            The width in x and y of the character in device units. Like the s_width, this width information is a vector
-            indicating the position of the next character’s origin relative to the origin of this character. Note that
-            the d_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal device-independent width
-            given by s_width in order to improve its typographic characteristics on a display. The d_width y value should
-            always be zero for a standard X font.
+            The width in x and y of the character in device units. Like the scalable_width, this width information is
+            a vector indicating the position of the next character’s origin relative to the origin of this character.
+            Note that the device_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal
+            device-independent width given by scalable_width in order to improve its typographic characteristics on a
+            display. The device_width y value should always be zero for a standard X font.
         :param bounding_box_size:
             The width in x, height in y of the character.
         :param bounding_box_offset:
