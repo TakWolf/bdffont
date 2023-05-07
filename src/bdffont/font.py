@@ -6,37 +6,6 @@ from bdffont.error import BdfGlyphExists
 
 
 class BdfFont:
-    # The BDF Specification version.
-    spec_version: str
-
-    # Either the 'X logical font description' or some private font name.
-    # https://en.wikipedia.org/wiki/X_logical_font_description
-    # Example: -Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1
-    name: str
-
-    # The point size of the characters.
-    point_size: int
-
-    # The x resolution, and the y resolution of the device for which these characters were intended.
-    dpi_x: int
-    dpi_y: int
-
-    # The width in x, height in y, and the x and y displacement of the lower left corner from the origin
-    # of the character.
-    bounding_box_width: int
-    bounding_box_height: int
-    bounding_box_offset_x: int
-    bounding_box_offset_y: int
-
-    # Some optional extended properties.
-    properties: BdfProperties
-
-    # Comments.
-    comments: list[str]
-
-    # Glyph objects using code point indexing.
-    code_point_to_glyph: dict[int, BdfGlyph]
-
     def __init__(
             self,
             name: str,
@@ -47,6 +16,24 @@ class BdfFont:
             properties: BdfProperties = None,
             comments: list[str] = None,
     ):
+        """
+        :param name:
+            Either the 'X logical font description' or some private font name.
+            Like: -Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1
+            https://en.wikipedia.org/wiki/X_logical_font_description
+        :param point_size:
+            The point size of the characters.
+        :param dpi_xy:
+            The x resolution, and the y resolution of the device for which these characters were intended.
+        :param bounding_box_size:
+            The width in x, height in y of the character.
+        :param bounding_box_offset:
+            The x and y displacement of the lower left corner from the origin of the character.
+        :param properties:
+            Some optional extended properties.
+        :param comments:
+            The comments.
+        """
         self.spec_version = '2.1'
         self.name = name
         self.point_size = point_size
