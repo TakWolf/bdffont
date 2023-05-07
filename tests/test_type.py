@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
-from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
+from bdffont.error import BdfGlyphExists, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def test_font():
@@ -35,6 +35,54 @@ def test_font():
     assert font.bounding_box_height == 8
     assert font.bounding_box_offset_x == 9
     assert font.bounding_box_offset_y == 10
+
+    glyph_a = BdfGlyph(
+        name='A',
+        code_point=ord('A'),
+        scalable_width=(500, 0),
+        device_width=(3, 0),
+        bounding_box_size=(2, 2),
+        bounding_box_offset=(0, 0),
+        bitmap=[
+            [0, 1],
+            [1, 0],
+        ],
+    )
+    glyph_b = BdfGlyph(
+        name='B',
+        code_point=ord('B'),
+        scalable_width=(500, 0),
+        device_width=(3, 0),
+        bounding_box_size=(2, 2),
+        bounding_box_offset=(0, 0),
+        bitmap=[
+            [1, 0],
+            [0, 1],
+        ],
+    )
+    font.add_glyph(glyph_a)
+    assert len(font.code_point_to_glyph) == 1
+    assert font.get_glyph(ord('A')) == glyph_a
+    font.add_glyph(glyph_b)
+    assert len(font.code_point_to_glyph) == 2
+    assert font.get_glyph(ord('B')) == glyph_b
+
+    with pytest.raises(Exception) as info:
+        font.add_glyph(glyph_a)
+    assert info.type == BdfGlyphExists
+    assert info.value.code_point == ord('A')
+
+    with pytest.raises(Exception) as info:
+        font.add_glyphs([glyph_a, glyph_b])
+    assert info.type == BdfGlyphExists
+    assert info.value.code_point == ord('A')
+
+    font.set_glyph(glyph_a)
+    assert len(font.code_point_to_glyph) == 2
+    font.remove_glyph(ord('A'))
+    assert len(font.code_point_to_glyph) == 1
+    font.remove_glyph(ord('B'))
+    assert len(font.code_point_to_glyph) == 0
 
 
 def test_properties():
