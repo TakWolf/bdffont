@@ -4,6 +4,7 @@ FONT -Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1
 SIZE 24 75 75
 FONTBOUNDINGBOX 9 24 -2 -6
 STARTPROPERTIES 19
+COMMENT This is a comment in properties.
 FOUNDRY "Adobe"
 FAMILY "Helvetica"
 WEIGHT_NAME "Bold"
@@ -26,6 +27,7 @@ NOTICE "Helvetica is a registered trademark of Linotype Inc."
 
 CHARS 2
 STARTCHAR quoteright
+COMMENT This is a comment in char.
 ENCODING 39
 SWIDTH 223 0
 DWIDTH 5 0

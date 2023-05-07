@@ -38,7 +38,19 @@ def test_font():
 
 
 def test_properties():
-    properties = BdfProperties()
+    properties = BdfProperties({
+        'PARAM_1': 1,
+        'PARAM_2': '2',
+    }, comments=[
+        'This is a comment.',
+        'This is a comment, too.',
+    ])
+    assert len(properties) == 2
+    assert properties['PARAM_1'] == 1
+    assert properties['PARAM_2'] == '2'
+    assert len(properties.comments) == 2
+    assert properties.comments[0] == 'This is a comment.'
+    assert properties.comments[1] == 'This is a comment, too.'
 
     assert properties.default_char is None
     properties.default_char = 1
@@ -125,10 +137,14 @@ def test_properties():
     assert properties.notice == 'H'
     assert 'NOTICE' in properties
 
-    assert len(properties) == 17
+    assert len(properties) == 19
 
     with pytest.raises(Exception) as info:
-        properties['abc'] = 'def'
+        properties['abc'] = 'abc'
+    assert info.type == BdfIllegalPropertiesKey
+
+    with pytest.raises(Exception) as info:
+        properties['ABC-DEF'] = 'abcdef'
     assert info.type == BdfIllegalPropertiesKey
 
     with pytest.raises(Exception) as info:
