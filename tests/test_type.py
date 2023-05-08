@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
-from bdffont.error import BdfGlyphExists, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
+from bdffont.error import BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def test_font():
@@ -243,3 +243,35 @@ def test_glyph():
     assert glyph.bounding_box_height == 10
     assert glyph.bounding_box_offset_x == 11
     assert glyph.bounding_box_offset_y == 12
+
+
+def test_bitmap():
+    glyph = BdfGlyph(
+        name='A',
+        code_point=ord('A'),
+        scalable_width=(0, 0),
+        device_width=(0, 0),
+        bounding_box_size=(5, 5),
+        bounding_box_offset=(0, 0),
+        bitmap=[
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+        ]
+    )
+    glyph.check_bitmap_validity()
+
+    glyph.bitmap.pop()
+    with pytest.raises(Exception) as info:
+        glyph.check_bitmap_validity()
+    assert info.type == BdfIllegalBitmap
+
+    glyph.bitmap.append([0, 0, 0, 0, 0, 0])
+    with pytest.raises(Exception) as info:
+        glyph.check_bitmap_validity()
+    assert info.type == BdfIllegalBitmap
+
+    glyph.bitmap[-1].pop()
+    glyph.check_bitmap_validity()

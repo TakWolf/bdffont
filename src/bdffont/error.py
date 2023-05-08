@@ -21,6 +21,10 @@ class BdfValueIncorrect(BdfException):
         super().__init__(f"'{word}' value incorrect")
 
 
+class BdfIllegalBitmap(BdfException):
+    pass
+
+
 class BdfIllegalPropertiesKey(BdfException):
     pass
 

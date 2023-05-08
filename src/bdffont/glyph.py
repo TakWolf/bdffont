@@ -1,3 +1,5 @@
+from bdffont.error import BdfIllegalBitmap
+
 
 class BdfGlyph:
     def __init__(
@@ -93,7 +95,15 @@ class BdfGlyph:
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
+    def check_bitmap_validity(self):
+        if len(self.bitmap) != self.bounding_box_height:
+            raise BdfIllegalBitmap("Glyph bitmap height not equals 'bounding_box_height'")
+        for bitmap_row in self.bitmap:
+            if len(bitmap_row) != self.bounding_box_width:
+                raise BdfIllegalBitmap("Glyph bitmap width not equals 'bounding_box_width'")
+
     def get_padded_bitmap(self) -> list[list[int]]:
+        self.check_bitmap_validity()
         padded_bitmap = []
         for bitmap_row in self.bitmap:
             padded_bitmap_row = []
