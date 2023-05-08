@@ -78,14 +78,14 @@ def test_example():
     ]
     for i, bitmap_row in enumerate(glyph.bitmap):
         assert ''.join(map(str, bitmap_row)).replace('0', '_').replace('1', '#') == glyph_data[i]
-    font.save(os.path.join(outputs_dir, 'example-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'example-output.bdf'), optimize_bitmap=True)
 
 
 def test_unifont():
     font = load_bdf('unifont-15.0.01.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'unifont-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'unifont-output.bdf'), optimize_bitmap=True)
 
 
 def test_galmuri9():
     font = load_bdf('galmuri9.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'galmuri9-output.bdf'))
+    font.save(os.path.join(outputs_dir, 'galmuri9-output.bdf'), optimize_bitmap=True)
