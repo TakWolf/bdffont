@@ -133,7 +133,7 @@ class BdfFont:
             lines.append(f'ENCODING {glyph.code_point}')
             lines.append(f'SWIDTH {glyph.scalable_width_x} {glyph.scalable_width_y}')
             lines.append(f'DWIDTH {glyph.device_width_x} {glyph.device_width_y}')
-            (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_aligned_8bit_bitmap(optimize_bitmap)
+            (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_8bit_aligned_bitmap(optimize_bitmap)
             lines.append(f'BBX {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}')
             lines.append('BITMAP')
             for bitmap_row in bitmap:

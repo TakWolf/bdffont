@@ -102,7 +102,7 @@ class BdfGlyph:
             if len(bitmap_row) != self.bounding_box_width:
                 raise BdfIllegalBitmap("Glyph bitmap width not equals 'bounding_box_width'")
 
-    def get_aligned_8bit_bitmap(self, optimize_bitmap: bool = False) -> tuple[tuple[int, int], tuple[int, int], list[list[int]]]:
+    def get_8bit_aligned_bitmap(self, optimize_bitmap: bool = False) -> tuple[tuple[int, int], tuple[int, int], list[list[int]]]:
         self.check_bitmap_validity()
         bounding_box_width = self.bounding_box_width
         bounding_box_height = self.bounding_box_height
