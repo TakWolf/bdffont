@@ -246,11 +246,16 @@ def test_bitmap():
         code_point=ord('A'),
         scalable_width=(0, 0),
         device_width=(0, 0),
-        bounding_box_size=(5, 5),
+        bounding_box_size=(5, 10),
         bounding_box_offset=(0, 0),
         bitmap=[
             [0, 1, 1, 1, 0],
             [0, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
@@ -259,12 +264,14 @@ def test_bitmap():
     glyph.check_bitmap_validity()
 
     glyph.bitmap.pop()
-    with pytest.raises(BdfIllegalBitmap):
+    with pytest.raises(BdfIllegalBitmap) as info:
         glyph.check_bitmap_validity()
+    assert info.value.code_point == glyph.code_point
 
     glyph.bitmap.append([0, 0, 0, 0, 0, 0])
-    with pytest.raises(BdfIllegalBitmap):
+    with pytest.raises(BdfIllegalBitmap) as info:
         glyph.check_bitmap_validity()
+    assert info.value.code_point == glyph.code_point
 
     glyph.bitmap[-1].pop()
     glyph.check_bitmap_validity()
@@ -283,4 +290,4 @@ def test_bitmap():
         assert width == 3
         assert len(bitmap_row) == 8
     assert offset_x == 1
-    assert offset_y == 3
+    assert offset_y == 8
