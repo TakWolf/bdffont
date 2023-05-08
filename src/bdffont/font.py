@@ -80,8 +80,16 @@ class BdfFont:
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
+    def get_glyphs_count(self) -> int:
+        return len(self.code_point_to_glyph)
+
     def get_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.get(code_point, None)
+
+    def get_glyphs(self) -> list[BdfGlyph]:
+        glyphs = list(self.code_point_to_glyph.values())
+        glyphs.sort(key=lambda glyph: glyph.code_point)
+        return glyphs
 
     def add_glyph(self, glyph: BdfGlyph):
         if glyph.code_point in self.code_point_to_glyph:
@@ -117,14 +125,12 @@ class BdfFont:
             lines.append(f'{word} {value}')
         lines.append('ENDPROPERTIES')
 
-        alphabet = list(self.code_point_to_glyph.items())
-        alphabet.sort()
-        lines.append(f'CHARS {len(alphabet)}')
-        for code_point, glyph in alphabet:
+        lines.append(f'CHARS {self.get_glyphs_count()}')
+        for glyph in self.get_glyphs():
             lines.append(f'STARTCHAR {glyph.name}')
             for comment in glyph.comments:
                 lines.append(f'COMMENT {comment}')
-            lines.append(f'ENCODING {code_point}')
+            lines.append(f'ENCODING {glyph.code_point}')
             lines.append(f'SWIDTH {glyph.scalable_width_x} {glyph.scalable_width_y}')
             lines.append(f'DWIDTH {glyph.device_width_x} {glyph.device_width_y}')
             lines.append(f'BBX {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}')

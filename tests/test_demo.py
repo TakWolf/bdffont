@@ -49,7 +49,7 @@ def test_example():
     assert font.properties.font_descent == 7
     assert font.properties.copyright == 'Copyright (c) 1987 Adobe Systems, Inc.'
     assert font.properties.notice == 'Helvetica is a registered trademark of Linotype Inc.'
-    assert len(font.code_point_to_glyph) == 2
+    assert font.get_glyphs_count() == 2
     glyph = font.get_glyph(39)
     assert glyph.name == 'quoteright'
     assert glyph.code_point == 39

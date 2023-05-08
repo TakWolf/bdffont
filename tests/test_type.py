@@ -61,10 +61,10 @@ def test_font():
         ],
     )
     font.add_glyph(glyph_a)
-    assert len(font.code_point_to_glyph) == 1
+    assert font.get_glyphs_count() == 1
     assert font.get_glyph(ord('A')) == glyph_a
     font.add_glyph(glyph_b)
-    assert len(font.code_point_to_glyph) == 2
+    assert font.get_glyphs_count() == 2
     assert font.get_glyph(ord('B')) == glyph_b
 
     with pytest.raises(Exception) as info:
@@ -78,11 +78,17 @@ def test_font():
     assert info.value.code_point == ord('A')
 
     font.set_glyph(glyph_a)
-    assert len(font.code_point_to_glyph) == 2
+    assert font.get_glyphs_count() == 2
     font.remove_glyph(ord('A'))
-    assert len(font.code_point_to_glyph) == 1
+    assert font.get_glyphs_count() == 1
     font.remove_glyph(ord('B'))
-    assert len(font.code_point_to_glyph) == 0
+    assert font.get_glyphs_count() == 0
+
+    font.add_glyph(glyph_b)
+    font.add_glyph(glyph_a)
+    glyphs = font.get_glyphs()
+    assert glyphs[0] == glyph_a
+    assert glyphs[1] == glyph_b
 
 
 def test_properties():
