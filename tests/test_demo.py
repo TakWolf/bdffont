@@ -16,6 +16,7 @@ def load_bdf(file_name: str) -> tuple[BdfFont, str]:
 def test_example():
     font, bdf_text = load_bdf('example.bdf')
     assert font.encode_str() == bdf_text
+    assert font.encode_str(optimize_bitmap=True) == bdf_text
     assert font.spec_version == '2.1'
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
     assert font.point_size == 24

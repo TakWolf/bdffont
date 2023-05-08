@@ -102,19 +102,66 @@ class BdfGlyph:
             if len(bitmap_row) != self.bounding_box_width:
                 raise BdfIllegalBitmap("Glyph bitmap width not equals 'bounding_box_width'")
 
-    def get_padded_bitmap(self) -> list[list[int]]:
+    def get_aligned_8bit_bitmap(self, optimize_bitmap: bool = False) -> tuple[tuple[int, int], tuple[int, int], list[list[int]]]:
         self.check_bitmap_validity()
-        padded_bitmap = []
-        for bitmap_row in self.bitmap:
-            padded_bitmap_row = []
-            for alpha in bitmap_row:
-                if alpha == 0:
-                    padded_bitmap_row.append(0)
+        bounding_box_width = self.bounding_box_width
+        bounding_box_height = self.bounding_box_height
+        bounding_box_offset_x = self.bounding_box_offset_x
+        bounding_box_offset_y = self.bounding_box_offset_y
+        bitmap = [[color for color in bitmap_row] for bitmap_row in self.bitmap]
+
+        if optimize_bitmap:
+            # Top
+            while bounding_box_height > 0:
+                for color in bitmap[0]:
+                    if color != 0:
+                        break
                 else:
-                    padded_bitmap_row.append(1)
-            remainder = len(bitmap_row) % 8
-            if remainder > 0:
+                    bitmap.pop(0)
+                    bounding_box_height -= 1
+                    continue
+                break
+            # Bottom
+            while bounding_box_height > 0:
+                for color in bitmap[-1]:
+                    if color != 0:
+                        break
+                else:
+                    bitmap.pop()
+                    bounding_box_height -= 1
+                    bounding_box_offset_y += 1
+                    continue
+                break
+            # Left
+            while bounding_box_width > 0:
+                for bitmap_row in bitmap:
+                    color = bitmap_row[0]
+                    if color != 0:
+                        break
+                else:
+                    for bitmap_row in bitmap:
+                        bitmap_row.pop(0)
+                    bounding_box_width -= 1
+                    bounding_box_offset_x += 1
+                    continue
+                break
+            # Right
+            while bounding_box_width > 0:
+                for bitmap_row in bitmap:
+                    color = bitmap_row[-1]
+                    if color != 0:
+                        break
+                else:
+                    for bitmap_row in bitmap:
+                        bitmap_row.pop()
+                    bounding_box_width -= 1
+                    continue
+                break
+
+        remainder = bounding_box_width % 8
+        if remainder > 0:
+            for bitmap_row in bitmap:
                 for _ in range(8 - remainder):
-                    padded_bitmap_row.append(0)
-            padded_bitmap.append(padded_bitmap_row)
-        return padded_bitmap
+                    bitmap_row.append(0)
+
+        return (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap

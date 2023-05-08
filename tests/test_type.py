@@ -249,8 +249,8 @@ def test_bitmap():
         bounding_box_size=(5, 5),
         bounding_box_offset=(0, 0),
         bitmap=[
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
+            [0, 1, 1, 1, 0],
+            [0, 1, 1, 1, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0],
@@ -268,3 +268,19 @@ def test_bitmap():
 
     glyph.bitmap[-1].pop()
     glyph.check_bitmap_validity()
+
+    (width, height), (offset_x, offset_y), bitmap = glyph.get_aligned_8bit_bitmap()
+    assert len(bitmap) == height == glyph.bounding_box_height
+    for bitmap_row in bitmap:
+        assert width == glyph.bounding_box_width
+        assert len(bitmap_row) == 8
+    assert offset_x == glyph.bounding_box_offset_x
+    assert offset_y == glyph.bounding_box_offset_y
+
+    (width, height), (offset_x, offset_y), bitmap = glyph.get_aligned_8bit_bitmap(optimize_bitmap=True)
+    assert len(bitmap) == height == 2
+    for bitmap_row in bitmap:
+        assert width == 3
+        assert len(bitmap_row) == 8
+    assert offset_x == 1
+    assert offset_y == 3

@@ -106,7 +106,7 @@ class BdfFont:
     def remove_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.pop(code_point, None)
 
-    def encode(self) -> list[str]:
+    def encode(self, optimize_bitmap: bool = False) -> list[str]:
         lines = [
             f'STARTFONT {self.spec_version}',
         ]
@@ -133,9 +133,10 @@ class BdfFont:
             lines.append(f'ENCODING {glyph.code_point}')
             lines.append(f'SWIDTH {glyph.scalable_width_x} {glyph.scalable_width_y}')
             lines.append(f'DWIDTH {glyph.device_width_x} {glyph.device_width_y}')
-            lines.append(f'BBX {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}')
+            (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_aligned_8bit_bitmap(optimize_bitmap)
+            lines.append(f'BBX {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}')
             lines.append('BITMAP')
-            for bitmap_row in glyph.get_padded_bitmap():
+            for bitmap_row in bitmap:
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 lines.append(hex_format.format(int(''.join(map(str, bitmap_row)), 2)))
             lines.append('ENDCHAR')
@@ -144,9 +145,13 @@ class BdfFont:
         lines.append('')
         return lines
 
-    def encode_str(self) -> str:
-        return '\n'.join(self.encode())
+    def encode_str(self, optimize_bitmap: bool = False) -> str:
+        return '\n'.join(self.encode(optimize_bitmap))
 
-    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+    def save(
+            self,
+            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+            optimize_bitmap: bool = False,
+    ):
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(self.encode_str())
+            file.write(self.encode_str(optimize_bitmap))
