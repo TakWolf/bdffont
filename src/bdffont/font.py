@@ -86,7 +86,7 @@ class BdfFont:
     def get_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.get(code_point, None)
 
-    def get_glyphs(self) -> list[BdfGlyph]:
+    def get_orderly_glyphs(self) -> list[BdfGlyph]:
         glyphs = list(self.code_point_to_glyph.values())
         glyphs.sort(key=lambda glyph: glyph.code_point)
         return glyphs
@@ -126,7 +126,7 @@ class BdfFont:
         lines.append('ENDPROPERTIES')
 
         lines.append(f'CHARS {self.get_glyphs_count()}')
-        for glyph in self.get_glyphs():
+        for glyph in self.get_orderly_glyphs():
             lines.append(f'STARTCHAR {glyph.name}')
             for comment in glyph.comments:
                 lines.append(f'COMMENT {comment}')
