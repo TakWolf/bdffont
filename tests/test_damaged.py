@@ -47,6 +47,30 @@ def test_no_line_chars():
     assert info.value.word == 'CHARS'
 
 
+def test_no_line_encoding():
+    with pytest.raises(BdfMissingLine) as info:
+        load_damaged_bdf('no_line_encoding.bdf')
+    assert info.value.word == 'ENCODING'
+
+
+def test_no_line_swidth():
+    with pytest.raises(BdfMissingLine) as info:
+        load_damaged_bdf('no_line_swidth.bdf')
+    assert info.value.word == 'SWIDTH'
+
+
+def test_no_line_dwidth():
+    with pytest.raises(BdfMissingLine) as info:
+        load_damaged_bdf('no_line_dwidth.bdf')
+    assert info.value.word == 'DWIDTH'
+
+
+def test_no_line_bbx():
+    with pytest.raises(BdfMissingLine) as info:
+        load_damaged_bdf('no_line_bbx.bdf')
+    assert info.value.word == 'BBX'
+
+
 def test_no_line_end_char():
     with pytest.raises(Exception):
         load_damaged_bdf('no_line_end_char.bdf')
