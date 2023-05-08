@@ -105,6 +105,9 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
                 raise BdfMissingLine('DWIDTH')
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfMissingLine('BBX')
+            for bitmap_row in bitmap:
+                while len(bitmap_row) > bounding_box_size[0]:
+                    bitmap_row.pop()
             return BdfGlyph(
                 name,
                 code_point,

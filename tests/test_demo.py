@@ -68,12 +68,12 @@ def test_example():
     assert glyph.bounding_box == (4, 6, 2, 12)
     assert len(glyph.bitmap) == 6
     glyph_data = [
-        '_###____',
-        '_###____',
-        '_###____',
-        '_##_____',
-        '###_____',
-        '##______',
+        '_###',
+        '_###',
+        '_###',
+        '_##_',
+        '###_',
+        '##__',
     ]
     for i, bitmap_row in enumerate(glyph.bitmap):
         assert ''.join(map(str, bitmap_row)).replace('0', '_').replace('1', '#') == glyph_data[i]
