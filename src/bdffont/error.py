@@ -22,7 +22,9 @@ class BdfValueIncorrect(BdfException):
 
 
 class BdfIllegalBitmap(BdfException):
-    pass
+    def __init__(self, code_point: int, reason: str):
+        self.code_point = code_point
+        super().__init__(f"Glyph '{self.code_point}': {reason}")
 
 
 class BdfIllegalPropertiesKey(BdfException):
