@@ -13,30 +13,26 @@ def load_damaged_bdf(file_name: str, strict_mode: bool = False):
 
 
 def test_not_a_bdf():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('not_a_bdf.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'STARTFONT'
 
 
 def test_no_line_font():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('no_line_font.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'FONT'
 
 
 def test_no_line_size():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('no_line_size.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'SIZE'
 
 
 def test_no_line_fontboundingbox():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('no_line_fontboundingbox.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'FONTBOUNDINGBOX'
 
 
@@ -46,9 +42,8 @@ def test_no_line_end_properties():
 
 
 def test_no_line_chars():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('no_line_chars.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'CHARS'
 
 
@@ -58,23 +53,20 @@ def test_no_line_end_char():
 
 
 def test_no_line_end_font():
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfMissingLine) as info:
         load_damaged_bdf('no_line_end_font.bdf')
-    assert info.type == BdfMissingLine
     assert info.value.word == 'ENDFONT'
 
 
 def test_incorrect_properties_count():
     load_damaged_bdf('incorrect_properties_count.bdf')
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfValueIncorrect) as info:
         load_damaged_bdf('incorrect_properties_count.bdf', strict_mode=True)
-    assert info.type == BdfValueIncorrect
     assert info.value.word == 'STARTPROPERTIES'
 
 
 def test_incorrect_chars_count():
     load_damaged_bdf('incorrect_chars_count.bdf')
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfValueIncorrect) as info:
         load_damaged_bdf('incorrect_chars_count.bdf', strict_mode=True)
-    assert info.type == BdfValueIncorrect
     assert info.value.word == 'CHARS'

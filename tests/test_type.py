@@ -67,14 +67,12 @@ def test_font():
     assert font.get_glyphs_count() == 2
     assert font.get_glyph(ord('B')) == glyph_b
 
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfGlyphExists) as info:
         font.add_glyph(glyph_a)
-    assert info.type == BdfGlyphExists
     assert info.value.code_point == ord('A')
 
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfGlyphExists) as info:
         font.add_glyphs([glyph_a, glyph_b])
-    assert info.type == BdfGlyphExists
     assert info.value.code_point == ord('A')
 
     font.set_glyph(glyph_a)
@@ -193,17 +191,14 @@ def test_properties():
 
     assert len(properties) == 19
 
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfIllegalPropertiesKey):
         properties['abc'] = 'abc'
-    assert info.type == BdfIllegalPropertiesKey
 
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfIllegalPropertiesKey):
         properties['ABC-DEF'] = 'abcdef'
-    assert info.type == BdfIllegalPropertiesKey
 
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfIllegalPropertiesValue):
         properties['TEST_KEY'] = float(1.2)
-    assert info.type == BdfIllegalPropertiesValue
 
 
 def test_glyph():
@@ -264,14 +259,12 @@ def test_bitmap():
     glyph.check_bitmap_validity()
 
     glyph.bitmap.pop()
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfIllegalBitmap):
         glyph.check_bitmap_validity()
-    assert info.type == BdfIllegalBitmap
 
     glyph.bitmap.append([0, 0, 0, 0, 0, 0])
-    with pytest.raises(Exception) as info:
+    with pytest.raises(BdfIllegalBitmap):
         glyph.check_bitmap_validity()
-    assert info.type == BdfIllegalBitmap
 
     glyph.bitmap[-1].pop()
     glyph.check_bitmap_validity()
