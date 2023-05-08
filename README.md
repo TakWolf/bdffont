@@ -66,7 +66,7 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0],
         ],
     ))
-    font.save(os.path.join(outputs_dir, 'my-font.bdf'))
+    font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
 
 
 if __name__ == '__main__':
