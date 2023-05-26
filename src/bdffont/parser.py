@@ -124,7 +124,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
 def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
     name = None
     point_size = None
-    dpi_xy = None
+    resolution_xy = None
     bounding_box_size = None
     bounding_box_offset = None
     properties = None
@@ -138,7 +138,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
         elif word == 'SIZE':
             tokens = _convert_tail_to_ints(tail)
             point_size = tokens[0]
-            dpi_xy = tokens[1], tokens[2]
+            resolution_xy = tokens[1], tokens[2]
         elif word == 'FONTBOUNDINGBOX':
             tokens = _convert_tail_to_ints(tail)
             bounding_box_size = tokens[0], tokens[1]
@@ -154,7 +154,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
         elif word == 'ENDFONT':
             if name is None:
                 raise BdfMissingLine('FONT')
-            if point_size is None or dpi_xy is None:
+            if point_size is None or resolution_xy is None:
                 raise BdfMissingLine('SIZE')
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfMissingLine('FONTBOUNDINGBOX')
@@ -165,7 +165,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
             font = BdfFont(
                 name,
                 point_size,
-                dpi_xy,
+                resolution_xy,
                 bounding_box_size,
                 bounding_box_offset,
                 properties,

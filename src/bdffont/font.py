@@ -10,7 +10,7 @@ class BdfFont:
             self,
             name: str,
             point_size: int,
-            dpi_xy: tuple[int, int],
+            resolution_xy: tuple[int, int],
             bounding_box_size: tuple[int, int],
             bounding_box_offset: tuple[int, int],
             properties: BdfProperties = None,
@@ -23,7 +23,7 @@ class BdfFont:
             https://en.wikipedia.org/wiki/X_logical_font_description
         :param point_size:
             The point size of the characters.
-        :param dpi_xy:
+        :param resolution_xy:
             The x resolution, and the y resolution of the device for which these characters were intended.
         :param bounding_box_size:
             The width in x, height in y of the character.
@@ -37,7 +37,7 @@ class BdfFont:
         self.spec_version = '2.1'
         self.name = name
         self.point_size = point_size
-        self.dpi_x, self.dpi_y = dpi_xy
+        self.resolution_x, self.resolution_y = resolution_xy
         self.bounding_box_width, self.bounding_box_height = bounding_box_size
         self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
         if properties is None:
@@ -49,12 +49,12 @@ class BdfFont:
         self.code_point_to_glyph = {}
 
     @property
-    def dpi_xy(self) -> tuple[int, int]:
-        return self.dpi_x, self.dpi_y
+    def resolution_xy(self) -> tuple[int, int]:
+        return self.resolution_x, self.resolution_y
 
-    @dpi_xy.setter
-    def dpi_xy(self, value: tuple[int, int]):
-        self.dpi_x, self.dpi_y = value
+    @resolution_xy.setter
+    def resolution_xy(self, value: tuple[int, int]):
+        self.resolution_x, self.resolution_y = value
 
     @property
     def bounding_box_size(self) -> tuple[int, int]:
@@ -113,7 +113,7 @@ class BdfFont:
         for comment in self.comments:
             lines.append(f'COMMENT {comment}')
         lines.append(f'FONT {self.name}')
-        lines.append(f'SIZE {self.point_size} {self.dpi_x} {self.dpi_y}')
+        lines.append(f'SIZE {self.point_size} {self.resolution_x} {self.resolution_y}')
         lines.append(f'FONTBOUNDINGBOX {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
 
         lines.append(f'STARTPROPERTIES {len(self.properties)}')

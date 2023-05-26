@@ -20,9 +20,9 @@ def test_example():
     assert font.spec_version == '2.1'
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
     assert font.point_size == 24
-    assert font.dpi_x == 75
-    assert font.dpi_y == 75
-    assert font.dpi_xy == (75, 75)
+    assert font.resolution_x == 75
+    assert font.resolution_y == 75
+    assert font.resolution_xy == (75, 75)
     assert font.bounding_box_width == 9
     assert font.bounding_box_height == 24
     assert font.bounding_box_size == (9, 24)

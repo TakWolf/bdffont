@@ -8,15 +8,15 @@ def test_font():
     font = BdfFont(
         name='',
         point_size=0,
-        dpi_xy=(0, 0),
+        resolution_xy=(0, 0),
         bounding_box_size=(0, 0),
         bounding_box_offset=(0, 0),
     )
 
-    font.dpi_xy = 1, 2
-    assert font.dpi_xy == (1, 2)
-    assert font.dpi_x == 1
-    assert font.dpi_y == 2
+    font.resolution_xy = 1, 2
+    assert font.resolution_xy == (1, 2)
+    assert font.resolution_x == 1
+    assert font.resolution_y == 2
 
     font.bounding_box_size = 3, 4
     assert font.bounding_box_size == (3, 4)

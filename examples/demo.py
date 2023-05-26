@@ -8,7 +8,7 @@ def main():
     font = BdfFont(
         name='my-font',
         point_size=16,
-        dpi_xy=(75, 75),
+        resolution_xy=(75, 75),
         bounding_box_size=(16, 16),
         bounding_box_offset=(0, -2),
         properties=BdfProperties({
