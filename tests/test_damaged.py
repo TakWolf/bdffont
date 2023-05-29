@@ -2,14 +2,14 @@ import os
 
 import pytest
 
-import bdffont
+from bdffont import BdfFont
 from bdffont.error import BdfMissingLine, BdfCountIncorrect
 from tests import assets_dir
 
 
 def load_damaged_bdf(file_name: str, strict_mode: bool = False):
     file_path = os.path.join(assets_dir, 'damaged', file_name)
-    bdffont.load_bdf(file_path, strict_mode=strict_mode)
+    BdfFont.load(file_path, strict_mode=strict_mode)
 
 
 def test_not_a_bdf():

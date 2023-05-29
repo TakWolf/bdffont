@@ -1,11 +1,11 @@
 import os
 
-import bdffont
+from bdffont import BdfFont
 from examples import assets_dir
 
 
 def print_bdf(file_name: str):
-    font = bdffont.load_bdf(os.path.join(assets_dir, file_name))
+    font = BdfFont.load(os.path.join(assets_dir, file_name))
     print(f'##### {file_name}')
     for glyph in font.get_orderly_glyphs():
         print(f'-> U+{glyph.code_point:04X} {chr(glyph.code_point)} {glyph.bounding_box}')
