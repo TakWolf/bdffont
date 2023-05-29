@@ -12,7 +12,7 @@ def _check_key(key: str):
 
 def _check_value(key: str, value: str | int):
     if not isinstance(value, str) and not isinstance(value, int):
-        raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value)}' instead")
+        raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
 
 
 class BdfProperties(UserDict):
