@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
@@ -177,7 +177,8 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
 
 class BdfFont:
     @staticmethod
-    def decode(lines: Iterator[str], strict_mode: bool = False) -> 'BdfFont':
+    def decode(lines: Iterable[str], strict_mode: bool = False) -> 'BdfFont':
+        lines = iter(lines)
         while line_params := _next_word_line(lines):
             word, tail = line_params
             if word == 'STARTFONT':
@@ -188,7 +189,7 @@ class BdfFont:
 
     @staticmethod
     def decode_str(text: str, strict_mode: bool = False) -> 'BdfFont':
-        return BdfFont.decode(iter(text.split('\n')), strict_mode)
+        return BdfFont.decode(text.split('\n'), strict_mode)
 
     @staticmethod
     def load(
@@ -196,7 +197,7 @@ class BdfFont:
             strict_mode: bool = False,
     ) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
-            return BdfFont.decode(iter(file.readlines()), strict_mode)
+            return BdfFont.decode(file.readlines(), strict_mode)
 
     def __init__(
             self,
