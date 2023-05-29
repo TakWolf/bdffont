@@ -18,19 +18,18 @@ def _check_value(value: str | int):
 class BdfProperties(UserDict):
     def __init__(
             self,
-            kvs: dict[str, str | int] = None,
+            data: dict[str, str | int] = None,
             comments: list[str] = None,
     ):
         """
-        :param kvs:
+        :param data:
             Keys and values used for initialization.
         :param comments:
             The comments.
         """
         super().__init__()
-        if kvs is not None:
-            for key, value in kvs.items():
-                self[key] = value
+        if data is not None:
+            self.update(data)
         if comments is None:
             comments = []
         self.comments = comments
