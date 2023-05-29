@@ -5,9 +5,9 @@ from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 def _check_key(key: str):
     if not key.isupper():
-        raise BdfIllegalPropertiesKey(key, 'key is not upper')
+        raise BdfIllegalPropertiesKey(key, 'is not upper')
     if not key.replace('_', '').isalnum():
-        raise BdfIllegalPropertiesKey(key, 'key is not an alpha-numeric string')
+        raise BdfIllegalPropertiesKey(key, 'contains illegal characters')
 
 
 def _check_value(key: str, value: str | int):
