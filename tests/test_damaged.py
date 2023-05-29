@@ -3,7 +3,7 @@ import os
 import pytest
 
 import bdffont
-from bdffont.error import BdfMissingLine, BdfValueIncorrect
+from bdffont.error import BdfMissingLine, BdfCountIncorrect
 from tests import assets_dir
 
 
@@ -84,13 +84,13 @@ def test_no_line_end_font():
 
 def test_incorrect_properties_count():
     load_damaged_bdf('incorrect_properties_count.bdf')
-    with pytest.raises(BdfValueIncorrect) as info:
+    with pytest.raises(BdfCountIncorrect) as info:
         load_damaged_bdf('incorrect_properties_count.bdf', strict_mode=True)
     assert info.value.word == 'STARTPROPERTIES'
 
 
 def test_incorrect_chars_count():
     load_damaged_bdf('incorrect_chars_count.bdf')
-    with pytest.raises(BdfValueIncorrect) as info:
+    with pytest.raises(BdfCountIncorrect) as info:
         load_damaged_bdf('incorrect_chars_count.bdf', strict_mode=True)
     assert info.value.word == 'CHARS'

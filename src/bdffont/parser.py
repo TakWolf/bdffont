@@ -5,7 +5,7 @@ from typing import Iterator
 from bdffont.font import BdfFont
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfMissingLine, BdfValueIncorrect
+from bdffont.error import BdfMissingLine, BdfCountIncorrect
 
 
 def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
@@ -49,7 +49,7 @@ def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bo
         word, tail = line_params
         if word == 'ENDPROPERTIES':
             if strict_mode and count != len(properties):
-                raise BdfValueIncorrect('STARTPROPERTIES')
+                raise BdfCountIncorrect('STARTPROPERTIES', count, len(properties))
             return properties
         elif word == 'COMMENT':
             properties.comments.append(tail)
@@ -161,7 +161,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> BdfFont:
             if glyphs_count is None:
                 raise BdfMissingLine('CHARS')
             if strict_mode and glyphs_count != len(glyphs):
-                raise BdfValueIncorrect('CHARS')
+                raise BdfCountIncorrect('CHARS', glyphs_count, len(glyphs))
             font = BdfFont(
                 name,
                 point_size,

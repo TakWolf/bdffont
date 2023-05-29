@@ -9,10 +9,12 @@ class BdfMissingLine(BdfException):
         super().__init__(f"Missing line '{word}'")
 
 
-class BdfValueIncorrect(BdfException):
-    def __init__(self, word: str):
+class BdfCountIncorrect(BdfException):
+    def __init__(self, word: str, defined: int, actual: int):
         self.word = word
-        super().__init__(f"'{word}' value incorrect")
+        self.defined = defined
+        self.actual = actual
+        super().__init__(f"'{word}' count incorrect: defined as {defined} but actually {actual}")
 
 
 class BdfIllegalPropertiesKey(BdfException):
