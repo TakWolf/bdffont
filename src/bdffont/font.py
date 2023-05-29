@@ -116,14 +116,15 @@ class BdfFont:
         lines.append(f'SIZE {self.point_size} {self.resolution_x} {self.resolution_y}')
         lines.append(f'FONTBOUNDINGBOX {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
 
-        lines.append(f'STARTPROPERTIES {len(self.properties)}')
-        for comment in self.properties.comments:
-            lines.append(f'COMMENT {comment}')
-        for word, value in self.properties.items():
-            if isinstance(value, str):
-                value = f'"{value}"'
-            lines.append(f'{word} {value}')
-        lines.append('ENDPROPERTIES')
+        if len(self.properties) > 0 or len(self.properties.comments) > 0:
+            lines.append(f'STARTPROPERTIES {len(self.properties)}')
+            for comment in self.properties.comments:
+                lines.append(f'COMMENT {comment}')
+            for word, value in self.properties.items():
+                if isinstance(value, str):
+                    value = f'"{value}"'
+                lines.append(f'{word} {value}')
+            lines.append('ENDPROPERTIES')
 
         lines.append(f'CHARS {self.get_glyphs_count()}')
         for glyph in self.get_orderly_glyphs():
