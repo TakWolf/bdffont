@@ -18,11 +18,18 @@ class BdfCountIncorrect(BdfException):
 
 
 class BdfIllegalPropertiesKey(BdfException):
-    pass
+    def __init__(self, key: str, reason: str):
+        self.key = key
+        self.reason = reason
+        super().__init__(f"Illegal properties key '{key}': {reason}")
 
 
 class BdfIllegalPropertiesValue(BdfException):
-    pass
+    def __init__(self, key: str, value: str, reason: str):
+        self.key = key
+        self.value = value
+        self.reason = reason
+        super().__init__(f"Illegal properties value of key '{key}': {reason}")
 
 
 class BdfGlyphExists(BdfException):

@@ -191,14 +191,18 @@ def test_properties():
 
     assert len(properties) == 19
 
-    with pytest.raises(BdfIllegalPropertiesKey):
+    with pytest.raises(BdfIllegalPropertiesKey) as info:
         properties['abc'] = 'abc'
+    assert info.value.key == 'abc'
 
-    with pytest.raises(BdfIllegalPropertiesKey):
+    with pytest.raises(BdfIllegalPropertiesKey) as info:
         properties['ABC-DEF'] = 'abcdef'
+    assert info.value.key == 'ABC-DEF'
 
-    with pytest.raises(BdfIllegalPropertiesValue):
-        properties['TEST_KEY'] = float(1.2)
+    with pytest.raises(BdfIllegalPropertiesValue) as info:
+        properties['TEST_KEY'] = 1.2
+    assert info.value.key == 'TEST_KEY'
+    assert info.value.value == 1.2
 
 
 def test_glyph():

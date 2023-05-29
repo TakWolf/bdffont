@@ -5,14 +5,14 @@ from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 def _check_key(key: str):
     if not key.isupper():
-        raise BdfIllegalPropertiesKey(f'Properties key must be upper')
+        raise BdfIllegalPropertiesKey(key, 'key is not upper')
     if not key.replace('_', '').isalnum():
-        raise BdfIllegalPropertiesKey(f"Illegal properties key '{key}'")
+        raise BdfIllegalPropertiesKey(key, 'key is not an alpha-numeric string')
 
 
-def _check_value(value: str | int):
+def _check_value(key: str, value: str | int):
     if not isinstance(value, str) and not isinstance(value, int):
-        raise BdfIllegalPropertiesValue("Properties value must be 'str' or 'int'")
+        raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value)}' instead")
 
 
 class BdfProperties(UserDict):
@@ -40,7 +40,7 @@ class BdfProperties(UserDict):
 
     def __setitem__(self, key: str, value: str | int):
         _check_key(key)
-        _check_value(value)
+        _check_value(key, value)
         super().__setitem__(key, value)
 
     @property
