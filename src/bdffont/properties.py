@@ -18,7 +18,7 @@ def _check_value(key: str, value: str | int):
 class BdfProperties(UserDict):
     def __init__(
             self,
-            data: dict[str, str | int] = None,
+            data: dict[str, str | int | None] = None,
             comments: list[str] = None,
     ):
         """
@@ -38,17 +38,20 @@ class BdfProperties(UserDict):
         _check_key(key)
         return super().__getitem__(key)
 
-    def __setitem__(self, key: str, value: str | int):
+    def __setitem__(self, key: str, value: str | int | None):
         _check_key(key)
-        _check_value(key, value)
-        super().__setitem__(key, value)
+        if value is None:
+            self.pop(key, None)
+        else:
+            _check_value(key, value)
+            super().__setitem__(key, value)
 
     @property
     def default_char(self) -> int | None:
         return self.get('DEFAULT_CHAR', None)
 
     @default_char.setter
-    def default_char(self, value: int):
+    def default_char(self, value: int | None):
         self['DEFAULT_CHAR'] = value
 
     @property
@@ -56,7 +59,7 @@ class BdfProperties(UserDict):
         return self.get('FONT_ASCENT', None)
 
     @font_ascent.setter
-    def font_ascent(self, value: int):
+    def font_ascent(self, value: int | None):
         self['FONT_ASCENT'] = value
 
     @property
@@ -64,7 +67,7 @@ class BdfProperties(UserDict):
         return self.get('FONT_DESCENT', None)
 
     @font_descent.setter
-    def font_descent(self, value: int):
+    def font_descent(self, value: int | None):
         self['FONT_DESCENT'] = value
 
     @property
@@ -72,7 +75,7 @@ class BdfProperties(UserDict):
         return self.get('CAP_HEIGHT', None)
 
     @cap_height.setter
-    def cap_height(self, value: int):
+    def cap_height(self, value: int | None):
         self['CAP_HEIGHT'] = value
 
     @property
@@ -80,7 +83,7 @@ class BdfProperties(UserDict):
         return self.get('X_HEIGHT', None)
 
     @x_height.setter
-    def x_height(self, value: int):
+    def x_height(self, value: int | None):
         self['X_HEIGHT'] = value
 
     @property
@@ -88,7 +91,7 @@ class BdfProperties(UserDict):
         return self.get('POINT_SIZE', None)
 
     @point_size.setter
-    def point_size(self, value: int):
+    def point_size(self, value: int | None):
         self['POINT_SIZE'] = value
 
     @property
@@ -96,7 +99,7 @@ class BdfProperties(UserDict):
         return self.get('RESOLUTION_X', None)
 
     @resolution_x.setter
-    def resolution_x(self, value: int):
+    def resolution_x(self, value: int | None):
         self['RESOLUTION_X'] = value
 
     @property
@@ -104,7 +107,7 @@ class BdfProperties(UserDict):
         return self.get('RESOLUTION_Y', None)
 
     @resolution_y.setter
-    def resolution_y(self, value: int):
+    def resolution_y(self, value: int | None):
         self['RESOLUTION_Y'] = value
 
     @property
@@ -112,7 +115,7 @@ class BdfProperties(UserDict):
         return self.get('FACE_NAME', None)
 
     @face_name.setter
-    def face_name(self, value: str):
+    def face_name(self, value: str | None):
         self['FACE_NAME'] = value
 
     @property
@@ -120,7 +123,7 @@ class BdfProperties(UserDict):
         return self.get('FONT', None)
 
     @font.setter
-    def font(self, value: str):
+    def font(self, value: str | None):
         self['FONT'] = value
 
     @property
@@ -128,7 +131,7 @@ class BdfProperties(UserDict):
         return self.get('FONT_VERSION', None)
 
     @font_version.setter
-    def font_version(self, value: str):
+    def font_version(self, value: str | None):
         self['FONT_VERSION'] = value
 
     @property
@@ -136,7 +139,7 @@ class BdfProperties(UserDict):
         return self.get('FAMILY_NAME', None)
 
     @family_name.setter
-    def family_name(self, value: str):
+    def family_name(self, value: str | None):
         self['FAMILY_NAME'] = value
 
     @property
@@ -144,7 +147,7 @@ class BdfProperties(UserDict):
         return self.get('SLANT', None)
 
     @slant.setter
-    def slant(self, value: str):
+    def slant(self, value: str | None):
         self['SLANT'] = value
 
     @property
@@ -152,7 +155,7 @@ class BdfProperties(UserDict):
         return self.get('WEIGHT_NAME', None)
 
     @weight_name.setter
-    def weight_name(self, value: str):
+    def weight_name(self, value: str | None):
         self['WEIGHT_NAME'] = value
 
     @property
@@ -160,7 +163,7 @@ class BdfProperties(UserDict):
         return self.get('FOUNDRY', None)
 
     @foundry.setter
-    def foundry(self, value: str):
+    def foundry(self, value: str | None):
         self['FOUNDRY'] = value
 
     @property
@@ -168,7 +171,7 @@ class BdfProperties(UserDict):
         return self.get('COPYRIGHT', None)
 
     @copyright.setter
-    def copyright(self, value: str):
+    def copyright(self, value: str | None):
         self['COPYRIGHT'] = value
 
     @property
@@ -176,5 +179,5 @@ class BdfProperties(UserDict):
         return self.get('NOTICE', None)
 
     @notice.setter
-    def notice(self, value: str):
+    def notice(self, value: str | None):
         self['NOTICE'] = value

@@ -93,6 +93,7 @@ def test_properties():
     properties = BdfProperties({
         'PARAM_1': 1,
         'PARAM_2': '2',
+        'PARAM_3': None,
     }, comments=[
         'This is a comment.',
         'This is a comment, too.',
@@ -200,9 +201,12 @@ def test_properties():
     assert info.value.key == 'ABC-DEF'
 
     with pytest.raises(BdfIllegalPropertiesValue) as info:
-        properties['TEST_KEY'] = 1.2
-    assert info.value.key == 'TEST_KEY'
+        properties['TEST_KEY_1'] = 1.2
+    assert info.value.key == 'TEST_KEY_1'
     assert info.value.value == 1.2
+
+    properties['TEST_KEY_2'] = None
+    assert 'TEST_KEY_2' not in properties
 
 
 def test_glyph():
