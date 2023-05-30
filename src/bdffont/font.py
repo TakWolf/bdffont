@@ -210,19 +210,18 @@ class BdfFont:
     ):
         """
         :param name:
-            Either the 'X logical font description' or some private font name.
-            Like: -Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1
-            https://en.wikipedia.org/wiki/X_logical_font_description
+            The font name. Should match the PostScript language FontName in the corresponding outline font program,
+            or match the 'X logical font description (https://en.wikipedia.org/wiki/X_logical_font_description)'.
         :param point_size:
-            The point size of the characters.
+            The point size of the glyphs.
         :param resolution_xy:
-            The x resolution, and the y resolution of the device for which these characters were intended.
+            The x and y resolutions of the device for which the font is intended.
         :param bounding_box_size:
-            The width in x, height in y of the character.
+            The width in x and height in y of the glyphs in integer pixel values.
         :param bounding_box_offset:
-            The x and y displacement of the lower left corner from the origin of the character.
+            The x and y displacement of the lower left corner from origin 0 of the glyphs in integer pixel values.
         :param properties:
-            Some optional extended properties.
+            The optional extended properties.
         :param comments:
             The comments.
         """

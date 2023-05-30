@@ -15,30 +15,33 @@ class BdfGlyph:
     ):
         """
         :param name:
-            Up to 14 characters (no blanks) of descriptive name of the glyph.
+            The name for the glyph, limited to a string of 14 characters. In base fonts, this should correspond to
+            the name in the PostScript language outline font's encoding vector. In a Composite font (Type 0), the
+            value may be a numeric offset or glyph ID.
         :param code_point:
-            Code point in Unicode.
+            The code point in Unicode. Could set -1 and optionally by another integer specifying the glyph index
+            for the non-standard encoding.
         :param scalable_width:
-            The scalable width in x and y of character. Scalable widths are in units of 1/1000th of the size of the
-            character. If the size of the character is p points, the width information must be scaled by p/1000 to
-            get the width of the character in printer’s points. This width information should be considered as a vector
-            indicating the position of the next character’s origin relative to the origin of this character.
-            To convert the scalable width to the width in device pixels, multiply scalable_width times p/1000 times
+            The scalable width in x and y of the glyph. The scalable width are in units of 1/1000th of the size of
+            the glyph and correspond to the width found in AFM files (for outline fonts). If the size of the glyph
+            is p points, the width information must be scaled by p/1000 to get the width of the glyph in printer's
+            points. This width information should be regarded as a vector indicating the position of the next glyph's
+            origin relative to the origin of this glyph.
+            To convert the scalable width to the width in device pixels, multiply scalable width times p/1000 times
             r/72, where r is the device resolution in pixels per inch. The result is a real number giving the ideal
-            print width in device pixels. The actual device width must of course be an integral number of device pixels
-            and is given in the next entry. The scalable_width y value should always be zero for a standard X font.
+            width in device pixels. The actual device width must be an integral number of device pixels and is given
+            by the device width entry.
+            The scalable width y value should always be zero for a standard X font.
         :param device_width:
-            The width in x and y of the character in device units. Like the scalable_width, this width information is
-            a vector indicating the position of the next character’s origin relative to the origin of this character.
-            Note that the device_width of a given "hand-tuned" WYSIWYG glyph may deviate slightly from its ideal
-            device-independent width given by scalable_width in order to improve its typographic characteristics on a
-            display. The device_width y value should always be zero for a standard X font.
+            The width in x and y of the glyph in device pixels. Like the scalable width, this width information is a
+            vector indicating the position of the next glyph's origin relative to the origin of this glyph.
+            The device width y value should always be zero for a standard X font.
         :param bounding_box_size:
-            The width in x, height in y of the character.
+            The width in x and height in y of the bitmap in integer pixel values.
         :param bounding_box_offset:
-            The x and y displacement of the lower left corner from the origin of the character.
+            The x and y displacement of the lower left corner from origin 0 of the bitmap in integer pixel values.
         :param bitmap:
-            The bitmap object.
+            The bitmap of the glyph.
         :param comments:
             The comments.
         """

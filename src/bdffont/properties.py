@@ -23,7 +23,7 @@ class BdfProperties(UserDict):
     ):
         """
         :param data:
-            Keys and values used for initialization.
+            The keys and values used for initialization.
         :param comments:
             The comments.
         """
