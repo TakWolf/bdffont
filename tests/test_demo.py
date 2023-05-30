@@ -31,7 +31,7 @@ def test_example():
     assert font.bounding_box == (9, 24, -2, -6)
     assert len(font.properties) == 19
     assert font.properties.foundry == 'Adobe'
-    assert font.properties['FAMILY'] == 'Helvetica'
+    assert font.properties['FAMILY_NAME'] == 'Helvetica'
     assert font.properties.weight_name == 'Bold'
     assert font.properties.slant == 'R'
     assert font.properties['SETWIDTH_NAME'] == 'Normal'

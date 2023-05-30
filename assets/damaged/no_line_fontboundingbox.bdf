@@ -6,7 +6,7 @@ SIZE 24 75 75
 STARTPROPERTIES 19
 COMMENT This is a comment in properties.
 FOUNDRY "Adobe"
-FAMILY "Helvetica"
+FAMILY_NAME "Helvetica"
 WEIGHT_NAME "Bold"
 SLANT "R"
 SETWIDTH_NAME "Normal"
