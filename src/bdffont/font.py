@@ -6,6 +6,23 @@ from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
 from bdffont.error import BdfException, BdfMissingLine, BdfCountIncorrect, BdfGlyphExists
 
+_WORD_STARTFONT = 'STARTFONT'
+_WORD_ENDFONT = 'ENDFONT'
+_WORD_COMMENT = 'COMMENT'
+_WORD_FONT = 'FONT'
+_WORD_SIZE = 'SIZE'
+_WORD_FONTBOUNDINGBOX = 'FONTBOUNDINGBOX'
+_WORD_STARTPROPERTIES = 'STARTPROPERTIES'
+_WORD_ENDPROPERTIES = 'ENDPROPERTIES'
+_WORD_CHARS = 'CHARS'
+_WORD_STARTCHAR = 'STARTCHAR'
+_WORD_ENDCHAR = 'ENDCHAR'
+_WORD_ENCODING = 'ENCODING'
+_WORD_SWIDTH = 'SWIDTH'
+_WORD_DWIDTH = 'DWIDTH'
+_WORD_BBX = 'BBX'
+_WORD_BITMAP = 'BITMAP'
+
 
 def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
     while True:
@@ -46,27 +63,27 @@ def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bo
     properties = BdfProperties()
     while line_params := _next_word_line(lines):
         word, tail = line_params
-        if word == 'ENDPROPERTIES':
+        if word == _WORD_ENDPROPERTIES:
             if strict_mode and count != len(properties):
-                raise BdfCountIncorrect('STARTPROPERTIES', count, len(properties))
+                raise BdfCountIncorrect(_WORD_STARTPROPERTIES, count, len(properties))
             return properties
-        elif word == 'COMMENT':
+        elif word == _WORD_COMMENT:
             properties.comments.append(tail)
         else:
             properties[word] = _convert_tail_to_properties_value(tail)
-    raise BdfMissingLine('ENDPROPERTIES')
+    raise BdfMissingLine(_WORD_ENDPROPERTIES)
 
 
 def _decode_bitmap_segment(lines: Iterator[str]) -> list[list[int]]:
     bitmap = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
-        if word == 'ENDCHAR':
+        if word == _WORD_ENDCHAR:
             return bitmap
         else:
             bin_format = '{:0' + str(len(word) * 4) + 'b}'
             bitmap.append([int(c) for c in bin_format.format(int(word, 16))])
-    raise BdfMissingLine('ENDCHAR')
+    raise BdfMissingLine(_WORD_ENDCHAR)
 
 
 def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
@@ -79,31 +96,31 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     comments = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
-        if word == 'ENCODING':
+        if word == _WORD_ENCODING:
             code_point = int(tail)
-        elif word == 'SWIDTH':
+        elif word == _WORD_SWIDTH:
             tokens = _convert_tail_to_ints(tail)
             scalable_width = tokens[0], tokens[1]
-        elif word == 'DWIDTH':
+        elif word == _WORD_DWIDTH:
             tokens = _convert_tail_to_ints(tail)
             device_width = tokens[0], tokens[1]
-        elif word == 'BBX':
+        elif word == _WORD_BBX:
             tokens = _convert_tail_to_ints(tail)
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
-        elif word == 'COMMENT':
+        elif word == _WORD_COMMENT:
             comments.append(tail)
-        elif word == 'BITMAP' or word == 'ENDCHAR':
-            if word == 'BITMAP':
+        elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
+            if word == _WORD_BITMAP:
                 bitmap = _decode_bitmap_segment(lines)
             if code_point is None:
-                raise BdfMissingLine('ENCODING')
+                raise BdfMissingLine(_WORD_ENCODING)
             if scalable_width is None:
-                raise BdfMissingLine('SWIDTH')
+                raise BdfMissingLine(_WORD_SWIDTH)
             if device_width is None:
-                raise BdfMissingLine('DWIDTH')
+                raise BdfMissingLine(_WORD_DWIDTH)
             if bounding_box_size is None or bounding_box_offset is None:
-                raise BdfMissingLine('BBX')
+                raise BdfMissingLine(_WORD_BBX)
             for bitmap_row in bitmap:
                 while len(bitmap_row) > bounding_box_size[0]:
                     bitmap_row.pop()
@@ -117,7 +134,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
                 bitmap,
                 comments,
             )
-    raise BdfMissingLine('ENDCHAR')
+    raise BdfMissingLine(_WORD_ENDCHAR)
 
 
 def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
@@ -132,35 +149,35 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
     comments = []
     while line_params := _next_word_line(lines):
         word, tail = line_params
-        if word == 'FONT':
+        if word == _WORD_FONT:
             name = tail
-        elif word == 'SIZE':
+        elif word == _WORD_SIZE:
             tokens = _convert_tail_to_ints(tail)
             point_size = tokens[0]
             resolution_xy = tokens[1], tokens[2]
-        elif word == 'FONTBOUNDINGBOX':
+        elif word == _WORD_FONTBOUNDINGBOX:
             tokens = _convert_tail_to_ints(tail)
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
-        elif word == 'STARTPROPERTIES':
+        elif word == _WORD_STARTPROPERTIES:
             properties = _decode_properties_segment(lines, int(tail), strict_mode)
-        elif word == 'CHARS':
+        elif word == _WORD_CHARS:
             glyphs_count = int(tail)
-        elif word == 'STARTCHAR':
+        elif word == _WORD_STARTCHAR:
             glyphs.append(_decode_glyph_segment(lines, tail))
-        elif word == 'COMMENT':
+        elif word == _WORD_COMMENT:
             comments.append(tail)
-        elif word == 'ENDFONT':
+        elif word == _WORD_ENDFONT:
             if name is None:
-                raise BdfMissingLine('FONT')
+                raise BdfMissingLine(_WORD_FONT)
             if point_size is None or resolution_xy is None:
-                raise BdfMissingLine('SIZE')
+                raise BdfMissingLine(_WORD_SIZE)
             if bounding_box_size is None or bounding_box_offset is None:
-                raise BdfMissingLine('FONTBOUNDINGBOX')
+                raise BdfMissingLine(_WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
-                raise BdfMissingLine('CHARS')
+                raise BdfMissingLine(_WORD_CHARS)
             if strict_mode and glyphs_count != len(glyphs):
-                raise BdfCountIncorrect('CHARS', glyphs_count, len(glyphs))
+                raise BdfCountIncorrect(_WORD_CHARS, glyphs_count, len(glyphs))
             font = BdfFont(
                 name,
                 point_size,
@@ -172,7 +189,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
             )
             font.add_glyphs(glyphs)
             return font
-    raise BdfMissingLine('ENDFONT')
+    raise BdfMissingLine(_WORD_ENDFONT)
 
 
 class BdfFont:
@@ -181,11 +198,11 @@ class BdfFont:
         lines = iter(lines)
         while line_params := _next_word_line(lines):
             word, tail = line_params
-            if word == 'STARTFONT':
+            if word == _WORD_STARTFONT:
                 font = _decode_font_segment(lines, strict_mode)
                 font.spec_version = tail
                 return font
-        raise BdfMissingLine('STARTFONT')
+        raise BdfMissingLine(_WORD_STARTFONT)
 
     @staticmethod
     def decode_str(text: str, strict_mode: bool = False) -> 'BdfFont':
@@ -303,42 +320,42 @@ class BdfFont:
             raise BdfException("Missing attribute 'name'")
 
         lines = [
-            f'STARTFONT {self.spec_version}',
+            f'{_WORD_STARTFONT} {self.spec_version}',
         ]
         for comment in self.comments:
-            lines.append(f'COMMENT {comment}')
-        lines.append(f'FONT {self.name}')
-        lines.append(f'SIZE {self.point_size} {self.resolution_x} {self.resolution_y}')
-        lines.append(f'FONTBOUNDINGBOX {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
+            lines.append(f'{_WORD_COMMENT} {comment}')
+        lines.append(f'{_WORD_FONT} {self.name}')
+        lines.append(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}')
+        lines.append(f'{_WORD_FONTBOUNDINGBOX} {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
 
         if len(self.properties) > 0 or len(self.properties.comments) > 0:
-            lines.append(f'STARTPROPERTIES {len(self.properties)}')
+            lines.append(f'{_WORD_STARTPROPERTIES} {len(self.properties)}')
             for comment in self.properties.comments:
-                lines.append(f'COMMENT {comment}')
+                lines.append(f'{_WORD_COMMENT} {comment}')
             for word, value in self.properties.items():
                 if isinstance(value, str):
                     value = value.replace('"', '""')
                     value = f'"{value}"'
                 lines.append(f'{word} {value}')
-            lines.append('ENDPROPERTIES')
+            lines.append(_WORD_ENDPROPERTIES)
 
-        lines.append(f'CHARS {self.get_glyphs_count()}')
+        lines.append(f'{_WORD_CHARS} {self.get_glyphs_count()}')
         for glyph in self.get_orderly_glyphs():
-            lines.append(f'STARTCHAR {glyph.name}')
+            lines.append(f'{_WORD_STARTCHAR} {glyph.name}')
             for comment in glyph.comments:
-                lines.append(f'COMMENT {comment}')
-            lines.append(f'ENCODING {glyph.code_point}')
-            lines.append(f'SWIDTH {glyph.scalable_width_x} {glyph.scalable_width_y}')
-            lines.append(f'DWIDTH {glyph.device_width_x} {glyph.device_width_y}')
+                lines.append(f'{_WORD_COMMENT} {comment}')
+            lines.append(f'{_WORD_ENCODING} {glyph.code_point}')
+            lines.append(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}')
+            lines.append(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}')
             (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_8bit_aligned_bitmap(optimize_bitmap)
-            lines.append(f'BBX {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}')
-            lines.append('BITMAP')
+            lines.append(f'{_WORD_BBX} {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}')
+            lines.append(_WORD_BITMAP)
             for bitmap_row in bitmap:
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 lines.append(hex_format.format(int(''.join(map(str, bitmap_row)), 2)))
-            lines.append('ENDCHAR')
+            lines.append(_WORD_ENDCHAR)
 
-        lines.append('ENDFONT')
+        lines.append(_WORD_ENDFONT)
         lines.append('')
         return lines
 
