@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
-from bdffont.error import BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
+from bdffont.error import BdfException, BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def test_font():
@@ -87,6 +87,12 @@ def test_font():
     glyphs = font.get_orderly_glyphs()
     assert glyphs[0] == glyph_a
     assert glyphs[1] == glyph_b
+
+    with pytest.raises(BdfException) as info:
+        font.encode()
+    assert info.value.args[0] == "Missing attribute 'name'"
+    font.name = 'my-font'
+    font.encode()
 
 
 def test_properties():
