@@ -1,12 +1,12 @@
 import pytest
 
-from bdffont import BdfFont, BdfProperties, BdfGlyph
+from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
 from bdffont.error import BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def test_font():
     font = BdfFont(
-        name='',
+        name=None,
         point_size=0,
         resolution_xy=(0, 0),
         bounding_box_size=(0, 0),
@@ -98,6 +98,7 @@ def test_properties():
         'This is a comment.',
         'This is a comment, too.',
     ])
+
     assert len(properties) == 2
     assert properties['param_1'] == 1
     assert properties['PARAM_2'] == '2'
@@ -105,107 +106,139 @@ def test_properties():
     assert properties.comments[0] == 'This is a comment.'
     assert properties.comments[1] == 'This is a comment, too.'
 
-    assert properties.default_char is None
-    properties.default_char = 1
-    assert properties.default_char == 1
-    assert 'DEFAULT_CHAR' in properties
+    properties.clear()
+    assert len(properties) == 0
 
-    assert properties.font_ascent is None
-    properties.font_ascent = 2
-    assert properties.font_ascent == 2
-    assert 'FONT_ASCENT' in properties
+    properties.foundry = 'TakWolf Studio'
+    assert properties.foundry == 'TakWolf Studio'
+    assert properties['FOUNDRY'] == 'TakWolf Studio'
 
-    assert properties.font_descent is None
-    properties.font_descent = 3
-    assert properties.font_descent == 3
-    assert 'FONT_DESCENT' in properties
+    properties.family_name = 'Demo Pixel'
+    assert properties.family_name == 'Demo Pixel'
+    assert properties['FAMILY_NAME'] == 'Demo Pixel'
 
-    assert properties.cap_height is None
-    properties.cap_height = 4
-    assert properties.cap_height == 4
-    assert 'CAP_HEIGHT' in properties
+    properties.weight_name = xlfd.WeightName.MEDIUM
+    assert properties.weight_name == 'Medium'
+    assert properties['WEIGHT_NAME'] == 'Medium'
 
-    assert properties.x_height is None
+    properties.slant = xlfd.Slant.ROMAN
+    assert properties.slant == 'R'
+    assert properties['SLANT'] == 'R'
+
+    properties.setwidth_name = xlfd.SetwidthName.NORMAL
+    assert properties.setwidth_name == 'Normal'
+    assert properties['SETWIDTH_NAME'] == 'Normal'
+
+    properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    assert properties.add_style_name == 'Sans Serif'
+    assert properties['ADD_STYLE_NAME'] == 'Sans Serif'
+
+    properties.pixel_size = 16
+    assert properties.pixel_size == 16
+    assert properties['PIXEL_SIZE'] == 16
+
+    properties.point_size = 160
+    assert properties.point_size == 160
+    assert properties['POINT_SIZE'] == 160
+
+    properties.resolution_x = 75
+    assert properties.resolution_x == 75
+    assert properties['RESOLUTION_X'] == 75
+
+    properties.resolution_y = 240
+    assert properties.resolution_y == 240
+    assert properties['RESOLUTION_Y'] == 240
+
+    properties.spacing = xlfd.Spacing.MONOSPACED
+    assert properties.spacing == 'M'
+    assert properties['SPACING'] == 'M'
+
+    properties.average_width = 85
+    assert properties.average_width == 85
+    assert properties['AVERAGE_WIDTH'] == 85
+
+    properties.charset_registry = 'ISO8859'
+    assert properties.charset_registry == 'ISO8859'
+    assert properties['CHARSET_REGISTRY'] == 'ISO8859'
+
+    properties.charset_encoding = '1'
+    assert properties.charset_encoding == '1'
+    assert properties['CHARSET_ENCODING'] == '1'
+
+    assert len(properties) == 14
+    properties.clear()
+    assert len(properties) == 0
+
+    properties.default_char = -1
+    assert properties.default_char == -1
+    assert properties['DEFAULT_CHAR'] == -1
+
+    properties.font_ascent = 14
+    assert properties.font_ascent == 14
+    assert properties['FONT_ASCENT'] == 14
+
+    properties.font_descent = 2
+    assert properties.font_descent == 2
+    assert properties['FONT_DESCENT'] == 2
+
     properties.x_height = 5
     assert properties.x_height == 5
-    assert 'X_HEIGHT' in properties
+    assert properties['X_HEIGHT'] == 5
 
-    assert properties.point_size is None
-    properties.point_size = 6
-    assert properties.point_size == 6
-    assert 'POINT_SIZE' in properties
+    properties.cap_height = 8
+    assert properties.cap_height == 8
+    assert properties['CAP_HEIGHT'] == 8
 
-    assert properties.resolution_x is None
-    properties.resolution_x = 7
-    assert properties.resolution_x == 7
-    assert 'RESOLUTION_X' in properties
+    assert len(properties) == 5
+    properties.clear()
+    assert len(properties) == 0
 
-    assert properties.resolution_y is None
-    properties.resolution_y = 8
-    assert properties.resolution_y == 8
-    assert 'RESOLUTION_Y' in properties
+    properties.font_version = '1.0.0'
+    assert properties.font_version == '1.0.0'
+    assert properties['FONT_VERSION'] == '1.0.0'
 
-    assert properties.face_name is None
-    properties.face_name = 'A'
-    assert properties.face_name == 'A'
-    assert 'FACE_NAME' in properties
+    properties.copyright = 'Copyright (c) TakWolf'
+    assert properties.copyright == 'Copyright (c) TakWolf'
+    assert properties['COPYRIGHT'] == 'Copyright (c) TakWolf'
 
-    assert properties.font is None
-    properties.font = 'B'
-    assert properties.font == 'B'
-    assert 'FONT' in properties
+    properties.notice = 'This is a notice.'
+    assert properties.notice == 'This is a notice.'
+    assert properties['NOTICE'] == 'This is a notice.'
 
-    assert properties.font_version is None
-    properties.font_version = '1.2.3'
-    assert properties.font_version == '1.2.3'
-    assert 'FONT_VERSION' in properties
-
-    assert properties.family_name is None
-    properties.family_name = 'C'
-    assert properties.family_name == 'C'
-    assert 'FAMILY_NAME' in properties
-
-    assert properties.slant is None
-    properties.slant = 'D'
-    assert properties.slant == 'D'
-    assert 'SLANT' in properties
-
-    assert properties.weight_name is None
-    properties.weight_name = 'E'
-    assert properties.weight_name == 'E'
-    assert 'WEIGHT_NAME' in properties
-
-    assert properties.foundry is None
-    properties.foundry = 'F'
-    assert properties.foundry == 'F'
-    assert 'FOUNDRY' in properties
-
-    assert properties.copyright is None
-    properties.copyright = 'G'
-    assert properties.copyright == 'G'
-    assert 'COPYRIGHT' in properties
-
-    assert properties.notice is None
-    properties.notice = 'H'
-    assert properties.notice == 'H'
-    assert 'NOTICE' in properties
-
-    assert len(properties) == 19
+    assert len(properties) == 3
+    properties.clear()
+    assert len(properties) == 0
 
     properties['abc'] = 'abc'
     assert properties['ABC'] == 'abc'
+    assert properties['abc'] == 'abc'
 
     with pytest.raises(BdfIllegalPropertiesKey) as info:
-        properties['ABC-DEF'] = 'abcdef'
+        properties['abc-def'] = 'abcdef'
     assert info.value.key == 'ABC-DEF'
 
+    properties['NONE_PARAM'] = None
+    assert 'NONE_PARAM' not in properties
+
     with pytest.raises(BdfIllegalPropertiesValue) as info:
-        properties['TEST_KEY_1'] = 1.2
-    assert info.value.key == 'TEST_KEY_1'
+        properties.foundry = 1
+    assert info.value.key == 'FOUNDRY'
+    assert info.value.value == 1
+
+    with pytest.raises(BdfIllegalPropertiesValue) as info:
+        properties.pixel_size = '1'
+    assert info.value.key == 'PIXEL_SIZE'
+    assert info.value.value == '1'
+
+    with pytest.raises(BdfIllegalPropertiesValue) as info:
+        properties['FLOAT_PARAM'] = 1.2
+    assert info.value.key == 'FLOAT_PARAM'
     assert info.value.value == 1.2
 
-    properties['TEST_KEY_2'] = None
-    assert 'TEST_KEY_2' not in properties
+    with pytest.raises(BdfIllegalPropertiesValue) as info:
+        properties.family_name = 'Demo-Pixel'
+    assert info.value.key == 'FAMILY_NAME'
+    assert info.value.value == 'Demo-Pixel'
 
 
 def test_glyph():

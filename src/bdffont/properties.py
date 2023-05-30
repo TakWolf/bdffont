@@ -2,6 +2,71 @@ from collections import UserDict
 
 from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
+_KEY_FOUNDRY = 'FOUNDRY'
+_KEY_FAMILY_NAME = 'FAMILY_NAME'
+_KEY_WEIGHT_NAME = 'WEIGHT_NAME'
+_KEY_SLANT = 'SLANT'
+_KEY_SETWIDTH_NAME = 'SETWIDTH_NAME'
+_KEY_ADD_STYLE_NAME = 'ADD_STYLE_NAME'
+_KEY_PIXEL_SIZE = 'PIXEL_SIZE'
+_KEY_POINT_SIZE = 'POINT_SIZE'
+_KEY_RESOLUTION_X = 'RESOLUTION_X'
+_KEY_RESOLUTION_Y = 'RESOLUTION_Y'
+_KEY_SPACING = 'SPACING'
+_KEY_AVERAGE_WIDTH = 'AVERAGE_WIDTH'
+_KEY_CHARSET_REGISTRY = 'CHARSET_REGISTRY'
+_KEY_CHARSET_ENCODING = 'CHARSET_ENCODING'
+
+_KEY_DEFAULT_CHAR = 'DEFAULT_CHAR'
+_KEY_FONT_ASCENT = 'FONT_ASCENT'
+_KEY_FONT_DESCENT = 'FONT_DESCENT'
+_KEY_CAP_HEIGHT = 'CAP_HEIGHT'
+_KEY_X_HEIGHT = 'X_HEIGHT'
+
+_KEY_FONT_VERSION = 'FONT_VERSION'
+_KEY_COPYRIGHT = 'COPYRIGHT'
+_KEY_NOTICE = 'NOTICE'
+
+_STR_VALUE_KEYS = {
+    _KEY_FOUNDRY,
+    _KEY_FAMILY_NAME,
+    _KEY_WEIGHT_NAME,
+    _KEY_SLANT,
+    _KEY_SETWIDTH_NAME,
+    _KEY_ADD_STYLE_NAME,
+    _KEY_SPACING,
+    _KEY_CHARSET_REGISTRY,
+    _KEY_CHARSET_ENCODING,
+    _KEY_FONT_VERSION,
+    _KEY_COPYRIGHT,
+    _KEY_NOTICE,
+}
+
+_INT_VALUE_KEYS = {
+    _KEY_PIXEL_SIZE,
+    _KEY_POINT_SIZE,
+    _KEY_RESOLUTION_X,
+    _KEY_RESOLUTION_Y,
+    _KEY_AVERAGE_WIDTH,
+    _KEY_DEFAULT_CHAR,
+    _KEY_FONT_ASCENT,
+    _KEY_FONT_DESCENT,
+    _KEY_CAP_HEIGHT,
+    _KEY_X_HEIGHT,
+}
+
+_XLFD_FONT_NAME_STR_VALUE_KEYS = {
+    _KEY_FOUNDRY,
+    _KEY_FAMILY_NAME,
+    _KEY_WEIGHT_NAME,
+    _KEY_SLANT,
+    _KEY_SETWIDTH_NAME,
+    _KEY_ADD_STYLE_NAME,
+    _KEY_SPACING,
+    _KEY_CHARSET_REGISTRY,
+    _KEY_CHARSET_ENCODING,
+}
+
 
 def _check_key(key: str):
     if not key.replace('_', '').isalnum():
@@ -9,8 +74,19 @@ def _check_key(key: str):
 
 
 def _check_value(key: str, value: str | int):
-    if not isinstance(value, str) and not isinstance(value, int):
-        raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
+    if key in _STR_VALUE_KEYS:
+        if not isinstance(value, str):
+            raise BdfIllegalPropertiesValue(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
+    elif key in _INT_VALUE_KEYS:
+        if not isinstance(value, int):
+            raise BdfIllegalPropertiesValue(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
+    else:
+        if not isinstance(value, str) and not isinstance(value, int):
+            raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
+    if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+        for c in ['-', '?', ',', '"']:
+            if c in value:
+                raise BdfIllegalPropertiesValue(key, value, f"contains illegal characters '{c}'")
 
 
 class BdfProperties(UserDict):
@@ -46,138 +122,190 @@ class BdfProperties(UserDict):
             _check_value(key, value)
             super().__setitem__(key, value)
 
-    @property
-    def default_char(self) -> int | None:
-        return self.get('DEFAULT_CHAR', None)
-
-    @default_char.setter
-    def default_char(self, value: int | None):
-        self['DEFAULT_CHAR'] = value
-
-    @property
-    def font_ascent(self) -> int | None:
-        return self.get('FONT_ASCENT', None)
-
-    @font_ascent.setter
-    def font_ascent(self, value: int | None):
-        self['FONT_ASCENT'] = value
-
-    @property
-    def font_descent(self) -> int | None:
-        return self.get('FONT_DESCENT', None)
-
-    @font_descent.setter
-    def font_descent(self, value: int | None):
-        self['FONT_DESCENT'] = value
-
-    @property
-    def cap_height(self) -> int | None:
-        return self.get('CAP_HEIGHT', None)
-
-    @cap_height.setter
-    def cap_height(self, value: int | None):
-        self['CAP_HEIGHT'] = value
-
-    @property
-    def x_height(self) -> int | None:
-        return self.get('X_HEIGHT', None)
-
-    @x_height.setter
-    def x_height(self, value: int | None):
-        self['X_HEIGHT'] = value
-
-    @property
-    def point_size(self) -> int | None:
-        return self.get('POINT_SIZE', None)
-
-    @point_size.setter
-    def point_size(self, value: int | None):
-        self['POINT_SIZE'] = value
-
-    @property
-    def resolution_x(self) -> int | None:
-        return self.get('RESOLUTION_X', None)
-
-    @resolution_x.setter
-    def resolution_x(self, value: int | None):
-        self['RESOLUTION_X'] = value
-
-    @property
-    def resolution_y(self) -> int | None:
-        return self.get('RESOLUTION_Y', None)
-
-    @resolution_y.setter
-    def resolution_y(self, value: int | None):
-        self['RESOLUTION_Y'] = value
-
-    @property
-    def face_name(self) -> str | None:
-        return self.get('FACE_NAME', None)
-
-    @face_name.setter
-    def face_name(self, value: str | None):
-        self['FACE_NAME'] = value
-
-    @property
-    def font(self) -> str | None:
-        return self.get('FONT', None)
-
-    @font.setter
-    def font(self, value: str | None):
-        self['FONT'] = value
-
-    @property
-    def font_version(self) -> str | None:
-        return self.get('FONT_VERSION', None)
-
-    @font_version.setter
-    def font_version(self, value: str | None):
-        self['FONT_VERSION'] = value
-
-    @property
-    def family_name(self) -> str | None:
-        return self.get('FAMILY_NAME', None)
-
-    @family_name.setter
-    def family_name(self, value: str | None):
-        self['FAMILY_NAME'] = value
-
-    @property
-    def slant(self) -> str | None:
-        return self.get('SLANT', None)
-
-    @slant.setter
-    def slant(self, value: str | None):
-        self['SLANT'] = value
-
-    @property
-    def weight_name(self) -> str | None:
-        return self.get('WEIGHT_NAME', None)
-
-    @weight_name.setter
-    def weight_name(self, value: str | None):
-        self['WEIGHT_NAME'] = value
+    # ========================
+    # XLFD FontName Properties
+    # ========================
 
     @property
     def foundry(self) -> str | None:
-        return self.get('FOUNDRY', None)
+        return self.get(_KEY_FOUNDRY, None)
 
     @foundry.setter
     def foundry(self, value: str | None):
-        self['FOUNDRY'] = value
+        self[_KEY_FOUNDRY] = value
+
+    @property
+    def family_name(self) -> str | None:
+        return self.get(_KEY_FAMILY_NAME, None)
+
+    @family_name.setter
+    def family_name(self, value: str | None):
+        self[_KEY_FAMILY_NAME] = value
+
+    @property
+    def weight_name(self) -> str | None:
+        return self.get(_KEY_WEIGHT_NAME, None)
+
+    @weight_name.setter
+    def weight_name(self, value: str | None):
+        self[_KEY_WEIGHT_NAME] = value
+
+    @property
+    def slant(self) -> str | None:
+        return self.get(_KEY_SLANT, None)
+
+    @slant.setter
+    def slant(self, value: str | None):
+        self[_KEY_SLANT] = value
+
+    @property
+    def setwidth_name(self) -> str | None:
+        return self.get(_KEY_SETWIDTH_NAME, None)
+
+    @setwidth_name.setter
+    def setwidth_name(self, value: str | None):
+        self[_KEY_SETWIDTH_NAME] = value
+
+    @property
+    def add_style_name(self) -> str | None:
+        return self.get(_KEY_ADD_STYLE_NAME, None)
+
+    @add_style_name.setter
+    def add_style_name(self, value: str | None):
+        self[_KEY_ADD_STYLE_NAME] = value
+
+    @property
+    def pixel_size(self) -> int | None:
+        return self.get(_KEY_PIXEL_SIZE, None)
+
+    @pixel_size.setter
+    def pixel_size(self, value: int | None):
+        self[_KEY_PIXEL_SIZE] = value
+
+    @property
+    def point_size(self) -> int | None:
+        return self.get(_KEY_POINT_SIZE, None)
+
+    @point_size.setter
+    def point_size(self, value: int | None):
+        self[_KEY_POINT_SIZE] = value
+
+    @property
+    def resolution_x(self) -> int | None:
+        return self.get(_KEY_RESOLUTION_X, None)
+
+    @resolution_x.setter
+    def resolution_x(self, value: int | None):
+        self[_KEY_RESOLUTION_X] = value
+
+    @property
+    def resolution_y(self) -> int | None:
+        return self.get(_KEY_RESOLUTION_Y, None)
+
+    @resolution_y.setter
+    def resolution_y(self, value: int | None):
+        self[_KEY_RESOLUTION_Y] = value
+
+    @property
+    def spacing(self) -> str | None:
+        return self.get(_KEY_SPACING, None)
+
+    @spacing.setter
+    def spacing(self, value: str | None):
+        self[_KEY_SPACING] = value
+
+    @property
+    def average_width(self) -> int | None:
+        return self.get(_KEY_AVERAGE_WIDTH, None)
+
+    @average_width.setter
+    def average_width(self, value: int | None):
+        self[_KEY_AVERAGE_WIDTH] = value
+
+    @property
+    def charset_registry(self) -> str | None:
+        return self.get(_KEY_CHARSET_REGISTRY, None)
+
+    @charset_registry.setter
+    def charset_registry(self, value: str | None):
+        self[_KEY_CHARSET_REGISTRY] = value
+
+    @property
+    def charset_encoding(self) -> str | None:
+        return self.get(_KEY_CHARSET_ENCODING, None)
+
+    @charset_encoding.setter
+    def charset_encoding(self, value: str | None):
+        self[_KEY_CHARSET_ENCODING] = value
+
+    # ============================
+    # Glyph and Metrics Properties
+    # ============================
+
+    @property
+    def default_char(self) -> int | None:
+        return self.get(_KEY_DEFAULT_CHAR, None)
+
+    @default_char.setter
+    def default_char(self, value: int | None):
+        self[_KEY_DEFAULT_CHAR] = value
+
+    @property
+    def font_ascent(self) -> int | None:
+        return self.get(_KEY_FONT_ASCENT, None)
+
+    @font_ascent.setter
+    def font_ascent(self, value: int | None):
+        self[_KEY_FONT_ASCENT] = value
+
+    @property
+    def font_descent(self) -> int | None:
+        return self.get(_KEY_FONT_DESCENT, None)
+
+    @font_descent.setter
+    def font_descent(self, value: int | None):
+        self[_KEY_FONT_DESCENT] = value
+
+    @property
+    def x_height(self) -> int | None:
+        return self.get(_KEY_X_HEIGHT, None)
+
+    @x_height.setter
+    def x_height(self, value: int | None):
+        self[_KEY_X_HEIGHT] = value
+
+    @property
+    def cap_height(self) -> int | None:
+        return self.get(_KEY_CAP_HEIGHT, None)
+
+    @cap_height.setter
+    def cap_height(self, value: int | None):
+        self[_KEY_CAP_HEIGHT] = value
+
+    # ===============
+    # Meta Properties
+    # ===============
+
+    @property
+    def font_version(self) -> str | None:
+        return self.get(_KEY_FONT_VERSION, None)
+
+    @font_version.setter
+    def font_version(self, value: str | None):
+        self[_KEY_FONT_VERSION] = value
 
     @property
     def copyright(self) -> str | None:
-        return self.get('COPYRIGHT', None)
+        return self.get(_KEY_COPYRIGHT, None)
 
     @copyright.setter
     def copyright(self, value: str | None):
-        self['COPYRIGHT'] = value
+        self[_KEY_COPYRIGHT] = value
 
     @property
     def notice(self) -> str | None:
-        return self.get('NOTICE', None)
+        return self.get(_KEY_NOTICE, None)
 
     @notice.setter
     def notice(self, value: str | None):
-        self['NOTICE'] = value
+        self[_KEY_NOTICE] = value
