@@ -92,14 +92,14 @@ def test_font():
 def test_properties():
     properties = BdfProperties({
         'PARAM_1': 1,
-        'PARAM_2': '2',
+        'param_2': '2',
         'PARAM_3': None,
     }, comments=[
         'This is a comment.',
         'This is a comment, too.',
     ])
     assert len(properties) == 2
-    assert properties['PARAM_1'] == 1
+    assert properties['param_1'] == 1
     assert properties['PARAM_2'] == '2'
     assert len(properties.comments) == 2
     assert properties.comments[0] == 'This is a comment.'
@@ -192,9 +192,8 @@ def test_properties():
 
     assert len(properties) == 19
 
-    with pytest.raises(BdfIllegalPropertiesKey) as info:
-        properties['abc'] = 'abc'
-    assert info.value.key == 'abc'
+    properties['abc'] = 'abc'
+    assert properties['ABC'] == 'abc'
 
     with pytest.raises(BdfIllegalPropertiesKey) as info:
         properties['ABC-DEF'] = 'abcdef'

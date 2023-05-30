@@ -4,8 +4,6 @@ from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
 
 
 def _check_key(key: str):
-    if not key.isupper():
-        raise BdfIllegalPropertiesKey(key, 'is not upper')
     if not key.replace('_', '').isalnum():
         raise BdfIllegalPropertiesKey(key, 'contains illegal characters')
 
@@ -35,10 +33,12 @@ class BdfProperties(UserDict):
         self.comments = comments
 
     def __getitem__(self, key: str) -> str | int:
+        key = key.upper()
         _check_key(key)
         return super().__getitem__(key)
 
     def __setitem__(self, key: str, value: str | int | None):
+        key = key.upper()
         _check_key(key)
         if value is None:
             self.pop(key, None)
