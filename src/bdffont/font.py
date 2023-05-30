@@ -4,7 +4,7 @@ from typing import Iterable, Iterator
 
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfMissingLine, BdfCountIncorrect, BdfGlyphExists
+from bdffont.error import BdfException, BdfMissingLine, BdfCountIncorrect, BdfGlyphExists
 
 
 def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
@@ -201,7 +201,7 @@ class BdfFont:
 
     def __init__(
             self,
-            name: str,
+            name: str | None,
             point_size: int,
             resolution_xy: tuple[int, int],
             bounding_box_size: tuple[int, int],
@@ -299,6 +299,9 @@ class BdfFont:
         return self.code_point_to_glyph.pop(code_point, None)
 
     def encode(self, optimize_bitmap: bool = False) -> list[str]:
+        if self.name is None:
+            raise BdfException("Missing attribute 'name'")
+
         lines = [
             f'STARTFONT {self.spec_version}',
         ]
