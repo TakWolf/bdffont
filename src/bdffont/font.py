@@ -33,7 +33,7 @@ def _convert_tail_to_ints(tail: str) -> list[int]:
 
 def _convert_tail_to_properties_value(tail: str) -> str | int:
     if tail.startswith('"') and tail.endswith('"'):
-        value = tail.removeprefix('"').removesuffix('"')
+        value = tail.removeprefix('"').removesuffix('"').replace('""', '"')
     else:
         try:
             value = int(tail)
@@ -314,6 +314,7 @@ class BdfFont:
                 lines.append(f'COMMENT {comment}')
             for word, value in self.properties.items():
                 if isinstance(value, str):
+                    value = value.replace('"', '""')
                     value = f'"{value}"'
                 lines.append(f'{word} {value}')
             lines.append('ENDPROPERTIES')
