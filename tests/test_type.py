@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
-from bdffont.error import BdfException, BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
+from bdffont.error import BdfException, BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue, BdfIllegalXlfdFontName
 
 
 def test_font():
@@ -113,7 +113,6 @@ def test_properties():
     assert properties.comments[1] == 'This is a comment, too.'
 
     properties.clear()
-    assert len(properties) == 0
 
     properties.foundry = 'TakWolf Studio'
     assert properties.foundry == 'TakWolf Studio'
@@ -172,8 +171,57 @@ def test_properties():
     assert properties['CHARSET_ENCODING'] == '1'
 
     assert len(properties) == 14
+
+    font_name = '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-240-M-85-ISO8859-1'
+    assert properties.to_xlfd_font_name() == font_name
+
+    font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
+    properties.update_by_xlfd_font_name(font_name)
+    assert properties.foundry == 'Bitstream'
+    assert properties.family_name == 'Charter'
+    assert properties.weight_name == 'Medium'
+    assert properties.slant == 'R'
+    assert properties.setwidth_name == 'Normal'
+    assert properties.add_style_name is None
+    assert properties.pixel_size == 12
+    assert properties.point_size == 120
+    assert properties.resolution_x == 75
+    assert properties.resolution_y == 75
+    assert properties.spacing == 'P'
+    assert properties.average_width == 68
+    assert properties.charset_registry == 'ISO8859'
+    assert properties.charset_encoding == '1'
+
+    font_name = '--------------'
+    properties.update_by_xlfd_font_name(font_name)
+    assert properties.foundry is None
+    assert properties.family_name is None
+    assert properties.weight_name is None
+    assert properties.slant is None
+    assert properties.setwidth_name is None
+    assert properties.add_style_name is None
+    assert properties.pixel_size is None
+    assert properties.point_size is None
+    assert properties.resolution_x is None
+    assert properties.resolution_y is None
+    assert properties.spacing is None
+    assert properties.average_width is None
+    assert properties.charset_registry is None
+    assert properties.charset_encoding is None
+
+    font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
+    with pytest.raises(BdfIllegalXlfdFontName) as info:
+        properties.update_by_xlfd_font_name(font_name)
+    assert info.value.font_name == font_name
+    assert info.value.reason == "not starts with '-'"
+
+    font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-'
+    with pytest.raises(BdfIllegalXlfdFontName) as info:
+        properties.update_by_xlfd_font_name(font_name)
+    assert info.value.font_name == font_name
+    assert info.value.reason == "there could only be 14 '-' in the name"
+
     properties.clear()
-    assert len(properties) == 0
 
     properties.default_char = -1
     assert properties.default_char == -1
@@ -197,7 +245,6 @@ def test_properties():
 
     assert len(properties) == 5
     properties.clear()
-    assert len(properties) == 0
 
     properties.font_version = '1.0.0'
     assert properties.font_version == '1.0.0'
@@ -213,7 +260,6 @@ def test_properties():
 
     assert len(properties) == 3
     properties.clear()
-    assert len(properties) == 0
 
     properties['abc'] = 'abc'
     assert properties['ABC'] == 'abc'

@@ -32,6 +32,13 @@ class BdfIllegalPropertiesValue(BdfException):
         super().__init__(f"Illegal properties value of key '{key}': {reason}")
 
 
+class BdfIllegalXlfdFontName(BdfException):
+    def __init__(self, font_name: str, reason: str):
+        self.font_name = font_name
+        self.reason = reason
+        super().__init__(f'Illegal xlfd font name: {reason}')
+
+
 class BdfGlyphExists(BdfException):
     def __init__(self, code_point: int):
         self.code_point = code_point

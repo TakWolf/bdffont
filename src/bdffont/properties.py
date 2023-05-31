@@ -1,6 +1,6 @@
 from collections import UserDict
 
-from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue
+from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue, BdfIllegalXlfdFontName
 
 _KEY_FOUNDRY = 'FOUNDRY'
 _KEY_FAMILY_NAME = 'FAMILY_NAME'
@@ -66,6 +66,23 @@ _XLFD_FONT_NAME_STR_VALUE_KEYS = {
     _KEY_CHARSET_REGISTRY,
     _KEY_CHARSET_ENCODING,
 }
+
+_XLFD_FONT_NAME_KEYS_ORDER = [
+    _KEY_FOUNDRY,
+    _KEY_FAMILY_NAME,
+    _KEY_WEIGHT_NAME,
+    _KEY_SLANT,
+    _KEY_SETWIDTH_NAME,
+    _KEY_ADD_STYLE_NAME,
+    _KEY_PIXEL_SIZE,
+    _KEY_POINT_SIZE,
+    _KEY_RESOLUTION_X,
+    _KEY_RESOLUTION_Y,
+    _KEY_SPACING,
+    _KEY_AVERAGE_WIDTH,
+    _KEY_CHARSET_REGISTRY,
+    _KEY_CHARSET_ENCODING,
+]
 
 
 def _check_key(key: str):
@@ -309,3 +326,27 @@ class BdfProperties(UserDict):
     @notice.setter
     def notice(self, value: str | None):
         self[_KEY_NOTICE] = value
+
+    # ==============
+    # Properties End
+    # ==============
+
+    def to_xlfd_font_name(self) -> str:
+        return f'-{self.foundry}-{self.family_name}-{self.weight_name}-{self.slant}-{self.setwidth_name}-{self.add_style_name}-{self.pixel_size}-{self.point_size}-{self.resolution_x}-{self.resolution_y}-{self.spacing}-{self.average_width}-{self.charset_registry}-{self.charset_encoding}'
+
+    def update_by_xlfd_font_name(self, font_name: str):
+        if not font_name.startswith('-'):
+            raise BdfIllegalXlfdFontName(font_name, "not starts with '-'")
+        if font_name.count('-') != 14:
+            raise BdfIllegalXlfdFontName(font_name, "there could only be 14 '-' in the name")
+        tokens = font_name.removeprefix('-').split('-')
+        for index, token in enumerate(tokens):
+            key = _XLFD_FONT_NAME_KEYS_ORDER[index]
+            if token == '':
+                value = None
+            else:
+                if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+                    value = token
+                else:
+                    value = int(token)
+            self[key] = value
