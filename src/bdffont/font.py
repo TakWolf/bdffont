@@ -218,11 +218,11 @@ class BdfFont:
 
     def __init__(
             self,
-            name: str | None,
-            point_size: int,
-            resolution_xy: tuple[int, int],
-            bounding_box_size: tuple[int, int],
-            bounding_box_offset: tuple[int, int],
+            name: str = None,
+            point_size: int = 0,
+            resolution_xy: tuple[int, int] = (0, 0),
+            bounding_box_size: tuple[int, int] = (0, 0),
+            bounding_box_offset: tuple[int, int] = (0, 0),
             properties: BdfProperties = None,
             comments: list[str] = None,
     ):

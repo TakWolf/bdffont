@@ -5,13 +5,7 @@ from bdffont.error import BdfException, BdfGlyphExists, BdfIllegalBitmap, BdfIll
 
 
 def test_font():
-    font = BdfFont(
-        name=None,
-        point_size=0,
-        resolution_xy=(0, 0),
-        bounding_box_size=(0, 0),
-        bounding_box_offset=(0, 0),
-    )
+    font = BdfFont()
 
     font.resolution_xy = 1, 2
     assert font.resolution_xy == (1, 2)
