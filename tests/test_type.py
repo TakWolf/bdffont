@@ -55,10 +55,10 @@ def test_font():
     font = BdfFont()
 
     with pytest.raises(BdfException) as info:
-        font.update_by_xlfd_font_name()
+        font.update_by_name_as_xlfd_font_name()
     assert info.value.args[0] == "Missing attribute 'name'"
     font.name = '-Adobe-Times-Medium-R-Normal--14-100-100-100-P-74-ISO8859-1'
-    font.update_by_xlfd_font_name()
+    font.update_by_name_as_xlfd_font_name()
     assert font.resolution_x == 100
     assert font.resolution_y == 100
     assert font.properties.foundry == 'Adobe'

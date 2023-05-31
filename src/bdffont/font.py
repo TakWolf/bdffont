@@ -334,7 +334,7 @@ class BdfFont:
     def generate_xlfd_font_name(self):
         self.name = self.properties.to_xlfd_font_name()
 
-    def update_by_xlfd_font_name(self):
+    def update_by_name_as_xlfd_font_name(self):
         if self.name is None:
             raise BdfException("Missing attribute 'name'")
 
