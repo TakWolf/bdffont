@@ -26,7 +26,7 @@ class SetwidthName(StrEnum):
     NORMAL = 'Normal'
     CONDENSED = 'Condensed'
     NARROW = 'Narrow'
-    DOUBLE_WIDE = 'Double_Wide'
+    DOUBLE_WIDE = 'Double Wide'
 
 
 class AddStyleName(StrEnum):
@@ -43,3 +43,8 @@ class Spacing(StrEnum):
     PROPORTIONAL = 'P'
     # A special monospaced font that conforms to the traditional data-processing character cell font model
     CHAR_CELL = 'C'
+
+
+class CharsetRegistry(StrEnum):
+    ISO8859 = 'ISO8859'
+    ISO10646 = 'ISO10646'

@@ -163,7 +163,7 @@ def test_properties():
     assert properties.average_width == 85
     assert properties['AVERAGE_WIDTH'] == 85
 
-    properties.charset_registry = 'ISO8859'
+    properties.charset_registry = xlfd.CharsetRegistry.ISO8859
     assert properties.charset_registry == 'ISO8859'
     assert properties['CHARSET_REGISTRY'] == 'ISO8859'
 
