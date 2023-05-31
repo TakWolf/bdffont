@@ -237,6 +237,7 @@ def test_properties():
     assert info.value.value == '1'
 
     with pytest.raises(BdfIllegalPropertiesValue) as info:
+        # noinspection PyTypeChecker
         properties['FLOAT_PARAM'] = 1.2
     assert info.value.key == 'FLOAT_PARAM'
     assert info.value.value == 1.2
