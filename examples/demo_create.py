@@ -1,30 +1,34 @@
 import os
 
-from bdffont import BdfFont, BdfProperties, BdfGlyph
+from bdffont import BdfFont, BdfGlyph, xlfd
 from examples import outputs_dir
 
 
 def main():
     font = BdfFont(
-        name='my-font',
         point_size=16,
         resolution_xy=(75, 75),
         bounding_box_size=(16, 16),
         bounding_box_offset=(0, -2),
-        properties=BdfProperties({
-            'PARAM_1': 1,
-            'PARAM_2': '2',
-        }),
-        comments=[
-            'This is a comment.',
-            'This is a comment, too.',
-        ],
     )
-    font.properties.font_version = '1.0.0'
-    font.properties.font_ascent = 7
+
+    font.properties.foundry = 'TakWolf Studio'
+    font.properties.family_name = 'Demo Pixel'
+    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    font.properties.pixel_size = 16
+    font.properties.point_size = 160
+    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
+    font.setup_missing_xlfd_properties()
+
+    font.properties.default_char = -1
+    font.properties.font_ascent = 14
     font.properties.font_descent = 2
     font.properties.x_height = 5
     font.properties.cap_height = 7
+
+    font.properties.font_version = '1.0.0'
+    font.properties.copyright = 'Copyright (c) TakWolf'
+
     font.add_glyph(BdfGlyph(
         name='A',
         code_point=ord('A'),
@@ -51,6 +55,12 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0],
         ],
     ))
+
+    glyph_widths = [glyph.scalable_width_x for glyph in font.get_orderly_glyphs()]
+    font.properties.average_width = round(sum(glyph_widths) / font.get_glyphs_count())
+
+    font.generate_xlfd_font_name()
+
     font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
 
 
