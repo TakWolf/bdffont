@@ -2,6 +2,7 @@ import os
 import re
 from typing import Iterable, Iterator
 
+from bdffont import xlfd
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
 from bdffont.error import BdfException, BdfMissingLine, BdfCountIncorrect, BdfGlyphExists
@@ -314,6 +315,32 @@ class BdfFont:
 
     def remove_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.pop(code_point, None)
+
+    def setup_missing_xlfd_properties(self):
+        if self.properties.weight_name is None:
+            self.properties.weight_name = xlfd.WeightName.MEDIUM
+        if self.properties.slant is None:
+            self.properties.slant = xlfd.Slant.ROMAN
+        if self.properties.setwidth_name is None:
+            self.properties.setwidth_name = xlfd.SetwidthName.NORMAL
+        if self.properties.resolution_x is None:
+            self.properties.resolution_x = self.resolution_x
+        if self.properties.resolution_y is None:
+            self.properties.resolution_y = self.resolution_y
+        if self.properties.charset_registry is None and self.properties.charset_encoding is None:
+            self.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
+            self.properties.charset_encoding = '1'
+
+    def generate_xlfd_font_name(self):
+        self.name = self.properties.to_xlfd_font_name()
+
+    def update_by_xlfd_font_name(self):
+        if self.name is None:
+            raise BdfException("Missing attribute 'name'")
+
+        self.properties.update_by_xlfd_font_name(self.name)
+        self.resolution_x = self.properties.resolution_x
+        self.resolution_y = self.properties.resolution_y
 
     def encode(self, optimize_bitmap: bool = False) -> list[str]:
         if self.name is None:

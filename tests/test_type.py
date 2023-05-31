@@ -21,14 +21,62 @@ def test_font():
     assert font.bounding_box_offset == (5, 6)
     assert font.bounding_box_offset_x == 5
     assert font.bounding_box_offset_y == 6
-
     assert font.bounding_box == (3, 4, 5, 6)
+
     font.bounding_box = 7, 8, 9, 10
     assert font.bounding_box == (7, 8, 9, 10)
     assert font.bounding_box_width == 7
     assert font.bounding_box_height == 8
     assert font.bounding_box_offset_x == 9
     assert font.bounding_box_offset_y == 10
+
+    font = BdfFont()
+
+    font.point_size = 16
+    font.resolution_xy = (75, 75)
+    font.properties.foundry = 'TakWolf Studio'
+    font.properties.family_name = 'Demo Pixel'
+    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    font.properties.pixel_size = 16
+    font.properties.point_size = 160
+    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
+    font.properties.average_width = 80
+    font.setup_missing_xlfd_properties()
+    assert font.properties.weight_name == 'Medium'
+    assert font.properties.slant == 'R'
+    assert font.properties.setwidth_name == 'Normal'
+    assert font.properties.resolution_x == 75
+    assert font.properties.resolution_y == 75
+    assert font.properties.charset_registry == 'ISO10646'
+    assert font.properties.charset_encoding == '1'
+    font.generate_xlfd_font_name()
+    assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
+
+    font = BdfFont()
+
+    with pytest.raises(BdfException) as info:
+        font.update_by_xlfd_font_name()
+    assert info.value.args[0] == "Missing attribute 'name'"
+    font.name = '-Adobe-Times-Medium-R-Normal--14-100-100-100-P-74-ISO8859-1'
+    font.update_by_xlfd_font_name()
+    assert font.resolution_x == 100
+    assert font.resolution_y == 100
+    assert font.properties.foundry == 'Adobe'
+    assert font.properties.family_name == 'Times'
+    assert font.properties.weight_name == 'Medium'
+    assert font.properties.slant == 'R'
+    assert font.properties.setwidth_name == 'Normal'
+    assert font.properties.add_style_name is None
+    assert font.properties.pixel_size == 14
+    assert font.properties.point_size == 100
+    assert font.properties.resolution_x == 100
+    assert font.properties.resolution_y == 100
+    assert font.properties.spacing == 'P'
+    assert font.properties.average_width == 74
+    assert font.properties.charset_registry == 'ISO8859'
+    assert font.properties.charset_encoding == '1'
+
+    font = BdfFont()
 
     glyph_a = BdfGlyph(
         name='A',
