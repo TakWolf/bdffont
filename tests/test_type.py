@@ -233,6 +233,7 @@ def test_properties():
     assert properties.average_width == 68
     assert properties.charset_registry == 'ISO8859'
     assert properties.charset_encoding == '1'
+    assert properties.to_xlfd_font_name() == font_name
 
     font_name = '--------------'
     properties.update_by_xlfd_font_name(font_name)
@@ -250,6 +251,7 @@ def test_properties():
     assert properties.average_width is None
     assert properties.charset_registry is None
     assert properties.charset_encoding is None
+    assert properties.to_xlfd_font_name() == font_name
 
     font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
     with pytest.raises(BdfIllegalXlfdFontName) as info:
