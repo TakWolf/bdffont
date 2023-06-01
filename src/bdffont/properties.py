@@ -332,11 +332,10 @@ class BdfProperties(UserDict):
     # ==============
 
     def to_xlfd_font_name(self) -> str:
-        tokens = []
+        tokens = ['']
         for key in _XLFD_FONT_NAME_KEYS_ORDER:
-            value = self.get(key, '')
-            tokens.append(f'-{value}')
-        return ''.join(tokens)
+            tokens.append(str(self.get(key, '')))
+        return '-'.join(tokens)
 
     def update_by_xlfd_font_name(self, font_name: str):
         if not font_name.startswith('-'):
