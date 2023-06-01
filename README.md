@@ -54,23 +54,6 @@ def main():
         bounding_box_offset=(0, -2),
     )
 
-    font.properties.foundry = 'TakWolf Studio'
-    font.properties.family_name = 'Demo Pixel'
-    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
-    font.properties.pixel_size = 16
-    font.properties.point_size = 160
-    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
-    font.setup_missing_xlfd_properties()
-
-    font.properties.default_char = -1
-    font.properties.font_ascent = 14
-    font.properties.font_descent = 2
-    font.properties.x_height = 5
-    font.properties.cap_height = 7
-
-    font.properties.font_version = '1.0.0'
-    font.properties.copyright = 'Copyright (c) TakWolf'
-
     font.add_glyph(BdfGlyph(
         name='A',
         code_point=ord('A'),
@@ -98,8 +81,23 @@ def main():
         ],
     ))
 
-    glyph_widths = [glyph.scalable_width_x for glyph in font.get_orderly_glyphs()]
-    font.properties.average_width = round(sum(glyph_widths) / font.get_glyphs_count())
+    font.properties.foundry = 'TakWolf Studio'
+    font.properties.family_name = 'Demo Pixel'
+    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    font.properties.pixel_size = 16
+    font.properties.point_size = 160
+    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
+    font.properties.average_width = round(sum([glyph.scalable_width_x for glyph in font.code_point_to_glyph.values()]) / font.get_glyphs_count())
+    font.setup_missing_xlfd_properties()
+
+    font.properties.default_char = -1
+    font.properties.font_ascent = 14
+    font.properties.font_descent = 2
+    font.properties.x_height = 5
+    font.properties.cap_height = 7
+
+    font.properties.font_version = '1.0.0'
+    font.properties.copyright = 'Copyright (c) TakWolf'
 
     font.generate_xlfd_font_name()
 
