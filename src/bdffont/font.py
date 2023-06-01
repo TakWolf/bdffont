@@ -256,7 +256,7 @@ class BdfFont:
         if comments is None:
             comments = []
         self.comments = comments
-        self.code_point_to_glyph = {}
+        self.code_point_to_glyph: dict[int, BdfGlyph] = {}
 
     @property
     def resolution_xy(self) -> tuple[int, int]:
