@@ -328,7 +328,7 @@ class BdfProperties(UserDict):
         self[_KEY_NOTICE] = value
 
     # ==============
-    # Properties End
+    # XLFD Font Name
     # ==============
 
     def to_xlfd_font_name(self) -> str:
