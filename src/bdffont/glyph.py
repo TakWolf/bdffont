@@ -115,50 +115,32 @@ class BdfGlyph:
         if optimize_bitmap:
             # Top
             while bounding_box_height > 0:
-                for color in bitmap[0]:
-                    if color != 0:
-                        break
-                else:
-                    bitmap.pop(0)
-                    bounding_box_height -= 1
-                    continue
-                break
+                if any(color != 0 for color in bitmap[0]):
+                    break
+                bitmap.pop(0)
+                bounding_box_height -= 1
             # Bottom
             while bounding_box_height > 0:
-                for color in bitmap[-1]:
-                    if color != 0:
-                        break
-                else:
-                    bitmap.pop()
-                    bounding_box_height -= 1
-                    bounding_box_offset_y += 1
-                    continue
-                break
+                if any(color != 0 for color in bitmap[-1]):
+                    break
+                bitmap.pop()
+                bounding_box_height -= 1
+                bounding_box_offset_y += 1
             # Left
             while bounding_box_width > 0:
+                if any(bitmap_row[0] != 0 for bitmap_row in bitmap):
+                    break
                 for bitmap_row in bitmap:
-                    color = bitmap_row[0]
-                    if color != 0:
-                        break
-                else:
-                    for bitmap_row in bitmap:
-                        bitmap_row.pop(0)
-                    bounding_box_width -= 1
-                    bounding_box_offset_x += 1
-                    continue
-                break
+                    bitmap_row.pop(0)
+                bounding_box_width -= 1
+                bounding_box_offset_x += 1
             # Right
             while bounding_box_width > 0:
+                if any(bitmap_row[-1] != 0 for bitmap_row in bitmap):
+                    break
                 for bitmap_row in bitmap:
-                    color = bitmap_row[-1]
-                    if color != 0:
-                        break
-                else:
-                    for bitmap_row in bitmap:
-                        bitmap_row.pop()
-                    bounding_box_width -= 1
-                    continue
-                break
+                    bitmap_row.pop()
+                bounding_box_width -= 1
 
         remainder = bounding_box_width % 8
         if remainder > 0:
