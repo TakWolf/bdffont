@@ -45,7 +45,7 @@ def main():
     font.properties.pixel_size = 16
     font.properties.point_size = 160
     font.properties.spacing = xlfd.Spacing.PROPORTIONAL
-    font.properties.average_width = round(sum([glyph.scalable_width_x for glyph in font.code_point_to_glyph.values()]) / font.get_glyphs_count())
+    font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.code_point_to_glyph.values()]) / font.get_glyphs_count())
     font.setup_missing_xlfd_properties()
 
     font.properties.default_char = -1
