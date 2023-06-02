@@ -290,16 +290,19 @@ class BdfFont:
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
 
-    def get_glyphs_count(self) -> int:
-        return len(self.code_point_to_glyph)
-
     def get_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.get(code_point, None)
 
-    def get_orderly_glyphs(self) -> list[BdfGlyph]:
+    def get_glyphs(self) -> list[BdfGlyph]:
         glyphs = list(self.code_point_to_glyph.values())
         glyphs.sort(key=lambda glyph: glyph.code_point)
         return glyphs
+
+    def get_glyphs_count(self) -> int:
+        return len(self.code_point_to_glyph)
+
+    def set_glyph(self, glyph: BdfGlyph):
+        self.code_point_to_glyph[glyph.code_point] = glyph
 
     def add_glyph(self, glyph: BdfGlyph):
         if glyph.code_point in self.code_point_to_glyph:
@@ -309,9 +312,6 @@ class BdfFont:
     def add_glyphs(self, glyphs: list[BdfGlyph]):
         for glyph in glyphs:
             self.add_glyph(glyph)
-
-    def set_glyph(self, glyph: BdfGlyph):
-        self.code_point_to_glyph[glyph.code_point] = glyph
 
     def remove_glyph(self, code_point: int) -> BdfGlyph | None:
         return self.code_point_to_glyph.pop(code_point, None)
@@ -367,7 +367,7 @@ class BdfFont:
             lines.append(_WORD_ENDPROPERTIES)
 
         lines.append(f'{_WORD_CHARS} {self.get_glyphs_count()}')
-        for glyph in self.get_orderly_glyphs():
+        for glyph in self.get_glyphs():
             lines.append(f'{_WORD_STARTCHAR} {glyph.name}')
             for comment in glyph.comments:
                 lines.append(f'{_WORD_COMMENT} {comment}')

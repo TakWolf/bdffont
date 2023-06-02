@@ -126,7 +126,7 @@ def test_font():
 
     font.add_glyph(glyph_b)
     font.add_glyph(glyph_a)
-    glyphs = font.get_orderly_glyphs()
+    glyphs = font.get_glyphs()
     assert glyphs[0] == glyph_a
     assert glyphs[1] == glyph_b
 
