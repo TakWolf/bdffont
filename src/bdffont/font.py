@@ -25,12 +25,8 @@ _WORD_BBX = 'BBX'
 _WORD_BITMAP = 'BITMAP'
 
 
-def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
-    while True:
-        try:
-            line = next(lines)
-        except StopIteration:
-            return None
+def _iter_word_lines(lines: Iterable[str]) -> Iterator[tuple[str, str | None]]:
+    for line in lines:
         line = line.strip()
         if line == '':
             continue
@@ -40,7 +36,7 @@ def _next_word_line(lines: Iterator[str]) -> tuple[str, str | None] | None:
             tail = None
         else:
             tail = tokens[1]
-        return word, tail
+        yield word, tail
 
 
 def _convert_tail_to_ints(tail: str) -> list[int]:
@@ -60,10 +56,9 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bool) -> BdfProperties:
+def _decode_properties_segment(word_lines: Iterator[tuple[str, str | None]], count: int, strict_mode: bool) -> BdfProperties:
     properties = BdfProperties()
-    while line_params := _next_word_line(lines):
-        word, tail = line_params
+    for word, tail in word_lines:
         if word == _WORD_ENDPROPERTIES:
             if strict_mode and count != len(properties):
                 raise BdfCountIncorrect(_WORD_STARTPROPERTIES, count, len(properties))
@@ -75,10 +70,9 @@ def _decode_properties_segment(lines: Iterator[str], count: int, strict_mode: bo
     raise BdfMissingLine(_WORD_ENDPROPERTIES)
 
 
-def _decode_bitmap_segment(lines: Iterator[str]) -> list[list[int]]:
+def _decode_bitmap_segment(word_lines: Iterator[tuple[str, str | None]]) -> list[list[int]]:
     bitmap = []
-    while line_params := _next_word_line(lines):
-        word, tail = line_params
+    for word, tail in word_lines:
         if word == _WORD_ENDCHAR:
             return bitmap
         else:
@@ -87,7 +81,7 @@ def _decode_bitmap_segment(lines: Iterator[str]) -> list[list[int]]:
     raise BdfMissingLine(_WORD_ENDCHAR)
 
 
-def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
+def _decode_glyph_segment(word_lines: Iterator[tuple[str, str | None]], name: str) -> BdfGlyph:
     code_point = None
     scalable_width = None
     device_width = None
@@ -95,8 +89,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     bounding_box_offset = None
     bitmap = None
     comments = []
-    while line_params := _next_word_line(lines):
-        word, tail = line_params
+    for word, tail in word_lines:
         if word == _WORD_ENCODING:
             code_point = int(tail)
         elif word == _WORD_SWIDTH:
@@ -113,7 +106,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
             if word == _WORD_BITMAP:
-                bitmap = _decode_bitmap_segment(lines)
+                bitmap = _decode_bitmap_segment(word_lines)
             if code_point is None:
                 raise BdfMissingLine(_WORD_ENCODING)
             if scalable_width is None:
@@ -138,7 +131,7 @@ def _decode_glyph_segment(lines: Iterator[str], name: str) -> BdfGlyph:
     raise BdfMissingLine(_WORD_ENDCHAR)
 
 
-def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
+def _decode_font_segment(word_lines: Iterator[tuple[str, str | None]], strict_mode: bool) -> 'BdfFont':
     name = None
     point_size = None
     resolution_xy = None
@@ -148,8 +141,7 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
     glyphs_count = None
     glyphs = []
     comments = []
-    while line_params := _next_word_line(lines):
-        word, tail = line_params
+    for word, tail in word_lines:
         if word == _WORD_FONT:
             name = tail
         elif word == _WORD_SIZE:
@@ -161,11 +153,11 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
         elif word == _WORD_STARTPROPERTIES:
-            properties = _decode_properties_segment(lines, int(tail), strict_mode)
+            properties = _decode_properties_segment(word_lines, int(tail), strict_mode)
         elif word == _WORD_CHARS:
             glyphs_count = int(tail)
         elif word == _WORD_STARTCHAR:
-            glyphs.append(_decode_glyph_segment(lines, tail))
+            glyphs.append(_decode_glyph_segment(word_lines, tail))
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_ENDFONT:
@@ -196,11 +188,10 @@ def _decode_font_segment(lines: Iterator[str], strict_mode: bool) -> 'BdfFont':
 class BdfFont:
     @staticmethod
     def decode(lines: Iterable[str], strict_mode: bool = False) -> 'BdfFont':
-        lines = iter(lines)
-        while line_params := _next_word_line(lines):
-            word, tail = line_params
+        word_lines = _iter_word_lines(lines)
+        for word, tail in word_lines:
             if word == _WORD_STARTFONT:
-                font = _decode_font_segment(lines, strict_mode)
+                font = _decode_font_segment(word_lines, strict_mode)
                 font.spec_version = tail
                 return font
         raise BdfMissingLine(_WORD_STARTFONT)
