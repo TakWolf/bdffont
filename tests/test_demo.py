@@ -81,10 +81,25 @@ def test_example():
 
 
 def test_unifont():
-    font = load_bdf('unifont-15.0.01.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'unifont-output.bdf'), optimize_bitmap=True)
+    font = load_bdf('unifont/unifont-15.0.01.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 
 
 def test_galmuri9():
-    font = load_bdf('galmuri9.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'galmuri9-output.bdf'), optimize_bitmap=True)
+    font = load_bdf('galmuri/galmuri9.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'galmuri9.bdf'), optimize_bitmap=True)
+
+
+def test_misaki_gothic():
+    font = load_bdf('misaki/misaki_gothic.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'misaki_gothic.bdf'))
+
+
+def test_misaki_gothic_2nd():
+    font = load_bdf('misaki/misaki_gothic_2nd.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'misaki_gothic_2nd.bdf'))
+
+
+def test_misaki_mincho():
+    font = load_bdf('misaki/misaki_mincho.bdf')[0]
+    font.save(os.path.join(outputs_dir, 'misaki_mincho.bdf'))

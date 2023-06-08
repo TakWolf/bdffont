@@ -5,7 +5,7 @@ from examples import assets_dir, outputs_dir
 
 
 def main():
-    font = BdfFont.load(os.path.join(assets_dir, 'unifont-15.0.01.bdf'))
+    font = BdfFont.load(os.path.join(assets_dir, 'unifont', 'unifont-15.0.01.bdf'))
     print(f'name: {font.name}')
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
