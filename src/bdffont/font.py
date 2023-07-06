@@ -206,7 +206,7 @@ class BdfFont:
             strict_mode: bool = False,
     ) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
-            return BdfFont.decode(file.readlines(), strict_mode)
+            return BdfFont.decode_str(file.read(), strict_mode)
 
     def __init__(
             self,
