@@ -7,7 +7,7 @@ BdfFont is a library for manipulating [`.bdf` format fonts](https://en.wikipedia
 
 ## Installation
 
-```commandline
+```shell
 pip install bdffont
 ```
 
