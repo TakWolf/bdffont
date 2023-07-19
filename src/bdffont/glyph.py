@@ -110,7 +110,7 @@ class BdfGlyph:
         bounding_box_height = self.bounding_box_height
         bounding_box_offset_x = self.bounding_box_offset_x
         bounding_box_offset_y = self.bounding_box_offset_y
-        bitmap = [[color for color in bitmap_row] for bitmap_row in self.bitmap]
+        bitmap = [bitmap_row[:] for bitmap_row in self.bitmap]
 
         if optimize_bitmap:
             # Top
