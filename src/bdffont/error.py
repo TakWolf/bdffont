@@ -25,7 +25,7 @@ class BdfIllegalPropertiesKey(BdfException):
 
 
 class BdfIllegalPropertiesValue(BdfException):
-    def __init__(self, key: str, value: any, reason: str):
+    def __init__(self, key: str, value: object, reason: str):
         self.key = key
         self.value = value
         self.reason = reason

@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Iterable, Iterator
+from collections.abc import Iterable, Iterator
 
 from bdffont import xlfd
 from bdffont.properties import BdfProperties
@@ -245,9 +245,9 @@ class BdfFont:
             properties = BdfProperties()
         self.properties = properties
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
-        self.code_point_to_glyph = dict[int, BdfGlyph]()
+        self.code_point_to_glyph: dict[int, BdfGlyph] = {}
 
     @property
     def resolution_xy(self) -> tuple[int, int]:

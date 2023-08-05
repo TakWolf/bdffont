@@ -106,7 +106,7 @@ def _check_value(key: str, value: str | int):
                 raise BdfIllegalPropertiesValue(key, value, f"contains illegal characters '{c}'")
 
 
-class BdfProperties(UserDict):
+class BdfProperties(UserDict[str, str | int | None]):
     def __init__(
             self,
             data: dict[str, str | int | None] = None,
@@ -122,7 +122,7 @@ class BdfProperties(UserDict):
         if data is not None:
             self.update(data)
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
 
     def __getitem__(self, key: str) -> str | int:

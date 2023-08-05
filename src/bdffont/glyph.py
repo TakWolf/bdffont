@@ -52,10 +52,10 @@ class BdfGlyph:
         self.bounding_box_width, self.bounding_box_height = bounding_box_size
         self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
         if bitmap is None:
-            bitmap = list[list[int]]()
+            bitmap = []
         self.bitmap = bitmap
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
 
     @property
