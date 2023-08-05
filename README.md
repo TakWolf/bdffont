@@ -81,7 +81,7 @@ def main():
         ],
     ))
 
-    font.properties.foundry = 'TakWolf Studio'
+    font.properties.foundry = 'Pixel Font Studio'
     font.properties.family_name = 'Demo Pixel'
     font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
     font.properties.pixel_size = 16
