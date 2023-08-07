@@ -118,9 +118,7 @@ class BdfProperties(UserDict[str, str | int | None]):
         :param comments:
             The comments.
         """
-        super().__init__()
-        if data is not None:
-            self.update(data)
+        super().__init__(data)
         if comments is None:
             comments = []
         self.comments = comments
