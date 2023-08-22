@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "bdffont"
 version = "0.0.13"
@@ -24,6 +28,7 @@ source = "https://github.com/TakWolf/bdffont"
 issues = "https://github.com/TakWolf/bdffont/issues"
 
 [tool.pytest.ini_options]
-pythonpath = [
-    "src",
+pythonpath = "src"
+addopts = [
+    "--import-mode=importlib",
 ]
