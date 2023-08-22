@@ -4,11 +4,10 @@ from pathlib import Path
 from bdffont import BdfFont
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-assets_dir = os.path.join(project_root_dir, 'assets')
 
 
 def _load_bdf(file_name: str) -> tuple[BdfFont, str]:
-    file_path = os.path.join(assets_dir, file_name)
+    file_path = os.path.join(project_root_dir, 'assets', file_name)
     with open(file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
     font = BdfFont.decode_str(bdf_text)

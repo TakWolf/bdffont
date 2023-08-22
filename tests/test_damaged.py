@@ -6,11 +6,10 @@ from bdffont import BdfFont
 from bdffont.error import BdfMissingLine, BdfCountIncorrect
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-assets_dir = os.path.join(project_root_dir, 'assets')
 
 
 def _load_damaged_bdf(file_name: str, strict_mode: bool = False):
-    file_path = os.path.join(assets_dir, 'damaged', file_name)
+    file_path = os.path.join(project_root_dir, 'assets', 'damaged', file_name)
     BdfFont.load(file_path, strict_mode=strict_mode)
 
 
