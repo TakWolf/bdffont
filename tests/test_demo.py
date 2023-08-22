@@ -1,10 +1,13 @@
 import os
+from pathlib import Path
 
 from bdffont import BdfFont
-from tests import assets_dir, outputs_dir
+
+project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+assets_dir = os.path.join(project_root_dir, 'assets')
 
 
-def load_bdf(file_name: str) -> tuple[BdfFont, str]:
+def _load_bdf(file_name: str) -> tuple[BdfFont, str]:
     file_path = os.path.join(assets_dir, file_name)
     with open(file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
@@ -12,8 +15,8 @@ def load_bdf(file_name: str) -> tuple[BdfFont, str]:
     return font, bdf_text
 
 
-def test_example():
-    font, bdf_text = load_bdf('example.bdf')
+def test_example(tmp_path: Path):
+    font, bdf_text = _load_bdf('example.bdf')
     assert font.encode_str() == bdf_text
     assert font.encode_str(optimize_bitmap=True) == bdf_text
     assert font.spec_version == '2.1'
@@ -77,29 +80,29 @@ def test_example():
     ]
     for i, bitmap_row in enumerate(glyph.bitmap):
         assert ''.join(map(str, bitmap_row)).replace('0', '_').replace('1', '#') == glyph_data[i]
-    font.save(os.path.join(outputs_dir, 'example-output.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(tmp_path, 'example-output.bdf'), optimize_bitmap=True)
 
 
-def test_unifont():
-    font = load_bdf('unifont/unifont-15.0.01.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
+def test_unifont(tmp_path: Path):
+    font = _load_bdf('unifont/unifont-15.0.01.bdf')[0]
+    font.save(os.path.join(tmp_path, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 
 
-def test_galmuri9():
-    font = load_bdf('galmuri/galmuri9.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'galmuri9.bdf'), optimize_bitmap=True)
+def test_galmuri9(tmp_path: Path):
+    font = _load_bdf('galmuri/galmuri9.bdf')[0]
+    font.save(os.path.join(tmp_path, 'galmuri9.bdf'), optimize_bitmap=True)
 
 
-def test_misaki_gothic():
-    font = load_bdf('misaki/misaki_gothic.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'misaki_gothic.bdf'))
+def test_misaki_gothic(tmp_path: Path):
+    font = _load_bdf('misaki/misaki_gothic.bdf')[0]
+    font.save(os.path.join(tmp_path, 'misaki_gothic.bdf'))
 
 
-def test_misaki_gothic_2nd():
-    font = load_bdf('misaki/misaki_gothic_2nd.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'misaki_gothic_2nd.bdf'))
+def test_misaki_gothic_2nd(tmp_path: Path):
+    font = _load_bdf('misaki/misaki_gothic_2nd.bdf')[0]
+    font.save(os.path.join(tmp_path, 'misaki_gothic_2nd.bdf'))
 
 
-def test_misaki_mincho():
-    font = load_bdf('misaki/misaki_mincho.bdf')[0]
-    font.save(os.path.join(outputs_dir, 'misaki_mincho.bdf'))
+def test_misaki_mincho(tmp_path: Path):
+    font = _load_bdf('misaki/misaki_mincho.bdf')[0]
+    font.save(os.path.join(tmp_path, 'misaki_mincho.bdf'))

@@ -19,7 +19,7 @@ pip install bdffont
 import os
 
 from bdffont import BdfFont
-from examples import assets_dir, outputs_dir
+from examples import assets_dir, build_dir
 
 
 def main():
@@ -30,7 +30,7 @@ def main():
     print(f'descent: {font.properties.font_descent}')
     for glyph in font.get_glyphs():
         print(f'glyph: {glyph.name} - {glyph.code_point:04X}')
-    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(build_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 
 
 if __name__ == '__main__':
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 import os
 
 from bdffont import BdfFont, BdfGlyph, xlfd
-from examples import outputs_dir
+from examples import build_dir
 
 
 def main():
@@ -101,7 +101,7 @@ def main():
 
     font.generate_xlfd_font_name()
 
-    font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(build_dir, 'my-font.bdf'), optimize_bitmap=True)
 
 
 if __name__ == '__main__':

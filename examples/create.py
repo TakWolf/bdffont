@@ -1,7 +1,7 @@
 import os
 
 from bdffont import BdfFont, BdfGlyph, xlfd
-from examples import outputs_dir
+from examples import build_dir
 
 
 def main():
@@ -59,7 +59,7 @@ def main():
 
     font.generate_xlfd_font_name()
 
-    font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(build_dir, 'my-font.bdf'), optimize_bitmap=True)
 
 
 if __name__ == '__main__':
