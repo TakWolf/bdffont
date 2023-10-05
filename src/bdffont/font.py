@@ -198,7 +198,7 @@ class BdfFont:
 
     @staticmethod
     def decode_str(text: str, strict_mode: bool = False) -> 'BdfFont':
-        return BdfFont.decode(text.split('\n'), strict_mode)
+        return BdfFont.decode(re.split(r'\r\n|\r|\n', text), strict_mode)
 
     @staticmethod
     def load(
