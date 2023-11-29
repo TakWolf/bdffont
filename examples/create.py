@@ -1,10 +1,16 @@
 import os
+import shutil
 
 from bdffont import BdfFont, BdfGlyph, xlfd
 from examples import build_dir
 
 
 def main():
+    outputs_dir = os.path.join(build_dir, 'create')
+    if os.path.exists(outputs_dir):
+        shutil.rmtree(outputs_dir)
+    os.makedirs(outputs_dir)
+
     font = BdfFont(
         point_size=16,
         resolution_xy=(75, 75),
@@ -59,7 +65,7 @@ def main():
 
     font.generate_xlfd_font_name()
 
-    font.save(os.path.join(build_dir, 'my-font.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
 
 
 if __name__ == '__main__':
