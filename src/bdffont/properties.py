@@ -1,3 +1,4 @@
+import re
 from collections import UserDict
 
 from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue, BdfIllegalXlfdFontName
@@ -101,9 +102,9 @@ def _check_value(key: str, value: str | int):
         if not isinstance(value, str) and not isinstance(value, int):
             raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
     if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
-        for c in ['-', '?', ',', '"']:
-            if c in value:
-                raise BdfIllegalPropertiesValue(key, value, f"contains illegal characters '{c}'")
+        matched = re.search(r'[-?*,"]', value)
+        if matched is not None:
+            raise BdfIllegalPropertiesValue(key, value, f"contains illegal characters '{matched.group()}'")
 
 
 class BdfProperties(UserDict[str, str | int | None]):
