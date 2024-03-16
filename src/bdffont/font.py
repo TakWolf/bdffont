@@ -1,3 +1,4 @@
+import io
 import os
 import re
 from collections.abc import Iterator
@@ -333,45 +334,43 @@ class BdfFont:
         if self.name is None:
             raise BdfException("Missing attribute 'name'")
 
-        lines = [
-            f'{_WORD_STARTFONT} {self.spec_version}',
-        ]
+        output = io.StringIO()
+        output.write(f'{_WORD_STARTFONT} {self.spec_version}\n')
         for comment in self.comments:
-            lines.append(f'{_WORD_COMMENT} {comment}')
-        lines.append(f'{_WORD_FONT} {self.name}')
-        lines.append(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}')
-        lines.append(f'{_WORD_FONTBOUNDINGBOX} {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}')
+            output.write(f'{_WORD_COMMENT} {comment}\n')
+        output.write(f'{_WORD_FONT} {self.name}\n')
+        output.write(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}\n')
+        output.write(f'{_WORD_FONTBOUNDINGBOX} {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}\n')
 
         if len(self.properties) > 0 or len(self.properties.comments) > 0:
-            lines.append(f'{_WORD_STARTPROPERTIES} {len(self.properties)}')
+            output.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
             for comment in self.properties.comments:
-                lines.append(f'{_WORD_COMMENT} {comment}')
+                output.write(f'{_WORD_COMMENT} {comment}\n')
             for word, value in self.properties.items():
                 if isinstance(value, str):
                     value = value.replace('"', '""')
                     value = f'"{value}"'
-                lines.append(f'{word} {value}')
-            lines.append(_WORD_ENDPROPERTIES)
+                output.write(f'{word} {value}\n')
+            output.write(f'{_WORD_ENDPROPERTIES}\n')
 
-        lines.append(f'{_WORD_CHARS} {self.get_glyphs_count()}')
+        output.write(f'{_WORD_CHARS} {self.get_glyphs_count()}\n')
         for glyph in self.get_glyphs():
-            lines.append(f'{_WORD_STARTCHAR} {glyph.name}')
+            output.write(f'{_WORD_STARTCHAR} {glyph.name}\n')
             for comment in glyph.comments:
-                lines.append(f'{_WORD_COMMENT} {comment}')
-            lines.append(f'{_WORD_ENCODING} {glyph.code_point}')
-            lines.append(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}')
-            lines.append(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}')
+                output.write(f'{_WORD_COMMENT} {comment}\n')
+            output.write(f'{_WORD_ENCODING} {glyph.code_point}\n')
+            output.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
+            output.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
             (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_8bit_aligned_bitmap(optimize_bitmap)
-            lines.append(f'{_WORD_BBX} {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}')
-            lines.append(_WORD_BITMAP)
+            output.write(f'{_WORD_BBX} {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}\n')
+            output.write(f'{_WORD_BITMAP}\n')
             for bitmap_row in bitmap:
-                hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
-                lines.append(hex_format.format(int(''.join(map(str, bitmap_row)), 2)))
-            lines.append(_WORD_ENDCHAR)
+                hex_value = ('{:0' + str(len(bitmap_row) // 4) + 'X}').format(int(''.join(map(str, bitmap_row)), 2))
+                output.write(f'{hex_value}\n')
+            output.write(f'{_WORD_ENDCHAR}\n')
 
-        lines.append(_WORD_ENDFONT)
-        lines.append('')
-        return '\n'.join(lines)
+        output.write(f'{_WORD_ENDFONT}\n')
+        return output.getvalue()
 
     def save(
             self,
