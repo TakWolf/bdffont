@@ -187,8 +187,8 @@ def _decode_font_segment(word_lines: Iterator[tuple[str, str | None]], strict_mo
 
 class BdfFont:
     @staticmethod
-    def decode(lines: Iterable[str], strict_mode: bool = False) -> 'BdfFont':
-        word_lines = _iter_word_lines(lines)
+    def decode(text: str, strict_mode: bool = False) -> 'BdfFont':
+        word_lines = _iter_word_lines(re.split(r'\r\n|\r|\n', text))
         for word, tail in word_lines:
             if word == _WORD_STARTFONT:
                 font = _decode_font_segment(word_lines, strict_mode)
@@ -197,16 +197,12 @@ class BdfFont:
         raise BdfMissingLine(_WORD_STARTFONT)
 
     @staticmethod
-    def decode_str(text: str, strict_mode: bool = False) -> 'BdfFont':
-        return BdfFont.decode(re.split(r'\r\n|\r|\n', text), strict_mode)
-
-    @staticmethod
     def load(
             file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
             strict_mode: bool = False,
     ) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
-            return BdfFont.decode_str(file.read(), strict_mode)
+            return BdfFont.decode(file.read(), strict_mode)
 
     def __init__(
             self,
@@ -333,7 +329,7 @@ class BdfFont:
         self.resolution_x = self.properties.resolution_x
         self.resolution_y = self.properties.resolution_y
 
-    def encode(self, optimize_bitmap: bool = False) -> list[str]:
+    def encode(self, optimize_bitmap: bool = False) -> str:
         if self.name is None:
             raise BdfException("Missing attribute 'name'")
 
@@ -375,10 +371,7 @@ class BdfFont:
 
         lines.append(_WORD_ENDFONT)
         lines.append('')
-        return lines
-
-    def encode_str(self, optimize_bitmap: bool = False) -> str:
-        return '\n'.join(self.encode(optimize_bitmap))
+        return '\n'.join(lines)
 
     def save(
             self,
@@ -386,4 +379,4 @@ class BdfFont:
             optimize_bitmap: bool = False,
     ):
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(self.encode_str(optimize_bitmap))
+            file.write(self.encode(optimize_bitmap))
