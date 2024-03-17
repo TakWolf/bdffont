@@ -27,7 +27,7 @@ _WORD_BITMAP = 'BITMAP'
 
 
 def _iter_as_lines(text: str) -> Iterator[tuple[str, str | None]]:
-    for line in re.split(r'\r\n|\r|\n', text):
+    for line in text.splitlines():
         line = line.strip()
         if line == '':
             continue
