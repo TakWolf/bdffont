@@ -120,6 +120,12 @@ if __name__ == '__main__':
     main()
 ```
 
+## Test Fonts
+
+- [GNU Unifont Glyphs](https://unifoundry.com/unifont/index.html)
+- [Galmuri](https://github.com/quiple/galmuri)
+- [美咲フォント / Misaki](https://littlelimit.net/misaki.htm)
+
 ## References
 
 - [X11 - Bitmap Distribution Format - Version 2.1](https://www.x.org/docs/BDF/bdf.pdf)
