@@ -83,8 +83,8 @@ def test_example(tmp_path: Path):
 
 
 def test_unifont(tmp_path: Path):
-    font = _load_bdf('unifont/unifont-15.0.01.bdf')[0]
-    font.save(os.path.join(tmp_path, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
+    font = _load_bdf('unifont/unifont-15.1.05.bdf')[0]
+    font.save(os.path.join(tmp_path, 'unifont-15.1.05.bdf'), optimize_bitmap=True)
 
 
 def test_galmuri9(tmp_path: Path):

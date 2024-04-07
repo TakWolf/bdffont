@@ -15,7 +15,7 @@ def _print_bdf(file_name: str):
 
 
 def main():
-    _print_bdf('unifont/unifont-15.0.01.bdf')
+    _print_bdf('unifont/unifont-15.1.05.bdf')
     _print_bdf('galmuri/galmuri9.bdf')
     _print_bdf('misaki/misaki_gothic.bdf')
     _print_bdf('misaki/misaki_gothic_2nd.bdf')
