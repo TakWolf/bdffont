@@ -1,7 +1,7 @@
 import re
 from collections import UserDict
 
-from bdffont.error import BdfIllegalPropertiesKey, BdfIllegalPropertiesValue, BdfIllegalXlfdFontName
+from bdffont.error import BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 _KEY_FOUNDRY = 'FOUNDRY'
 _KEY_FAMILY_NAME = 'FAMILY_NAME'
@@ -88,23 +88,23 @@ _XLFD_FONT_NAME_KEYS_ORDER = [
 
 def _check_key(key: str):
     if not key.replace('_', '').isalnum():
-        raise BdfIllegalPropertiesKey(key, 'contains illegal characters')
+        raise BdfPropKeyError(key, 'contains illegal characters')
 
 
 def _check_value(key: str, value: str | int):
     if key in _STR_VALUE_KEYS:
         if not isinstance(value, str):
-            raise BdfIllegalPropertiesValue(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
+            raise BdfPropValueError(key, value, f"expected type 'str', got '{type(value).__name__}' instead")
     elif key in _INT_VALUE_KEYS:
         if not isinstance(value, int):
-            raise BdfIllegalPropertiesValue(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
+            raise BdfPropValueError(key, value, f"expected type 'int', got '{type(value).__name__}' instead")
     else:
         if not isinstance(value, str) and not isinstance(value, int):
-            raise BdfIllegalPropertiesValue(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
+            raise BdfPropValueError(key, value, f"expected type 'str | int', got '{type(value).__name__}' instead")
     if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
         matched = re.search(r'[-?*,"]', value)
         if matched is not None:
-            raise BdfIllegalPropertiesValue(key, value, f"contains illegal characters '{matched.group()}'")
+            raise BdfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
 
 
 class BdfProperties(UserDict[str, str | int | None]):
@@ -338,9 +338,9 @@ class BdfProperties(UserDict[str, str | int | None]):
 
     def update_by_xlfd_font_name(self, font_name: str):
         if not font_name.startswith('-'):
-            raise BdfIllegalXlfdFontName(font_name, "not starts with '-'")
+            raise BdfXlfdError(font_name, "not starts with '-'")
         if font_name.count('-') != 14:
-            raise BdfIllegalXlfdFontName(font_name, "there could only be 14 '-' in the name")
+            raise BdfXlfdError(font_name, "there could only be 14 '-' in the name")
         tokens = font_name.removeprefix('-').split('-')
         for index, token in enumerate(tokens):
             key = _XLFD_FONT_NAME_KEYS_ORDER[index]

@@ -1,4 +1,4 @@
-from bdffont.error import BdfIllegalBitmap
+from bdffont.error import BdfGlyphError
 
 
 class BdfGlyph:
@@ -100,9 +100,9 @@ class BdfGlyph:
 
     def check_bitmap_validity(self):
         if len(self.bitmap) != self.bounding_box_height:
-            raise BdfIllegalBitmap(self.code_point, f"bitmap height not equals 'bounding_box_height'")
+            raise BdfGlyphError(self.code_point, f"bitmap height not equals 'bounding_box_height'")
         if any(len(bitmap_row) != self.bounding_box_width for bitmap_row in self.bitmap):
-            raise BdfIllegalBitmap(self.code_point, f"bitmap width not equals 'bounding_box_width'")
+            raise BdfGlyphError(self.code_point, f"bitmap width not equals 'bounding_box_width'")
 
     def get_8bit_aligned_bitmap(self, optimize_bitmap: bool = False) -> tuple[tuple[int, int], tuple[int, int], list[list[int]]]:
         self.check_bitmap_validity()

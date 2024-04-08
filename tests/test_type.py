@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
-from bdffont.error import BdfException, BdfGlyphExists, BdfIllegalBitmap, BdfIllegalPropertiesKey, BdfIllegalPropertiesValue, BdfIllegalXlfdFontName
+from bdffont.error import BdfError, BdfGlyphError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 
 def test_font():
@@ -54,7 +54,7 @@ def test_font():
 
     font = BdfFont()
 
-    with pytest.raises(BdfException) as info:
+    with pytest.raises(BdfError) as info:
         font.update_by_name_as_xlfd_font_name()
     assert info.value.args[0] == "Missing attribute 'name'"
     font.name = '-Adobe-Times-Medium-R-Normal--14-100-100-100-P-74-ISO8859-1'
@@ -109,11 +109,11 @@ def test_font():
     assert font.get_glyphs_count() == 2
     assert font.get_glyph(ord('B')) == glyph_b
 
-    with pytest.raises(BdfGlyphExists) as info:
+    with pytest.raises(BdfGlyphError) as info:
         font.add_glyph(glyph_a)
     assert info.value.code_point == ord('A')
 
-    with pytest.raises(BdfGlyphExists) as info:
+    with pytest.raises(BdfGlyphError) as info:
         font.add_glyphs([glyph_a, glyph_b])
     assert info.value.code_point == ord('A')
 
@@ -130,7 +130,7 @@ def test_font():
     assert glyphs[0] == glyph_a
     assert glyphs[1] == glyph_b
 
-    with pytest.raises(BdfException) as info:
+    with pytest.raises(BdfError) as info:
         font.dump()
     assert info.value.args[0] == "Missing attribute 'name'"
     font.name = 'my-font'
@@ -254,13 +254,13 @@ def test_properties():
     assert properties.to_xlfd_font_name() == font_name
 
     font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
-    with pytest.raises(BdfIllegalXlfdFontName) as info:
+    with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd_font_name(font_name)
     assert info.value.font_name == font_name
     assert info.value.reason == "not starts with '-'"
 
     font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-'
-    with pytest.raises(BdfIllegalXlfdFontName) as info:
+    with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd_font_name(font_name)
     assert info.value.font_name == font_name
     assert info.value.reason == "there could only be 14 '-' in the name"
@@ -309,30 +309,30 @@ def test_properties():
     assert properties['ABC'] == 'abc'
     assert properties['abc'] == 'abc'
 
-    with pytest.raises(BdfIllegalPropertiesKey) as info:
+    with pytest.raises(BdfPropKeyError) as info:
         properties['abc-def'] = 'abcdef'
     assert info.value.key == 'ABC-DEF'
 
     properties['NONE_PARAM'] = None
     assert 'NONE_PARAM' not in properties
 
-    with pytest.raises(BdfIllegalPropertiesValue) as info:
+    with pytest.raises(BdfPropValueError) as info:
         properties.foundry = 1
     assert info.value.key == 'FOUNDRY'
     assert info.value.value == 1
 
-    with pytest.raises(BdfIllegalPropertiesValue) as info:
+    with pytest.raises(BdfPropValueError) as info:
         properties.pixel_size = '1'
     assert info.value.key == 'PIXEL_SIZE'
     assert info.value.value == '1'
 
-    with pytest.raises(BdfIllegalPropertiesValue) as info:
+    with pytest.raises(BdfPropValueError) as info:
         # noinspection PyTypeChecker
         properties['FLOAT_PARAM'] = 1.2
     assert info.value.key == 'FLOAT_PARAM'
     assert info.value.value == 1.2
 
-    with pytest.raises(BdfIllegalPropertiesValue) as info:
+    with pytest.raises(BdfPropValueError) as info:
         properties.family_name = 'Demo-Pixel'
     assert info.value.key == 'FAMILY_NAME'
     assert info.value.value == 'Demo-Pixel'
@@ -401,12 +401,12 @@ def test_bitmap():
     glyph.check_bitmap_validity()
 
     glyph.bitmap.pop()
-    with pytest.raises(BdfIllegalBitmap) as info:
+    with pytest.raises(BdfGlyphError) as info:
         glyph.check_bitmap_validity()
     assert info.value.code_point == glyph.code_point
 
     glyph.bitmap.append([0, 0, 0, 0, 0, 0])
-    with pytest.raises(BdfIllegalBitmap) as info:
+    with pytest.raises(BdfGlyphError) as info:
         glyph.check_bitmap_validity()
     assert info.value.code_point == glyph.code_point
 
