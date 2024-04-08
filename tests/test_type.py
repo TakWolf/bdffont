@@ -131,10 +131,10 @@ def test_font():
     assert glyphs[1] == glyph_b
 
     with pytest.raises(BdfException) as info:
-        font.encode()
+        font.dump()
     assert info.value.args[0] == "Missing attribute 'name'"
     font.name = 'my-font'
-    font.encode()
+    font.dump()
 
 
 def test_properties():

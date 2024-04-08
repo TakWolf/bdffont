@@ -57,7 +57,7 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _decode_properties_segment(lines: Iterator[tuple[str, str | None]], count: int, strict_mode: bool) -> BdfProperties:
+def _parse_properties_segment(lines: Iterator[tuple[str, str | None]], count: int, strict_mode: bool) -> BdfProperties:
     properties = BdfProperties()
     for word, tail in lines:
         if word == _WORD_ENDPROPERTIES:
@@ -71,7 +71,7 @@ def _decode_properties_segment(lines: Iterator[tuple[str, str | None]], count: i
     raise BdfMissingLine(_WORD_ENDPROPERTIES)
 
 
-def _decode_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list[int]]:
+def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list[int]]:
     bitmap = []
     for word, tail in lines:
         if word == _WORD_ENDCHAR:
@@ -82,7 +82,7 @@ def _decode_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list
     raise BdfMissingLine(_WORD_ENDCHAR)
 
 
-def _decode_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> BdfGlyph:
+def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> BdfGlyph:
     code_point = None
     scalable_width = None
     device_width = None
@@ -107,7 +107,7 @@ def _decode_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) ->
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
             if word == _WORD_BITMAP:
-                bitmap = _decode_bitmap_segment(lines)
+                bitmap = _parse_bitmap_segment(lines)
             if code_point is None:
                 raise BdfMissingLine(_WORD_ENCODING)
             if scalable_width is None:
@@ -132,7 +132,7 @@ def _decode_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) ->
     raise BdfMissingLine(_WORD_ENDCHAR)
 
 
-def _decode_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bool) -> 'BdfFont':
+def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bool) -> 'BdfFont':
     name = None
     point_size = None
     resolution_xy = None
@@ -154,11 +154,11 @@ def _decode_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: b
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
         elif word == _WORD_STARTPROPERTIES:
-            properties = _decode_properties_segment(lines, int(tail), strict_mode)
+            properties = _parse_properties_segment(lines, int(tail), strict_mode)
         elif word == _WORD_CHARS:
             glyphs_count = int(tail)
         elif word == _WORD_STARTCHAR:
-            glyphs.append(_decode_glyph_segment(lines, tail))
+            glyphs.append(_parse_glyph_segment(lines, tail))
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_ENDFONT:
@@ -188,11 +188,11 @@ def _decode_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: b
 
 class BdfFont:
     @staticmethod
-    def decode(text: str, strict_mode: bool = False) -> 'BdfFont':
+    def parse(text: str, strict_mode: bool = False) -> 'BdfFont':
         lines = _iter_as_lines(text)
         for word, tail in lines:
             if word == _WORD_STARTFONT:
-                font = _decode_font_segment(lines, strict_mode)
+                font = _parse_font_segment(lines, strict_mode)
                 font.spec_version = tail
                 return font
         raise BdfMissingLine(_WORD_STARTFONT)
@@ -203,7 +203,7 @@ class BdfFont:
             strict_mode: bool = False,
     ) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
-            return BdfFont.decode(file.read(), strict_mode)
+            return BdfFont.parse(file.read(), strict_mode)
 
     def __init__(
             self,
@@ -330,7 +330,7 @@ class BdfFont:
         self.resolution_x = self.properties.resolution_x
         self.resolution_y = self.properties.resolution_y
 
-    def encode(self, optimize_bitmap: bool = False) -> str:
+    def dump(self, optimize_bitmap: bool = False) -> str:
         if self.name is None:
             raise BdfException("Missing attribute 'name'")
 
@@ -378,4 +378,4 @@ class BdfFont:
             optimize_bitmap: bool = False,
     ):
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(self.encode(optimize_bitmap))
+            file.write(self.dump(optimize_bitmap))

@@ -10,14 +10,14 @@ def _load_bdf(file_name: str) -> tuple[BdfFont, str]:
     file_path = os.path.join(project_root_dir, 'assets', file_name)
     with open(file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
-    font = BdfFont.decode(bdf_text)
+    font = BdfFont.parse(bdf_text)
     return font, bdf_text
 
 
 def test_example(tmp_path: Path):
     font, bdf_text = _load_bdf('example.bdf')
-    assert font.encode() == bdf_text
-    assert font.encode(optimize_bitmap=True) == bdf_text
+    assert font.dump() == bdf_text
+    assert font.dump(optimize_bitmap=True) == bdf_text
     assert font.spec_version == '2.1'
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
     assert font.point_size == 24
