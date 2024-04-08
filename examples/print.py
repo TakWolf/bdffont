@@ -5,8 +5,8 @@ from examples import assets_dir
 
 
 def _print_bdf(file_name: str):
-    font = BdfFont.load(os.path.join(assets_dir, file_name))
     print(f'##### {file_name}')
+    font = BdfFont.load(os.path.join(assets_dir, file_name))
     for glyph in font.get_glyphs():
         print(f'-> U+{glyph.code_point:04X} {chr(glyph.code_point)} {glyph.bounding_box}')
         for bitmap_row in glyph.bitmap:
