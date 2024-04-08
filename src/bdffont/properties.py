@@ -138,10 +138,6 @@ class BdfProperties(UserDict[str, str | int | None]):
             _check_value(key, value)
             super().__setitem__(key, value)
 
-    # ========================
-    # XLFD FontName Properties
-    # ========================
-
     @property
     def foundry(self) -> str | None:
         return self.get(_KEY_FOUNDRY, None)
@@ -254,10 +250,6 @@ class BdfProperties(UserDict[str, str | int | None]):
     def charset_encoding(self, value: str | None):
         self[_KEY_CHARSET_ENCODING] = value
 
-    # ============================
-    # Glyph and Metrics Properties
-    # ============================
-
     @property
     def default_char(self) -> int | None:
         return self.get(_KEY_DEFAULT_CHAR, None)
@@ -298,10 +290,6 @@ class BdfProperties(UserDict[str, str | int | None]):
     def cap_height(self, value: int | None):
         self[_KEY_CAP_HEIGHT] = value
 
-    # ===============
-    # Meta Properties
-    # ===============
-
     @property
     def font_version(self) -> str | None:
         return self.get(_KEY_FONT_VERSION, None)
@@ -325,10 +313,6 @@ class BdfProperties(UserDict[str, str | int | None]):
     @notice.setter
     def notice(self, value: str | None):
         self[_KEY_NOTICE] = value
-
-    # ==============
-    # XLFD Font Name
-    # ==============
 
     def to_xlfd_font_name(self) -> str:
         tokens = ['']
