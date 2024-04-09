@@ -78,7 +78,9 @@ def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list[
             return bitmap
         else:
             bin_format = '{:0' + str(len(word) * 4) + 'b}'
-            bitmap.append([int(c) for c in bin_format.format(int(word, 16))])
+            bin_string = bin_format.format(int(word, 16))
+            bitmap_row = [int(c) for c in bin_string]
+            bitmap.append(bitmap_row)
     raise BdfParseError(_WORD_ENDCHAR)
 
 
@@ -365,7 +367,9 @@ class BdfFont:
             output.write(f'{_WORD_BBX} {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}\n')
             output.write(f'{_WORD_BITMAP}\n')
             for bitmap_row in bitmap:
-                hex_value = ('{:0' + str(len(bitmap_row) // 4) + 'X}').format(int(''.join(map(str, bitmap_row)), 2))
+                bin_string = ''.join(map(str, bitmap_row))
+                hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
+                hex_value = hex_format.format(int(bin_string, 2))
                 output.write(f'{hex_value}\n')
             output.write(f'{_WORD_ENDCHAR}\n')
 
