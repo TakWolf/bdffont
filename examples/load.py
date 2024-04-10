@@ -16,7 +16,7 @@ def main():
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
     print(f'descent: {font.properties.font_descent}')
-    for glyph in font.get_glyphs():
+    for glyph in font.glyphs:
         print(f'glyph: {glyph.name} - {glyph.code_point:04X}')
     font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 

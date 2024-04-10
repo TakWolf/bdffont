@@ -18,7 +18,7 @@ def main():
         bounding_box_offset=(0, -2),
     )
 
-    font.add_glyph(BdfGlyph(
+    font.glyphs.append(BdfGlyph(
         name='A',
         code_point=ord('A'),
         scalable_width=(500, 0),
@@ -51,7 +51,7 @@ def main():
     font.properties.pixel_size = 16
     font.properties.point_size = 160
     font.properties.spacing = xlfd.Spacing.PROPORTIONAL
-    font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.code_point_to_glyph.values()]) / font.get_glyphs_count())
+    font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.glyphs]) / len(font.glyphs))
     font.setup_missing_xlfd_properties()
 
     font.properties.default_char = -1

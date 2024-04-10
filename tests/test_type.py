@@ -4,7 +4,7 @@ from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
 from bdffont.error import BdfError, BdfGlyphError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 
-def test_font():
+def test_font_1():
     font = BdfFont()
 
     font.resolution_xy = 1, 2
@@ -30,6 +30,8 @@ def test_font():
     assert font.bounding_box_offset_x == 9
     assert font.bounding_box_offset_y == 10
 
+
+def test_font_2():
     font = BdfFont()
 
     font.point_size = 16
@@ -52,6 +54,8 @@ def test_font():
     font.generate_xlfd_font_name()
     assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
 
+
+def test_font_3():
     font = BdfFont()
 
     with pytest.raises(BdfError) as info:
@@ -76,9 +80,11 @@ def test_font():
     assert font.properties.charset_registry == 'ISO8859'
     assert font.properties.charset_encoding == '1'
 
+
+def test_font_4():
     font = BdfFont()
 
-    glyph_a = BdfGlyph(
+    font.glyphs.append(BdfGlyph(
         name='A',
         code_point=ord('A'),
         scalable_width=(500, 0),
@@ -89,8 +95,8 @@ def test_font():
             [0, 1],
             [1, 0],
         ],
-    )
-    glyph_b = BdfGlyph(
+    ))
+    font.glyphs.append(BdfGlyph(
         name='B',
         code_point=ord('B'),
         scalable_width=(500, 0),
@@ -101,34 +107,7 @@ def test_font():
             [1, 0],
             [0, 1],
         ],
-    )
-    font.add_glyph(glyph_a)
-    assert font.get_glyphs_count() == 1
-    assert font.get_glyph(ord('A')) == glyph_a
-    font.add_glyph(glyph_b)
-    assert font.get_glyphs_count() == 2
-    assert font.get_glyph(ord('B')) == glyph_b
-
-    with pytest.raises(BdfGlyphError) as info:
-        font.add_glyph(glyph_a)
-    assert info.value.code_point == ord('A')
-
-    with pytest.raises(BdfGlyphError) as info:
-        font.add_glyphs([glyph_a, glyph_b])
-    assert info.value.code_point == ord('A')
-
-    font.set_glyph(glyph_a)
-    assert font.get_glyphs_count() == 2
-    font.remove_glyph(ord('A'))
-    assert font.get_glyphs_count() == 1
-    font.remove_glyph(ord('B'))
-    assert font.get_glyphs_count() == 0
-
-    font.add_glyph(glyph_b)
-    font.add_glyph(glyph_a)
-    glyphs = font.get_glyphs()
-    assert glyphs[0] == glyph_a
-    assert glyphs[1] == glyph_b
+    ))
 
     with pytest.raises(BdfError) as info:
         font.dump()

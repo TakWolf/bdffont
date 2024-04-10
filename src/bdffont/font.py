@@ -6,7 +6,7 @@ from collections.abc import Iterator
 from bdffont import xlfd
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfError, BdfParseError, BdfCountError, BdfGlyphError
+from bdffont.error import BdfError, BdfParseError, BdfCountError
 
 _WORD_STARTFONT = 'STARTFONT'
 _WORD_ENDFONT = 'ENDFONT'
@@ -174,17 +174,16 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bo
                 raise BdfParseError(_WORD_CHARS)
             if strict_mode and glyphs_count != len(glyphs):
                 raise BdfCountError(_WORD_CHARS, glyphs_count, len(glyphs))
-            font = BdfFont(
+            return BdfFont(
                 name,
                 point_size,
                 resolution_xy,
                 bounding_box_size,
                 bounding_box_offset,
                 properties,
+                glyphs,
                 comments,
             )
-            font.add_glyphs(glyphs)
-            return font
     raise BdfParseError(_WORD_ENDFONT)
 
 
@@ -215,6 +214,7 @@ class BdfFont:
             bounding_box_size: tuple[int, int] = (0, 0),
             bounding_box_offset: tuple[int, int] = (0, 0),
             properties: BdfProperties = None,
+            glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
     ):
         """
@@ -231,6 +231,8 @@ class BdfFont:
             The x and y displacement of the lower left corner from origin 0 of the glyphs in integer pixel values.
         :param properties:
             The optional extended properties.
+        :param glyphs:
+            The glyphs.
         :param comments:
             The comments.
         """
@@ -243,10 +245,12 @@ class BdfFont:
         if properties is None:
             properties = BdfProperties()
         self.properties = properties
+        if glyphs is None:
+            glyphs = []
+        self.glyphs = glyphs
         if comments is None:
             comments = []
         self.comments = comments
-        self.code_point_to_glyph: dict[int, BdfGlyph] = {}
 
     @property
     def resolution_xy(self) -> tuple[int, int]:
@@ -279,32 +283,6 @@ class BdfFont:
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
-
-    def get_glyph(self, code_point: int) -> BdfGlyph | None:
-        return self.code_point_to_glyph.get(code_point, None)
-
-    def get_glyphs(self) -> list[BdfGlyph]:
-        glyphs = list(self.code_point_to_glyph.values())
-        glyphs.sort(key=lambda glyph: glyph.code_point)
-        return glyphs
-
-    def get_glyphs_count(self) -> int:
-        return len(self.code_point_to_glyph)
-
-    def set_glyph(self, glyph: BdfGlyph):
-        self.code_point_to_glyph[glyph.code_point] = glyph
-
-    def add_glyph(self, glyph: BdfGlyph):
-        if glyph.code_point in self.code_point_to_glyph:
-            raise BdfGlyphError(glyph.code_point, 'already exists')
-        self.code_point_to_glyph[glyph.code_point] = glyph
-
-    def add_glyphs(self, glyphs: list[BdfGlyph]):
-        for glyph in glyphs:
-            self.add_glyph(glyph)
-
-    def remove_glyph(self, code_point: int) -> BdfGlyph | None:
-        return self.code_point_to_glyph.pop(code_point, None)
 
     def setup_missing_xlfd_properties(self):
         if self.properties.weight_name is None:
@@ -355,8 +333,8 @@ class BdfFont:
                 output.write(f'{word} {value}\n')
             output.write(f'{_WORD_ENDPROPERTIES}\n')
 
-        output.write(f'{_WORD_CHARS} {self.get_glyphs_count()}\n')
-        for glyph in self.get_glyphs():
+        output.write(f'{_WORD_CHARS} {len(self.glyphs)}\n')
+        for glyph in self.glyphs:
             output.write(f'{_WORD_STARTCHAR} {glyph.name}\n')
             for comment in glyph.comments:
                 output.write(f'{_WORD_COMMENT} {comment}\n')

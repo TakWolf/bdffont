@@ -34,7 +34,7 @@ def main():
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
     print(f'descent: {font.properties.font_descent}')
-    for glyph in font.get_glyphs():
+    for glyph in font.glyphs:
         print(f'glyph: {glyph.name} - {glyph.code_point:04X}')
     font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 
@@ -66,7 +66,7 @@ def main():
         bounding_box_offset=(0, -2),
     )
 
-    font.add_glyph(BdfGlyph(
+    font.glyphs.append(BdfGlyph(
         name='A',
         code_point=ord('A'),
         scalable_width=(500, 0),
@@ -99,7 +99,7 @@ def main():
     font.properties.pixel_size = 16
     font.properties.point_size = 160
     font.properties.spacing = xlfd.Spacing.PROPORTIONAL
-    font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.code_point_to_glyph.values()]) / font.get_glyphs_count())
+    font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.glyphs]) / len(font.glyphs))
     font.setup_missing_xlfd_properties()
 
     font.properties.default_char = -1
