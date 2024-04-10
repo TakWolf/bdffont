@@ -107,10 +107,10 @@ def _check_value(key: str, value: str | int):
             raise BdfPropValueError(key, value, f"contains illegal characters '{matched.group()}'")
 
 
-class BdfProperties(UserDict[str, str | int | None]):
+class BdfProperties(UserDict[str, str | int]):
     def __init__(
             self,
-            data: dict[str, str | int | None] = None,
+            data: dict[str, str | int] = None,
             comments: list[str] = None,
     ):
         """
