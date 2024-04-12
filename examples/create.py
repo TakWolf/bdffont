@@ -63,7 +63,7 @@ def main():
     font.properties.font_version = '1.0.0'
     font.properties.copyright = 'Copyright (c) TakWolf'
 
-    font.generate_xlfd_font_name()
+    font.generate_name_as_xlfd()
 
     font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
 

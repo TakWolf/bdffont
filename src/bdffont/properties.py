@@ -314,13 +314,13 @@ class BdfProperties(UserDict[str, str | int]):
     def notice(self, value: str | None):
         self[_KEY_NOTICE] = value
 
-    def to_xlfd_font_name(self) -> str:
+    def to_xlfd(self) -> str:
         tokens = ['']
         for key in _XLFD_FONT_NAME_KEYS_ORDER:
             tokens.append(str(self.get(key, '')))
         return '-'.join(tokens)
 
-    def update_by_xlfd_font_name(self, font_name: str):
+    def update_by_xlfd(self, font_name: str):
         if not font_name.startswith('-'):
             raise BdfXlfdError(font_name, "not starts with '-'")
         if font_name.count('-') != 14:

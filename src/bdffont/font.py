@@ -299,14 +299,14 @@ class BdfFont:
             self.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
             self.properties.charset_encoding = '1'
 
-    def generate_xlfd_font_name(self):
-        self.name = self.properties.to_xlfd_font_name()
+    def generate_name_as_xlfd(self):
+        self.name = self.properties.to_xlfd()
 
-    def update_by_name_as_xlfd_font_name(self):
+    def update_by_name_as_xlfd(self):
         if self.name is None:
             raise BdfError("Missing attribute 'name'")
 
-        self.properties.update_by_xlfd_font_name(self.name)
+        self.properties.update_by_xlfd(self.name)
         self.resolution_x = self.properties.resolution_x
         self.resolution_y = self.properties.resolution_y
 

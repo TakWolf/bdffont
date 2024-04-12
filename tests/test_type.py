@@ -51,7 +51,7 @@ def test_font_2():
     assert font.properties.resolution_y == 75
     assert font.properties.charset_registry == 'ISO10646'
     assert font.properties.charset_encoding == '1'
-    font.generate_xlfd_font_name()
+    font.generate_name_as_xlfd()
     assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
 
 
@@ -59,10 +59,10 @@ def test_font_3():
     font = BdfFont()
 
     with pytest.raises(BdfError) as info:
-        font.update_by_name_as_xlfd_font_name()
+        font.update_by_name_as_xlfd()
     assert info.value.args[0] == "Missing attribute 'name'"
     font.name = '-Adobe-Times-Medium-R-Normal--14-100-100-100-P-74-ISO8859-1'
-    font.update_by_name_as_xlfd_font_name()
+    font.update_by_name_as_xlfd()
     assert font.resolution_x == 100
     assert font.resolution_y == 100
     assert font.properties.foundry == 'Adobe'
@@ -194,10 +194,10 @@ def test_properties():
     assert len(properties) == 14
 
     font_name = '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-240-M-85-ISO8859-1'
-    assert properties.to_xlfd_font_name() == font_name
+    assert properties.to_xlfd() == font_name
 
     font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
-    properties.update_by_xlfd_font_name(font_name)
+    properties.update_by_xlfd(font_name)
     assert properties.foundry == 'Bitstream'
     assert properties.family_name == 'Charter'
     assert properties.weight_name == 'Medium'
@@ -212,10 +212,10 @@ def test_properties():
     assert properties.average_width == 68
     assert properties.charset_registry == 'ISO8859'
     assert properties.charset_encoding == '1'
-    assert properties.to_xlfd_font_name() == font_name
+    assert properties.to_xlfd() == font_name
 
     font_name = '--------------'
-    properties.update_by_xlfd_font_name(font_name)
+    properties.update_by_xlfd(font_name)
     assert properties.foundry is None
     assert properties.family_name is None
     assert properties.weight_name is None
@@ -230,17 +230,17 @@ def test_properties():
     assert properties.average_width is None
     assert properties.charset_registry is None
     assert properties.charset_encoding is None
-    assert properties.to_xlfd_font_name() == font_name
+    assert properties.to_xlfd() == font_name
 
     font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
     with pytest.raises(BdfXlfdError) as info:
-        properties.update_by_xlfd_font_name(font_name)
+        properties.update_by_xlfd(font_name)
     assert info.value.font_name == font_name
     assert info.value.reason == "not starts with '-'"
 
     font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-'
     with pytest.raises(BdfXlfdError) as info:
-        properties.update_by_xlfd_font_name(font_name)
+        properties.update_by_xlfd(font_name)
     assert info.value.font_name == font_name
     assert info.value.reason == "there could only be 14 '-' in the name"
 
