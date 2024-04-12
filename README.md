@@ -34,10 +34,14 @@ def main():
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
     print(f'descent: {font.properties.font_descent}')
+    print()
     for glyph in font.glyphs:
-        print(f'glyph: {glyph.name} - {glyph.code_point:04X} {chr(glyph.code_point)} {glyph.bounding_box}')
+        print(f'char: {chr(glyph.code_point)} ({glyph.code_point:04X})')
+        print(f'glyph_name: {glyph.name}')
+        print(f'advance_width: {glyph.device_width_x}')
+        print(f'offset: {glyph.bounding_box_offset}')
         for bitmap_row in glyph.bitmap:
-            print(''.join(map(str, bitmap_row)).replace('0', '__').replace('1', '**'))
+            print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
         print()
     font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
 
@@ -62,12 +66,12 @@ def main():
         shutil.rmtree(outputs_dir)
     os.makedirs(outputs_dir)
 
-    font = BdfFont(
-        point_size=16,
-        resolution_xy=(75, 75),
-        bounding_box_size=(16, 16),
-        bounding_box_offset=(0, -2),
-    )
+    font = BdfFont()
+
+    font.point_size = 16
+    font.resolution_xy = 75, 75
+    font.bounding_box_size = 16, 16
+    font.bounding_box_offset = 0, -2
 
     font.glyphs.append(BdfGlyph(
         name='A',

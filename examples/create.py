@@ -11,12 +11,12 @@ def main():
         shutil.rmtree(outputs_dir)
     os.makedirs(outputs_dir)
 
-    font = BdfFont(
-        point_size=16,
-        resolution_xy=(75, 75),
-        bounding_box_size=(16, 16),
-        bounding_box_offset=(0, -2),
-    )
+    font = BdfFont()
+
+    font.point_size = 16
+    font.resolution_xy = 75, 75
+    font.bounding_box_size = 16, 16
+    font.bounding_box_offset = 0, -2
 
     font.glyphs.append(BdfGlyph(
         name='A',
