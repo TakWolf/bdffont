@@ -3,10 +3,10 @@ class BdfError(Exception):
     pass
 
 
-class BdfParseError(BdfError):
+class BdfUnclosedError(BdfError):
     def __init__(self, word: str):
         self.word = word
-        super().__init__(f"Missing line '{word}'")
+        super().__init__(f"Word unclosed: '{word}'")
 
 
 class BdfCountError(BdfError):

@@ -6,7 +6,7 @@ from collections.abc import Iterator
 from bdffont import xlfd
 from bdffont.properties import BdfProperties
 from bdffont.glyph import BdfGlyph
-from bdffont.error import BdfError, BdfParseError, BdfCountError
+from bdffont.error import BdfError, BdfUnclosedError, BdfCountError
 
 _WORD_STARTFONT = 'STARTFONT'
 _WORD_ENDFONT = 'ENDFONT'
@@ -68,7 +68,7 @@ def _parse_properties_segment(lines: Iterator[tuple[str, str | None]], count: in
             properties.comments.append(tail)
         else:
             properties[word] = _convert_tail_to_properties_value(tail)
-    raise BdfParseError(_WORD_ENDPROPERTIES)
+    raise BdfUnclosedError(_WORD_ENDPROPERTIES)
 
 
 def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list[int]]:
@@ -81,7 +81,7 @@ def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]]) -> list[list[
             bin_string = bin_format.format(int(word, 16))
             bitmap_row = [int(c) for c in bin_string]
             bitmap.append(bitmap_row)
-    raise BdfParseError(_WORD_ENDCHAR)
+    raise BdfUnclosedError(_WORD_ENDCHAR)
 
 
 def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> BdfGlyph:
@@ -111,13 +111,13 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> 
             if word == _WORD_BITMAP:
                 bitmap = _parse_bitmap_segment(lines)
             if code_point is None:
-                raise BdfParseError(_WORD_ENCODING)
+                raise BdfUnclosedError(_WORD_ENCODING)
             if scalable_width is None:
-                raise BdfParseError(_WORD_SWIDTH)
+                raise BdfUnclosedError(_WORD_SWIDTH)
             if device_width is None:
-                raise BdfParseError(_WORD_DWIDTH)
+                raise BdfUnclosedError(_WORD_DWIDTH)
             if bounding_box_size is None or bounding_box_offset is None:
-                raise BdfParseError(_WORD_BBX)
+                raise BdfUnclosedError(_WORD_BBX)
             return BdfGlyph(
                 name,
                 code_point,
@@ -128,7 +128,7 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> 
                 bitmap,
                 comments,
             )
-    raise BdfParseError(_WORD_ENDCHAR)
+    raise BdfUnclosedError(_WORD_ENDCHAR)
 
 
 def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bool) -> 'BdfFont':
@@ -162,13 +162,13 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bo
             comments.append(tail)
         elif word == _WORD_ENDFONT:
             if name is None:
-                raise BdfParseError(_WORD_FONT)
+                raise BdfUnclosedError(_WORD_FONT)
             if point_size is None or resolution_xy is None:
-                raise BdfParseError(_WORD_SIZE)
+                raise BdfUnclosedError(_WORD_SIZE)
             if bounding_box_size is None or bounding_box_offset is None:
-                raise BdfParseError(_WORD_FONTBOUNDINGBOX)
+                raise BdfUnclosedError(_WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
-                raise BdfParseError(_WORD_CHARS)
+                raise BdfUnclosedError(_WORD_CHARS)
             if strict_mode and glyphs_count != len(glyphs):
                 raise BdfCountError(_WORD_CHARS, glyphs_count, len(glyphs))
             return BdfFont(
@@ -181,7 +181,7 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_mode: bo
                 glyphs,
                 comments,
             )
-    raise BdfParseError(_WORD_ENDFONT)
+    raise BdfUnclosedError(_WORD_ENDFONT)
 
 
 class BdfFont:
@@ -193,7 +193,7 @@ class BdfFont:
                 font = _parse_font_segment(lines, strict_mode)
                 font.spec_version = tail
                 return font
-        raise BdfParseError(_WORD_STARTFONT)
+        raise BdfUnclosedError(_WORD_STARTFONT)
 
     @staticmethod
     def load(
