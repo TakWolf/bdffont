@@ -1,5 +1,3 @@
-from bdffont.error import BdfGlyphError
-
 
 class BdfGlyph:
     def __init__(
@@ -97,55 +95,3 @@ class BdfGlyph:
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
-
-    def check_bitmap_validity(self):
-        if len(self.bitmap) != self.bounding_box_height:
-            raise BdfGlyphError(self.code_point, f"bitmap height not equals 'bounding_box_height'")
-        if any(len(bitmap_row) != self.bounding_box_width for bitmap_row in self.bitmap):
-            raise BdfGlyphError(self.code_point, f"bitmap width not equals 'bounding_box_width'")
-
-    def get_8bit_aligned_bitmap(self, optimize_bitmap: bool = False) -> tuple[tuple[int, int], tuple[int, int], list[list[int]]]:
-        self.check_bitmap_validity()
-        bounding_box_width = self.bounding_box_width
-        bounding_box_height = self.bounding_box_height
-        bounding_box_offset_x = self.bounding_box_offset_x
-        bounding_box_offset_y = self.bounding_box_offset_y
-        bitmap = [bitmap_row[:] for bitmap_row in self.bitmap]
-
-        if optimize_bitmap:
-            # Top
-            while bounding_box_height > 0:
-                if any(color != 0 for color in bitmap[0]):
-                    break
-                bitmap.pop(0)
-                bounding_box_height -= 1
-            # Bottom
-            while bounding_box_height > 0:
-                if any(color != 0 for color in bitmap[-1]):
-                    break
-                bitmap.pop()
-                bounding_box_height -= 1
-                bounding_box_offset_y += 1
-            # Left
-            while bounding_box_width > 0:
-                if any(bitmap_row[0] != 0 for bitmap_row in bitmap):
-                    break
-                for bitmap_row in bitmap:
-                    bitmap_row.pop(0)
-                bounding_box_width -= 1
-                bounding_box_offset_x += 1
-            # Right
-            while bounding_box_width > 0:
-                if any(bitmap_row[-1] != 0 for bitmap_row in bitmap):
-                    break
-                for bitmap_row in bitmap:
-                    bitmap_row.pop()
-                bounding_box_width -= 1
-
-        remainder = bounding_box_width % 8
-        if remainder > 0:
-            for bitmap_row in bitmap:
-                for _ in range(8 - remainder):
-                    bitmap_row.append(0)
-
-        return (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap

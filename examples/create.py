@@ -65,7 +65,7 @@ def main():
 
     font.generate_name_as_xlfd()
 
-    font.save(os.path.join(outputs_dir, 'my-font.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(outputs_dir, 'my-font.bdf'))
 
 
 if __name__ == '__main__':

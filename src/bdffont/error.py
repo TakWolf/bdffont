@@ -37,9 +37,3 @@ class BdfXlfdError(BdfError):
         self.font_name = font_name
         self.reason = reason
         super().__init__(f"'{font_name}': {reason}")
-
-
-class BdfGlyphError(BdfError):
-    def __init__(self, code_point: int, reason: str):
-        self.code_point = code_point
-        super().__init__(f"Glyph '{code_point}': {reason}")

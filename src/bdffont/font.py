@@ -118,9 +118,6 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str) -> 
                 raise BdfParseError(_WORD_DWIDTH)
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfParseError(_WORD_BBX)
-            for bitmap_row in bitmap:
-                while len(bitmap_row) > bounding_box_size[0]:
-                    bitmap_row.pop()
             return BdfGlyph(
                 name,
                 code_point,
@@ -310,7 +307,7 @@ class BdfFont:
         self.resolution_x = self.properties.resolution_x
         self.resolution_y = self.properties.resolution_y
 
-    def dump(self, optimize_bitmap: bool = False) -> str:
+    def dump(self) -> str:
         if self.name is None:
             raise BdfError("Missing attribute 'name'")
 
@@ -341,10 +338,12 @@ class BdfFont:
             output.write(f'{_WORD_ENCODING} {glyph.code_point}\n')
             output.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
             output.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
-            (bounding_box_width, bounding_box_height), (bounding_box_offset_x, bounding_box_offset_y), bitmap = glyph.get_8bit_aligned_bitmap(optimize_bitmap)
-            output.write(f'{_WORD_BBX} {bounding_box_width} {bounding_box_height} {bounding_box_offset_x} {bounding_box_offset_y}\n')
+            output.write(f'{_WORD_BBX} {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}\n')
             output.write(f'{_WORD_BITMAP}\n')
-            for bitmap_row in bitmap:
+            for bitmap_row in glyph.bitmap:
+                bitmap_row = bitmap_row[:]
+                while len(bitmap_row) % 8 > 0:
+                    bitmap_row.append(0)
                 bin_string = ''.join(map(str, bitmap_row))
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 hex_value = hex_format.format(int(bin_string, 2))
@@ -354,10 +353,6 @@ class BdfFont:
         output.write(f'{_WORD_ENDFONT}\n')
         return output.getvalue()
 
-    def save(
-            self,
-            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
-            optimize_bitmap: bool = False,
-    ):
+    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
         with open(file_path, 'w', encoding='utf-8') as file:
-            file.write(self.dump(optimize_bitmap))
+            file.write(self.dump())

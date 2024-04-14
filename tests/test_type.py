@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
-from bdffont.error import BdfError, BdfGlyphError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
+from bdffont.error import BdfError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 
 def test_font_1():
@@ -354,56 +354,3 @@ def test_glyph():
     assert glyph.bounding_box_height == 10
     assert glyph.bounding_box_offset_x == 11
     assert glyph.bounding_box_offset_y == 12
-
-
-def test_bitmap():
-    glyph = BdfGlyph(
-        name='A',
-        code_point=ord('A'),
-        scalable_width=(0, 0),
-        device_width=(0, 0),
-        bounding_box_size=(5, 10),
-        bounding_box_offset=(0, 0),
-        bitmap=[
-            [0, 1, 1, 1, 0],
-            [0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-        ]
-    )
-    glyph.check_bitmap_validity()
-
-    glyph.bitmap.pop()
-    with pytest.raises(BdfGlyphError) as info:
-        glyph.check_bitmap_validity()
-    assert info.value.code_point == glyph.code_point
-
-    glyph.bitmap.append([0, 0, 0, 0, 0, 0])
-    with pytest.raises(BdfGlyphError) as info:
-        glyph.check_bitmap_validity()
-    assert info.value.code_point == glyph.code_point
-
-    glyph.bitmap[-1].pop()
-    glyph.check_bitmap_validity()
-
-    (width, height), (offset_x, offset_y), bitmap = glyph.get_8bit_aligned_bitmap()
-    assert len(bitmap) == height == glyph.bounding_box_height
-    for bitmap_row in bitmap:
-        assert width == glyph.bounding_box_width
-        assert len(bitmap_row) == 8
-    assert offset_x == glyph.bounding_box_offset_x
-    assert offset_y == glyph.bounding_box_offset_y
-
-    (width, height), (offset_x, offset_y), bitmap = glyph.get_8bit_aligned_bitmap(optimize_bitmap=True)
-    assert len(bitmap) == height == 2
-    for bitmap_row in bitmap:
-        assert width == 3
-        assert len(bitmap_row) == 8
-    assert offset_x == 1
-    assert offset_y == 8

@@ -25,7 +25,7 @@ def main():
         for bitmap_row in glyph.bitmap:
             print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
         print()
-    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'), optimize_bitmap=True)
+    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'))
 
 
 if __name__ == '__main__':
