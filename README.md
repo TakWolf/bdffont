@@ -41,7 +41,8 @@ def main():
         print(f'advance_width: {glyph.device_width_x}')
         print(f'offset: {glyph.bounding_box_offset}')
         for bitmap_row in glyph.bitmap:
-            print(f'{''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')}*')
+            text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
+            print(f'{text}*')
         print()
     font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'))
 
