@@ -172,7 +172,7 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_level: i
                 raise BdfMissingLineError(_WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
                 raise BdfMissingLineError(_WORD_CHARS)
-            if strict_level >= 2 and glyphs_count != len(glyphs):
+            if strict_level >= 2 and len(glyphs) != glyphs_count:
                 raise BdfCountError(_WORD_CHARS, glyphs_count, len(glyphs))
             return BdfFont(
                 name,
