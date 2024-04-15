@@ -3,7 +3,7 @@ import os
 import pytest
 
 from bdffont import BdfFont
-from bdffont.error import BdfMissingLineError, BdfCountError
+from bdffont.error import BdfParseError, BdfMissingLineError, BdfCountError
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -17,6 +17,11 @@ def test_not_a_bdf():
     with pytest.raises(BdfMissingLineError) as info:
         _load_damaged_bdf('not_a_bdf.bdf')
     assert info.value.word == 'STARTFONT'
+
+
+def test_not_support_version():
+    with pytest.raises(BdfParseError):
+        _load_damaged_bdf('not_support_version.bdf')
 
 
 def test_no_line_font():
