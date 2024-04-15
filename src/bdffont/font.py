@@ -331,9 +331,8 @@ class BdfFont:
             output.write(f'{_WORD_BBX} {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}\n')
             output.write(f'{_WORD_BITMAP}\n')
             for bitmap_row in glyph.bitmap:
-                bitmap_row = bitmap_row[:]
-                while len(bitmap_row) % 8 > 0:
-                    bitmap_row.append(0)
+                if len(bitmap_row) % 8 > 0:
+                    bitmap_row = bitmap_row + [0] * (8 - len(bitmap_row) % 8)
                 bin_string = ''.join(map(str, bitmap_row))
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 hex_value = hex_format.format(int(bin_string, 2))
