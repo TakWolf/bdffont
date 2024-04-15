@@ -57,7 +57,7 @@ if __name__ == '__main__':
 import os
 import shutil
 
-from bdffont import BdfFont, BdfGlyph, xlfd
+from bdffont import BdfFont, BdfGlyph
 from examples import build_dir
 
 
@@ -103,17 +103,17 @@ def main():
 
     font.properties.foundry = 'Pixel Font Studio'
     font.properties.family_name = 'Demo Pixel'
-    font.properties.weight_name = xlfd.WeightName.MEDIUM
-    font.properties.slant = xlfd.Slant.ROMAN
-    font.properties.setwidth_name = xlfd.SetwidthName.NORMAL
-    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    font.properties.weight_name = 'Medium'
+    font.properties.slant = 'R'
+    font.properties.setwidth_name = 'Normal'
+    font.properties.add_style_name = 'Sans Serif'
     font.properties.pixel_size = font.point_size
     font.properties.point_size = font.point_size * 10
     font.properties.resolution_x = font.resolution_x
     font.properties.resolution_y = font.resolution_y
-    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
+    font.properties.spacing = 'P'
     font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.glyphs]) / len(font.glyphs))
-    font.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
+    font.properties.charset_registry = 'ISO10646'
     font.properties.charset_encoding = '1'
     font.generate_name_as_xlfd()
 

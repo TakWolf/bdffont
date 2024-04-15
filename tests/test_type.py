@@ -1,6 +1,6 @@
 import pytest
 
-from bdffont import BdfFont, BdfProperties, BdfGlyph, xlfd
+from bdffont import BdfFont, BdfProperties, BdfGlyph
 from bdffont.error import BdfError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 
@@ -39,17 +39,17 @@ def test_font_2():
 
     font.properties.foundry = 'TakWolf Studio'
     font.properties.family_name = 'Demo Pixel'
-    font.properties.weight_name = xlfd.WeightName.MEDIUM
-    font.properties.slant = xlfd.Slant.ROMAN
-    font.properties.setwidth_name = xlfd.SetwidthName.NORMAL
-    font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    font.properties.weight_name = 'Medium'
+    font.properties.slant = 'R'
+    font.properties.setwidth_name = 'Normal'
+    font.properties.add_style_name = 'Sans Serif'
     font.properties.pixel_size = font.point_size
     font.properties.point_size = font.point_size * 10
     font.properties.resolution_x = font.resolution_x
     font.properties.resolution_y = font.resolution_y
-    font.properties.spacing = xlfd.Spacing.PROPORTIONAL
+    font.properties.spacing = 'P'
     font.properties.average_width = 80
-    font.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
+    font.properties.charset_registry = 'ISO10646'
     font.properties.charset_encoding = '1'
     font.generate_name_as_xlfd()
     assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
@@ -143,19 +143,19 @@ def test_properties():
     assert properties.family_name == 'Demo Pixel'
     assert properties['FAMILY_NAME'] == 'Demo Pixel'
 
-    properties.weight_name = xlfd.WeightName.MEDIUM
+    properties.weight_name = 'Medium'
     assert properties.weight_name == 'Medium'
     assert properties['WEIGHT_NAME'] == 'Medium'
 
-    properties.slant = xlfd.Slant.ROMAN
+    properties.slant = 'R'
     assert properties.slant == 'R'
     assert properties['SLANT'] == 'R'
 
-    properties.setwidth_name = xlfd.SetwidthName.NORMAL
+    properties.setwidth_name = 'Normal'
     assert properties.setwidth_name == 'Normal'
     assert properties['SETWIDTH_NAME'] == 'Normal'
 
-    properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
+    properties.add_style_name = 'Sans Serif'
     assert properties.add_style_name == 'Sans Serif'
     assert properties['ADD_STYLE_NAME'] == 'Sans Serif'
 
@@ -175,7 +175,7 @@ def test_properties():
     assert properties.resolution_y == 240
     assert properties['RESOLUTION_Y'] == 240
 
-    properties.spacing = xlfd.Spacing.MONOSPACED
+    properties.spacing = 'M'
     assert properties.spacing == 'M'
     assert properties['SPACING'] == 'M'
 
@@ -183,7 +183,7 @@ def test_properties():
     assert properties.average_width == 85
     assert properties['AVERAGE_WIDTH'] == 85
 
-    properties.charset_registry = xlfd.CharsetRegistry.ISO8859
+    properties.charset_registry = 'ISO8859'
     assert properties.charset_registry == 'ISO8859'
     assert properties['CHARSET_REGISTRY'] == 'ISO8859'
 
