@@ -3,7 +3,15 @@ class BdfError(Exception):
     pass
 
 
-class BdfUnclosedError(BdfError):
+class BdfParseError(BdfError):
+    pass
+
+
+class BdfAttrError(BdfError):
+    pass
+
+
+class BdfMissingLineError(BdfError):
     def __init__(self, word: str):
         self.word = word
         super().__init__(f"Word unclosed: '{word}'")
