@@ -8,9 +8,9 @@ from bdffont.error import BdfUnclosedError, BdfCountError
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
-def _load_damaged_bdf(file_name: str, strict_mode: bool = False):
+def _load_damaged_bdf(file_name: str, strict_level: int = 1):
     file_path = os.path.join(project_root_dir, 'assets', 'damaged', file_name)
-    BdfFont.load(file_path, strict_mode=strict_mode)
+    BdfFont.load(file_path, strict_level)
 
 
 def test_not_a_bdf():
@@ -86,12 +86,12 @@ def test_no_line_end_font():
 def test_incorrect_properties_count():
     _load_damaged_bdf('incorrect_properties_count.bdf')
     with pytest.raises(BdfCountError) as info:
-        _load_damaged_bdf('incorrect_properties_count.bdf', strict_mode=True)
+        _load_damaged_bdf('incorrect_properties_count.bdf', strict_level=2)
     assert info.value.word == 'STARTPROPERTIES'
 
 
 def test_incorrect_chars_count():
     _load_damaged_bdf('incorrect_chars_count.bdf')
     with pytest.raises(BdfCountError) as info:
-        _load_damaged_bdf('incorrect_chars_count.bdf', strict_mode=True)
+        _load_damaged_bdf('incorrect_chars_count.bdf', strict_level=2)
     assert info.value.word == 'CHARS'
