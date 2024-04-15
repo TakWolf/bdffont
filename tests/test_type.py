@@ -36,21 +36,21 @@ def test_font_2():
 
     font.point_size = 16
     font.resolution_xy = (75, 75)
+
     font.properties.foundry = 'TakWolf Studio'
     font.properties.family_name = 'Demo Pixel'
+    font.properties.weight_name = xlfd.WeightName.MEDIUM
+    font.properties.slant = xlfd.Slant.ROMAN
+    font.properties.setwidth_name = xlfd.SetwidthName.NORMAL
     font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
-    font.properties.pixel_size = 16
-    font.properties.point_size = 160
+    font.properties.pixel_size = font.point_size
+    font.properties.point_size = font.point_size * 10
+    font.properties.resolution_x = font.resolution_x
+    font.properties.resolution_y = font.resolution_y
     font.properties.spacing = xlfd.Spacing.PROPORTIONAL
     font.properties.average_width = 80
-    font.setup_missing_xlfd_properties()
-    assert font.properties.weight_name == 'Medium'
-    assert font.properties.slant == 'R'
-    assert font.properties.setwidth_name == 'Normal'
-    assert font.properties.resolution_x == 75
-    assert font.properties.resolution_y == 75
-    assert font.properties.charset_registry == 'ISO10646'
-    assert font.properties.charset_encoding == '1'
+    font.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
+    font.properties.charset_encoding = '1'
     font.generate_name_as_xlfd()
     assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
 

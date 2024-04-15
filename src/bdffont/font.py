@@ -3,10 +3,9 @@ import os
 import re
 from collections.abc import Iterator
 
-from bdffont import xlfd
-from bdffont.properties import BdfProperties
-from bdffont.glyph import BdfGlyph
 from bdffont.error import BdfError, BdfUnclosedError, BdfCountError
+from bdffont.glyph import BdfGlyph
+from bdffont.properties import BdfProperties
 
 _WORD_STARTFONT = 'STARTFONT'
 _WORD_ENDFONT = 'ENDFONT'
@@ -280,21 +279,6 @@ class BdfFont:
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
         self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
-
-    def setup_missing_xlfd_properties(self):
-        if self.properties.weight_name is None:
-            self.properties.weight_name = xlfd.WeightName.MEDIUM
-        if self.properties.slant is None:
-            self.properties.slant = xlfd.Slant.ROMAN
-        if self.properties.setwidth_name is None:
-            self.properties.setwidth_name = xlfd.SetwidthName.NORMAL
-        if self.properties.resolution_x is None:
-            self.properties.resolution_x = self.resolution_x
-        if self.properties.resolution_y is None:
-            self.properties.resolution_y = self.resolution_y
-        if self.properties.charset_registry is None and self.properties.charset_encoding is None:
-            self.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
-            self.properties.charset_encoding = '1'
 
     def generate_name_as_xlfd(self):
         self.name = self.properties.to_xlfd()

@@ -103,12 +103,19 @@ def main():
 
     font.properties.foundry = 'Pixel Font Studio'
     font.properties.family_name = 'Demo Pixel'
+    font.properties.weight_name = xlfd.WeightName.MEDIUM
+    font.properties.slant = xlfd.Slant.ROMAN
+    font.properties.setwidth_name = xlfd.SetwidthName.NORMAL
     font.properties.add_style_name = xlfd.AddStyleName.SANS_SERIF
-    font.properties.pixel_size = 16
-    font.properties.point_size = 160
+    font.properties.pixel_size = font.point_size
+    font.properties.point_size = font.point_size * 10
+    font.properties.resolution_x = font.resolution_x
+    font.properties.resolution_y = font.resolution_y
     font.properties.spacing = xlfd.Spacing.PROPORTIONAL
     font.properties.average_width = round(sum([glyph.device_width_x * 10 for glyph in font.glyphs]) / len(font.glyphs))
-    font.setup_missing_xlfd_properties()
+    font.properties.charset_registry = xlfd.CharsetRegistry.ISO10646
+    font.properties.charset_encoding = '1'
+    font.generate_name_as_xlfd()
 
     font.properties.default_char = -1
     font.properties.font_ascent = 14
@@ -118,8 +125,6 @@ def main():
 
     font.properties.font_version = '1.0.0'
     font.properties.copyright = 'Copyright (c) TakWolf'
-
-    font.generate_name_as_xlfd()
 
     font.save(os.path.join(outputs_dir, 'my-font.bdf'))
 
