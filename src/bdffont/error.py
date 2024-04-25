@@ -14,7 +14,7 @@ class BdfAttrError(BdfError):
 class BdfMissingLineError(BdfError):
     def __init__(self, word: str):
         self.word = word
-        super().__init__(f"Word unclosed: '{word}'")
+        super().__init__(f"Missing line: '{word}'")
 
 
 class BdfCountError(BdfError):
