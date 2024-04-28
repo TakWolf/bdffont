@@ -1,6 +1,6 @@
 # BdfFont
 
-[![Python](https://img.shields.io/badge/python-3.11-brightgreen)](https://www.python.org)
+[![Python](https://img.shields.io/badge/python-3.10-brightgreen)](https://www.python.org)
 [![PyPI](https://img.shields.io/pypi/v/bdffont)](https://pypi.org/project/bdffont/)
 
 BdfFont is a library for manipulating [Glyph Bitmap Distribution Format (BDF) Fonts](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format).
