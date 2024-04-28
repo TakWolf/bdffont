@@ -309,16 +309,15 @@ class BdfFont:
         output.write(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}\n')
         output.write(f'{_WORD_FONTBOUNDINGBOX} {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}\n')
 
-        if len(self.properties) > 0 or len(self.properties.comments) > 0:
-            output.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
-            for comment in self.properties.comments:
-                output.write(f'{_WORD_COMMENT} {comment}\n')
-            for word, value in self.properties.items():
-                if isinstance(value, str):
-                    value = value.replace('"', '""')
-                    value = f'"{value}"'
-                output.write(f'{word} {value}\n')
-            output.write(f'{_WORD_ENDPROPERTIES}\n')
+        output.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
+        for comment in self.properties.comments:
+            output.write(f'{_WORD_COMMENT} {comment}\n')
+        for word, value in self.properties.items():
+            if isinstance(value, str):
+                value = value.replace('"', '""')
+                value = f'"{value}"'
+            output.write(f'{word} {value}\n')
+        output.write(f'{_WORD_ENDPROPERTIES}\n')
 
         output.write(f'{_WORD_CHARS} {len(self.glyphs)}\n')
         for glyph in self.glyphs:
