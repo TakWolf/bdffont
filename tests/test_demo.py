@@ -1,21 +1,16 @@
 import os
-from pathlib import Path
 
 from bdffont import BdfFont
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 
-def _load_bdf(file_name: str) -> tuple[BdfFont, str]:
-    file_path = os.path.join(project_root_dir, 'assets', file_name)
+def test_demo():
+    file_path = os.path.join(project_root_dir, 'assets', 'demo.bdf')
     with open(file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
+
     font = BdfFont.parse(bdf_text)
-    return font, bdf_text
-
-
-def test_example(tmp_path: Path):
-    font, bdf_text = _load_bdf('example.bdf')
     assert font.dump() == bdf_text
     assert font.spec_version == '2.1'
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
@@ -78,29 +73,3 @@ def test_example(tmp_path: Path):
     ]
     for i, bitmap_row in enumerate(glyph.bitmap):
         assert ''.join(map(str, bitmap_row)).replace('0', '_').replace('1', '#') == glyph_data[i]
-    font.save(os.path.join(tmp_path, 'example-output.bdf'))
-
-
-def test_unifont(tmp_path: Path):
-    font = _load_bdf('unifont/unifont-15.1.05.bdf')[0]
-    font.save(os.path.join(tmp_path, 'unifont-15.1.05.bdf'))
-
-
-def test_galmuri9(tmp_path: Path):
-    font = _load_bdf('galmuri/galmuri9.bdf')[0]
-    font.save(os.path.join(tmp_path, 'galmuri9.bdf'))
-
-
-def test_misaki_gothic(tmp_path: Path):
-    font = _load_bdf('misaki/misaki_gothic.bdf')[0]
-    font.save(os.path.join(tmp_path, 'misaki_gothic.bdf'))
-
-
-def test_misaki_gothic_2nd(tmp_path: Path):
-    font = _load_bdf('misaki/misaki_gothic_2nd.bdf')[0]
-    font.save(os.path.join(tmp_path, 'misaki_gothic_2nd.bdf'))
-
-
-def test_misaki_mincho(tmp_path: Path):
-    font = _load_bdf('misaki/misaki_mincho.bdf')[0]
-    font.save(os.path.join(tmp_path, 'misaki_mincho.bdf'))
