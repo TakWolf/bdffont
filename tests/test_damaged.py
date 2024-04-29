@@ -3,7 +3,7 @@ import os
 import pytest
 
 from bdffont import BdfFont
-from bdffont.error import BdfParseError, BdfMissingLineError, BdfCountError
+from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError
 
 project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -86,6 +86,18 @@ def test_no_line_end_font():
     with pytest.raises(BdfMissingLineError) as info:
         _load_damaged_bdf('no_line_end_font.bdf')
     assert info.value.word == 'ENDFONT'
+
+
+def test_illegal_word_in_font():
+    with pytest.raises(BdfIllegalWordError) as info:
+        _load_damaged_bdf('illegal_word_in_font.bdf', strict_level=2)
+    assert info.value.word == 'ABC'
+
+
+def test_illegal_word_in_char():
+    with pytest.raises(BdfIllegalWordError) as info:
+        _load_damaged_bdf('illegal_word_in_char.bdf', strict_level=2)
+    assert info.value.word == 'DEF'
 
 
 def test_incorrect_properties_count():

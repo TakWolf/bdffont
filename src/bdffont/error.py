@@ -17,6 +17,12 @@ class BdfMissingLineError(BdfError):
         super().__init__(f"Missing line: '{word}'")
 
 
+class BdfIllegalWordError(BdfError):
+    def __init__(self, word: str):
+        self.word = word
+        super().__init__(f"Illegal word: '{word}'")
+
+
 class BdfCountError(BdfError):
     def __init__(self, word: str, expected: int, actual: int):
         self.word = word

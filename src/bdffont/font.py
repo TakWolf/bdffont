@@ -3,7 +3,7 @@ import re
 from collections.abc import Iterator
 from io import StringIO
 
-from bdffont.error import BdfParseError, BdfAttrError, BdfMissingLineError, BdfCountError, BdfPropKeyError, BdfPropValueError
+from bdffont.error import BdfParseError, BdfAttrError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
@@ -135,6 +135,9 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str, str
                 bitmap,
                 comments,
             )
+        else:
+            if strict_level >= 2:
+                raise BdfIllegalWordError(word)
     raise BdfMissingLineError(_WORD_ENDCHAR)
 
 
@@ -188,6 +191,9 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_level: i
                 glyphs,
                 comments,
             )
+        else:
+            if strict_level >= 2:
+                raise BdfIllegalWordError(word)
     raise BdfMissingLineError(_WORD_ENDFONT)
 
 
