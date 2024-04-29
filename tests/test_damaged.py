@@ -91,12 +91,14 @@ def test_no_line_end_font():
 def test_illegal_word_in_font():
     with pytest.raises(BdfIllegalWordError) as info:
         _load_damaged_bdf('illegal_word_in_font.bdf', strict_level=2)
+    assert info.value.line_num == 2
     assert info.value.word == 'ABC'
 
 
 def test_illegal_word_in_char():
     with pytest.raises(BdfIllegalWordError) as info:
         _load_damaged_bdf('illegal_word_in_char.bdf', strict_level=2)
+    assert info.value.line_num == 30
     assert info.value.word == 'DEF'
 
 

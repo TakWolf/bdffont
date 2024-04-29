@@ -25,8 +25,9 @@ _WORD_BBX = 'BBX'
 _WORD_BITMAP = 'BITMAP'
 
 
-def _iter_as_lines(text: str) -> Iterator[tuple[str, str | None]]:
-    for line in text.splitlines():
+def _iter_as_lines(text: str) -> Iterator[tuple[int, str, str | None]]:
+    for i, line in enumerate(text.splitlines()):
+        line_num = i + 1
         line = line.strip()
         if line == '':
             continue
@@ -36,7 +37,7 @@ def _iter_as_lines(text: str) -> Iterator[tuple[str, str | None]]:
             tail = None
         else:
             tail = tokens[1]
-        yield word, tail
+        yield line_num, word, tail
 
 
 def _convert_tail_to_ints(tail: str) -> list[int]:
@@ -56,9 +57,9 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _parse_properties_segment(lines: Iterator[tuple[str, str | None]], count: int, strict_level: int) -> BdfProperties:
+def _parse_properties_segment(lines: Iterator[tuple[int, str, str | None]], count: int, strict_level: int) -> BdfProperties:
     properties = BdfProperties()
-    for word, tail in lines:
+    for _line_num, word, tail in lines:
         if word == _WORD_ENDPROPERTIES:
             if strict_level >= 2 and len(properties) != count:
                 raise BdfCountError(_WORD_STARTPROPERTIES, count, len(properties))
@@ -74,10 +75,10 @@ def _parse_properties_segment(lines: Iterator[tuple[str, str | None]], count: in
     raise BdfMissingLineError(_WORD_ENDPROPERTIES)
 
 
-def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]], _strict_level: int) -> tuple[list[list[int]], list[str]]:
+def _parse_bitmap_segment(lines: Iterator[tuple[int, str, str | None]], _strict_level: int) -> tuple[list[list[int]], list[str]]:
     bitmap = []
     comments = []
-    for word, tail in lines:
+    for _line_num, word, tail in lines:
         if word == _WORD_ENDCHAR:
             return bitmap, comments
         elif word == _WORD_COMMENT:
@@ -90,7 +91,7 @@ def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]], _strict_level
     raise BdfMissingLineError(_WORD_ENDCHAR)
 
 
-def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str, strict_level: int) -> BdfGlyph:
+def _parse_glyph_segment(lines: Iterator[tuple[int, str, str | None]], name: str, strict_level: int) -> BdfGlyph:
     code_point = None
     scalable_width = None
     device_width = None
@@ -98,7 +99,7 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str, str
     bounding_box_offset = None
     bitmap = None
     comments = []
-    for word, tail in lines:
+    for line_num, word, tail in lines:
         if word == _WORD_ENCODING:
             code_point = int(tail)
         elif word == _WORD_SWIDTH:
@@ -137,11 +138,11 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str, str
             )
         else:
             if strict_level >= 2:
-                raise BdfIllegalWordError(word)
+                raise BdfIllegalWordError(line_num, word)
     raise BdfMissingLineError(_WORD_ENDCHAR)
 
 
-def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_level: int) -> 'BdfFont':
+def _parse_font_segment(lines: Iterator[tuple[int, str, str | None]], strict_level: int) -> 'BdfFont':
     name = None
     point_size = None
     resolution_xy = None
@@ -151,7 +152,7 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_level: i
     glyphs_count = None
     glyphs = []
     comments = []
-    for word, tail in lines:
+    for line_num, word, tail in lines:
         if word == _WORD_FONT:
             name = tail
         elif word == _WORD_SIZE:
@@ -193,7 +194,7 @@ def _parse_font_segment(lines: Iterator[tuple[str, str | None]], strict_level: i
             )
         else:
             if strict_level >= 2:
-                raise BdfIllegalWordError(word)
+                raise BdfIllegalWordError(line_num, word)
     raise BdfMissingLineError(_WORD_ENDFONT)
 
 
@@ -201,7 +202,7 @@ class BdfFont:
     @staticmethod
     def parse(text: str, strict_level: int = 1) -> 'BdfFont':
         lines = _iter_as_lines(text)
-        for word, tail in lines:
+        for _line_num, word, tail in lines:
             if word == _WORD_STARTFONT:
                 if strict_level >= 1 and tail != '2.1':
                     raise BdfParseError(f'BDF version not supported: {tail}')

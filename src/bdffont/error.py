@@ -18,9 +18,10 @@ class BdfMissingLineError(BdfError):
 
 
 class BdfIllegalWordError(BdfError):
-    def __init__(self, word: str):
+    def __init__(self, line_num: int, word: str):
+        self.line_num = line_num
         self.word = word
-        super().__init__(f"Illegal word: '{word}'")
+        super().__init__(f"[line {line_num}] Illegal word: '{word}'")
 
 
 class BdfCountError(BdfError):
