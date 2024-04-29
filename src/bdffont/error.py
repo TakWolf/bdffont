@@ -4,7 +4,9 @@ class BdfError(Exception):
 
 
 class BdfParseError(BdfError):
-    pass
+    def __init__(self, line_num: int, message: str):
+        super().__init__(f'[line {line_num}] {message}')
+        self.line_num = line_num
 
 
 class BdfMissingLineError(BdfError):

@@ -20,8 +20,9 @@ def test_not_a_bdf():
 
 
 def test_not_support_version():
-    with pytest.raises(BdfParseError):
+    with pytest.raises(BdfParseError) as info:
         _load_damaged_bdf('not_support_version.bdf')
+    assert info.value.line_num == 1
 
 
 def test_no_line_font():

@@ -202,10 +202,10 @@ class BdfFont:
     @staticmethod
     def parse(text: str, strict_level: int = 1) -> 'BdfFont':
         lines = _iter_as_lines(text)
-        for _line_num, word, tail in lines:
+        for line_num, word, tail in lines:
             if word == _WORD_STARTFONT:
                 if strict_level >= 1 and tail != '2.1':
-                    raise BdfParseError(f'BDF version not supported: {tail}')
+                    raise BdfParseError(line_num, f'BDF version not supported: {tail}')
                 font = _parse_font_segment(lines, strict_level)
                 font.spec_version = tail
                 return font
