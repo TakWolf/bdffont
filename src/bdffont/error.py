@@ -10,8 +10,9 @@ class BdfParseError(BdfError):
 
 
 class BdfMissingLineError(BdfError):
-    def __init__(self, word: str):
-        super().__init__(f"Missing line: '{word}'")
+    def __init__(self, line_num: int, word: str):
+        super().__init__(f"[line {line_num}] Missing line: '{word}'")
+        self.line_num = line_num
         self.word = word
 
 
