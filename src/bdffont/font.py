@@ -57,7 +57,12 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _parse_properties_segment(lines: Iterator[tuple[int, str, str | None]], start_line_num: int, count: int, strict_level: int) -> BdfProperties:
+def _parse_properties_segment(
+        lines: Iterator[tuple[int, str, str | None]],
+        start_line_num: int,
+        count: int,
+        strict_level: int,
+) -> BdfProperties:
     properties = BdfProperties()
     for _line_num, word, tail in lines:
         if word == _WORD_ENDPROPERTIES:
@@ -75,7 +80,11 @@ def _parse_properties_segment(lines: Iterator[tuple[int, str, str | None]], star
     raise BdfMissingLineError(start_line_num, _WORD_ENDPROPERTIES)
 
 
-def _parse_bitmap_segment(lines: Iterator[tuple[int, str, str | None]], start_line_num: int, _strict_level: int) -> tuple[list[list[int]], list[str]]:
+def _parse_bitmap_segment(
+        lines: Iterator[tuple[int, str, str | None]],
+        start_line_num: int,
+        _strict_level: int,
+) -> tuple[list[list[int]], list[str]]:
     bitmap = []
     comments = []
     for _line_num, word, tail in lines:
@@ -91,7 +100,12 @@ def _parse_bitmap_segment(lines: Iterator[tuple[int, str, str | None]], start_li
     raise BdfMissingLineError(start_line_num, _WORD_ENDCHAR)
 
 
-def _parse_glyph_segment(lines: Iterator[tuple[int, str, str | None]], start_line_num: int, name: str, strict_level: int) -> BdfGlyph:
+def _parse_glyph_segment(
+        lines: Iterator[tuple[int, str, str | None]],
+        start_line_num: int,
+        name: str,
+        strict_level: int,
+) -> BdfGlyph:
     code_point = None
     scalable_width = None
     device_width = None
@@ -142,7 +156,11 @@ def _parse_glyph_segment(lines: Iterator[tuple[int, str, str | None]], start_lin
     raise BdfMissingLineError(start_line_num, _WORD_ENDCHAR)
 
 
-def _parse_font_segment(lines: Iterator[tuple[int, str, str | None]], start_line_num: int, strict_level: int) -> 'BdfFont':
+def _parse_font_segment(
+        lines: Iterator[tuple[int, str, str | None]],
+        start_line_num: int,
+        strict_level: int,
+) -> 'BdfFont':
     name = None
     point_size = None
     resolution_xy = None
