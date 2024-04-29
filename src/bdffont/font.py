@@ -1,7 +1,7 @@
-import io
 import os
 import re
 from collections.abc import Iterator
+from io import StringIO
 
 from bdffont.error import BdfParseError, BdfAttrError, BdfMissingLineError, BdfCountError, BdfPropKeyError, BdfPropValueError
 from bdffont.glyph import BdfGlyph
@@ -301,7 +301,7 @@ class BdfFont:
         if self.name is None:
             raise BdfAttrError("Missing attribute 'name'")
 
-        output = io.StringIO()
+        output = StringIO()
         output.write(f'{_WORD_STARTFONT} {self.spec_version}\n')
         for comment in self.comments:
             output.write(f'{_WORD_COMMENT} {comment}\n')
