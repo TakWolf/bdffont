@@ -74,11 +74,14 @@ def _parse_properties_segment(lines: Iterator[tuple[str, str | None]], count: in
     raise BdfMissingLineError(_WORD_ENDPROPERTIES)
 
 
-def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]], _strict_level: int) -> list[list[int]]:
+def _parse_bitmap_segment(lines: Iterator[tuple[str, str | None]], _strict_level: int) -> tuple[list[list[int]], list[str]]:
     bitmap = []
+    comments = []
     for word, tail in lines:
         if word == _WORD_ENDCHAR:
-            return bitmap
+            return bitmap, comments
+        elif word == _WORD_COMMENT:
+            comments.append(tail)
         else:
             bin_format = '{:0' + str(len(word) * 4) + 'b}'
             bin_string = bin_format.format(int(word, 16))
@@ -112,7 +115,8 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str | None]], name: str, str
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
             if word == _WORD_BITMAP:
-                bitmap = _parse_bitmap_segment(lines, strict_level)
+                bitmap, bitmap_comments = _parse_bitmap_segment(lines, strict_level)
+                comments.extend(bitmap_comments)
             if code_point is None:
                 raise BdfMissingLineError(_WORD_ENCODING)
             if scalable_width is None:
