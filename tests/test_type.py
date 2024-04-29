@@ -1,7 +1,7 @@
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
-from bdffont.error import BdfError, BdfPropKeyError, BdfPropValueError, BdfXlfdError
+from bdffont.error import BdfPropKeyError, BdfPropValueError, BdfXlfdError
 
 
 def test_font_1():
@@ -58,9 +58,17 @@ def test_font_2():
 def test_font_3():
     font = BdfFont()
 
-    with pytest.raises(BdfError) as info:
+    with pytest.raises(BdfXlfdError) as info:
         font.update_by_name_as_xlfd()
-    assert info.value.args[0] == "Missing attribute 'name'"
+    assert info.value.font_name == ''
+    assert info.value.reason == "not starts with '-'"
+
+    font.name = '--------------'
+    font.update_by_name_as_xlfd()
+    assert font.resolution_x == 0
+    assert font.resolution_y == 0
+    assert len(font.properties) == 0
+
     font.name = '-Adobe-Times-Medium-R-Normal--14-100-100-100-P-74-ISO8859-1'
     font.update_by_name_as_xlfd()
     assert font.resolution_x == 100
@@ -79,41 +87,6 @@ def test_font_3():
     assert font.properties.average_width == 74
     assert font.properties.charset_registry == 'ISO8859'
     assert font.properties.charset_encoding == '1'
-
-
-def test_font_4():
-    font = BdfFont()
-
-    font.glyphs.append(BdfGlyph(
-        name='A',
-        code_point=ord('A'),
-        scalable_width=(500, 0),
-        device_width=(3, 0),
-        bounding_box_size=(2, 2),
-        bounding_box_offset=(0, 0),
-        bitmap=[
-            [0, 1],
-            [1, 0],
-        ],
-    ))
-    font.glyphs.append(BdfGlyph(
-        name='B',
-        code_point=ord('B'),
-        scalable_width=(500, 0),
-        device_width=(3, 0),
-        bounding_box_size=(2, 2),
-        bounding_box_offset=(0, 0),
-        bitmap=[
-            [1, 0],
-            [0, 1],
-        ],
-    ))
-
-    with pytest.raises(BdfError) as info:
-        font.dump()
-    assert info.value.args[0] == "Missing attribute 'name'"
-    font.name = 'my-font'
-    font.dump()
 
 
 def test_properties():

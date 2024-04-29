@@ -3,7 +3,7 @@ import re
 from collections.abc import Iterator
 from io import StringIO
 
-from bdffont.error import BdfParseError, BdfAttrError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
+from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
@@ -221,7 +221,7 @@ class BdfFont:
 
     def __init__(
             self,
-            name: str = None,
+            name: str = '',
             point_size: int = 0,
             resolution_xy: tuple[int, int] = (0, 0),
             bounding_box_size: tuple[int, int] = (0, 0),
@@ -301,17 +301,11 @@ class BdfFont:
         self.name = self.properties.to_xlfd()
 
     def update_by_name_as_xlfd(self):
-        if self.name is None:
-            raise BdfAttrError("Missing attribute 'name'")
-
         self.properties.update_by_xlfd(self.name)
-        self.resolution_x = self.properties.resolution_x
-        self.resolution_y = self.properties.resolution_y
+        self.resolution_x = self.properties.resolution_x or 0
+        self.resolution_y = self.properties.resolution_y or 0
 
     def dump(self) -> str:
-        if self.name is None:
-            raise BdfAttrError("Missing attribute 'name'")
-
         output = StringIO()
         output.write(f'{_WORD_STARTFONT} {self.spec_version}\n')
         for comment in self.comments:
