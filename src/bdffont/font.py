@@ -57,12 +57,12 @@ def _convert_tail_to_properties_value(tail: str) -> str | int:
     return value
 
 
-def _parse_properties_segment(lines: Iterator[tuple[int, str, str | None]], count: int, strict_level: int) -> BdfProperties:
+def _parse_properties_segment(lines: Iterator[tuple[int, str, str | None]], start_line_num: int, count: int, strict_level: int) -> BdfProperties:
     properties = BdfProperties()
     for _line_num, word, tail in lines:
         if word == _WORD_ENDPROPERTIES:
             if strict_level >= 2 and len(properties) != count:
-                raise BdfCountError(_WORD_STARTPROPERTIES, count, len(properties))
+                raise BdfCountError(start_line_num, _WORD_STARTPROPERTIES, count, len(properties))
             return properties
         elif word == _WORD_COMMENT:
             properties.comments.append(tail)
@@ -149,6 +149,7 @@ def _parse_font_segment(lines: Iterator[tuple[int, str, str | None]], strict_lev
     bounding_box_size = None
     bounding_box_offset = None
     properties = None
+    chars_line_num = None
     glyphs_count = None
     glyphs = []
     comments = []
@@ -164,8 +165,9 @@ def _parse_font_segment(lines: Iterator[tuple[int, str, str | None]], strict_lev
             bounding_box_size = tokens[0], tokens[1]
             bounding_box_offset = tokens[2], tokens[3]
         elif word == _WORD_STARTPROPERTIES:
-            properties = _parse_properties_segment(lines, int(tail), strict_level)
+            properties = _parse_properties_segment(lines, line_num, int(tail), strict_level)
         elif word == _WORD_CHARS:
+            chars_line_num = line_num
             glyphs_count = int(tail)
         elif word == _WORD_STARTCHAR:
             glyphs.append(_parse_glyph_segment(lines, tail, strict_level))
@@ -181,7 +183,7 @@ def _parse_font_segment(lines: Iterator[tuple[int, str, str | None]], strict_lev
             if glyphs_count is None:
                 raise BdfMissingLineError(_WORD_CHARS)
             if strict_level >= 2 and len(glyphs) != glyphs_count:
-                raise BdfCountError(_WORD_CHARS, glyphs_count, len(glyphs))
+                raise BdfCountError(chars_line_num, _WORD_CHARS, glyphs_count, len(glyphs))
             return BdfFont(
                 name,
                 point_size,

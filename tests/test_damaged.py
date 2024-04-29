@@ -107,6 +107,7 @@ def test_incorrect_properties_count():
     _load_damaged_bdf('incorrect_properties_count.bdf')
     with pytest.raises(BdfCountError) as info:
         _load_damaged_bdf('incorrect_properties_count.bdf', strict_level=2)
+    assert info.value.line_num == 6
     assert info.value.word == 'STARTPROPERTIES'
 
 
@@ -114,4 +115,5 @@ def test_incorrect_chars_count():
     _load_damaged_bdf('incorrect_chars_count.bdf')
     with pytest.raises(BdfCountError) as info:
         _load_damaged_bdf('incorrect_chars_count.bdf', strict_level=2)
+    assert info.value.line_num == 28
     assert info.value.word == 'CHARS'

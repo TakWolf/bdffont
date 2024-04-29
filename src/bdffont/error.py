@@ -23,8 +23,9 @@ class BdfIllegalWordError(BdfError):
 
 
 class BdfCountError(BdfError):
-    def __init__(self, word: str, expected: int, actual: int):
-        super().__init__(f"'{word}' expected to be {expected} but actually {actual}")
+    def __init__(self, line_num: int, word: str, expected: int, actual: int):
+        super().__init__(f"[line {line_num}] '{word}' expected to be {expected} but actually {actual}")
+        self.line_num = line_num
         self.word = word
         self.expected = expected
         self.actual = actual
