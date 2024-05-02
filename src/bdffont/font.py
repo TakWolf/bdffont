@@ -140,6 +140,7 @@ def _parse_glyph_segment(
                 raise BdfMissingLineError(start_line_num, _WORD_DWIDTH)
             if bounding_box_size is None or bounding_box_offset is None:
                 raise BdfMissingLineError(start_line_num, _WORD_BBX)
+            bitmap = [bitmap_row[:bounding_box_size[0]] for bitmap_row in bitmap]
             return BdfGlyph(
                 name,
                 code_point,
