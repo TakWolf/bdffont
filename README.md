@@ -36,7 +36,7 @@ def main():
     print(f'descent: {font.properties.font_descent}')
     print()
     for glyph in font.glyphs:
-        print(f'char: {chr(glyph.code_point)} ({glyph.code_point:04X})')
+        print(f'char: {chr(glyph.encoding)} ({glyph.encoding:04X})')
         print(f'glyph_name: {glyph.name}')
         print(f'advance_width: {glyph.device_width_x}')
         print(f'offset: {glyph.bounding_box_offset}')
@@ -76,7 +76,7 @@ def main():
 
     font.glyphs.append(BdfGlyph(
         name='A',
-        code_point=ord('A'),
+        encoding=ord('A'),
         scalable_width=(500, 0),
         device_width=(8, 0),
         bounding_box_size=(8, 16),

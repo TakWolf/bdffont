@@ -20,7 +20,7 @@ def main():
 
     font.glyphs.append(BdfGlyph(
         name='A',
-        code_point=ord('A'),
+        encoding=ord('A'),
         scalable_width=(500, 0),
         device_width=(8, 0),
         bounding_box_size=(8, 16),

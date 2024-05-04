@@ -3,7 +3,7 @@ class BdfGlyph:
     def __init__(
             self,
             name: str,
-            code_point: int,
+            encoding: int,
             scalable_width: tuple[int, int] = (0, 0),
             device_width: tuple[int, int] = (0, 0),
             bounding_box_size: tuple[int, int] = (0, 0),
@@ -16,7 +16,7 @@ class BdfGlyph:
             The name for the glyph, limited to a string of 14 characters. In base fonts, this should correspond to
             the name in the PostScript language outline font's encoding vector. In a Composite font (Type 0), the
             value may be a numeric offset or glyph ID.
-        :param code_point:
+        :param encoding:
             The code point in Unicode. Could set -1 and optionally by another integer specifying the glyph index
             for the non-standard encoding.
         :param scalable_width:
@@ -44,7 +44,7 @@ class BdfGlyph:
             The comments.
         """
         self.name = name
-        self.code_point = code_point
+        self.encoding = encoding
         self.scalable_width_x, self.scalable_width_y = scalable_width
         self.device_width_x, self.device_width_y = device_width
         self.bounding_box_width, self.bounding_box_height = bounding_box_size

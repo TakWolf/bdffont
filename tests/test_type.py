@@ -293,7 +293,7 @@ def test_properties():
 def test_glyph():
     glyph = BdfGlyph(
         name='A',
-        code_point=ord('A'),
+        encoding=ord('A'),
         scalable_width=(0, 0),
         device_width=(0, 0),
         bounding_box_size=(0, 0),

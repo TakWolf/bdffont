@@ -106,7 +106,7 @@ def _parse_glyph_segment(
         name: str,
         strict_level: int,
 ) -> BdfGlyph:
-    code_point = None
+    encoding = None
     scalable_width = None
     device_width = None
     bounding_box_size = None
@@ -115,7 +115,7 @@ def _parse_glyph_segment(
     comments = []
     for line_num, word, tail in lines:
         if word == _WORD_ENCODING:
-            code_point = int(tail)
+            encoding = int(tail)
         elif word == _WORD_SWIDTH:
             tokens = _convert_tail_to_ints(tail)
             scalable_width = tokens[0], tokens[1]
@@ -132,7 +132,7 @@ def _parse_glyph_segment(
             if word == _WORD_BITMAP:
                 bitmap, bitmap_comments = _parse_bitmap_segment(lines, line_num, strict_level)
                 comments.extend(bitmap_comments)
-            if code_point is None:
+            if encoding is None:
                 raise BdfMissingLineError(start_line_num, _WORD_ENCODING)
             if scalable_width is None:
                 raise BdfMissingLineError(start_line_num, _WORD_SWIDTH)
@@ -143,7 +143,7 @@ def _parse_glyph_segment(
             bitmap = [bitmap_row[:bounding_box_size[0]] for bitmap_row in bitmap]
             return BdfGlyph(
                 name,
-                code_point,
+                encoding,
                 scalable_width,
                 device_width,
                 bounding_box_size,
@@ -350,7 +350,7 @@ class BdfFont:
             output.write(f'{_WORD_STARTCHAR} {glyph.name}\n')
             for comment in glyph.comments:
                 output.write(f'{_WORD_COMMENT} {comment}\n')
-            output.write(f'{_WORD_ENCODING} {glyph.code_point}\n')
+            output.write(f'{_WORD_ENCODING} {glyph.encoding}\n')
             output.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
             output.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
             output.write(f'{_WORD_BBX} {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}\n')

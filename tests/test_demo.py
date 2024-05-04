@@ -46,9 +46,9 @@ def test_demo():
     assert font.properties.copyright == 'Copyright (c) 1987 Adobe Systems, Inc.'
     assert font.properties.notice == 'Helvetica is a registered trademark of Linotype Inc.'
     assert len(font.glyphs) == 2
-    glyph = {glyph.code_point: glyph for glyph in font.glyphs}[39]
+    glyph = {glyph.encoding: glyph for glyph in font.glyphs}[39]
     assert glyph.name == 'quoteright'
-    assert glyph.code_point == 39
+    assert glyph.encoding == 39
     assert glyph.scalable_width_x == 223
     assert glyph.scalable_width_y == 0
     assert glyph.scalable_width == (223, 0)
