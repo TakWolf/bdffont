@@ -7,8 +7,8 @@ from bdffont.error import BdfPropKeyError, BdfPropValueError, BdfXlfdError
 def test_font_1():
     font = BdfFont()
 
-    font.resolution_xy = 1, 2
-    assert font.resolution_xy == (1, 2)
+    font.resolution = 1, 2
+    assert font.resolution == (1, 2)
     assert font.resolution_x == 1
     assert font.resolution_y == 2
 
@@ -35,7 +35,7 @@ def test_font_2():
     font = BdfFont()
 
     font.point_size = 16
-    font.resolution_xy = (75, 75)
+    font.resolution = (75, 75)
 
     font.properties.foundry = 'TakWolf Studio'
     font.properties.family_name = 'Demo Pixel'

@@ -17,7 +17,7 @@ def test_demo():
     assert font.point_size == 24
     assert font.resolution_x == 75
     assert font.resolution_y == 75
-    assert font.resolution_xy == (75, 75)
+    assert font.resolution == (75, 75)
     assert font.width == 9
     assert font.height == 24
     assert font.dimensions == (9, 24)

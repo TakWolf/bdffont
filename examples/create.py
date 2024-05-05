@@ -13,7 +13,7 @@ def main():
 
     font = BdfFont(
         point_size=16,
-        resolution_xy=(75, 75),
+        resolution=(75, 75),
         bounding_box=(16, 16, 0, -2),
     )
 

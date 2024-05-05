@@ -161,7 +161,7 @@ def _parse_font_segment(
 ) -> 'BdfFont':
     name = None
     point_size = None
-    resolution_xy = None
+    resolution = None
     bounding_box = None
     properties = None
     chars_line_num = None
@@ -174,7 +174,7 @@ def _parse_font_segment(
         elif word == _WORD_SIZE:
             tokens = _convert_tail_to_ints(tail)
             point_size = tokens[0]
-            resolution_xy = tokens[1], tokens[2]
+            resolution = tokens[1], tokens[2]
         elif word == _WORD_FONTBOUNDINGBOX:
             tokens = _convert_tail_to_ints(tail)
             bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
@@ -190,7 +190,7 @@ def _parse_font_segment(
         elif word == _WORD_ENDFONT:
             if name is None:
                 raise BdfMissingLineError(start_line_num, _WORD_FONT)
-            if point_size is None or resolution_xy is None:
+            if point_size is None or resolution is None:
                 raise BdfMissingLineError(start_line_num, _WORD_SIZE)
             if bounding_box is None:
                 raise BdfMissingLineError(start_line_num, _WORD_FONTBOUNDINGBOX)
@@ -201,7 +201,7 @@ def _parse_font_segment(
             return BdfFont(
                 name,
                 point_size,
-                resolution_xy,
+                resolution,
                 bounding_box,
                 properties,
                 glyphs,
@@ -238,7 +238,7 @@ class BdfFont:
             self,
             name: str = '',
             point_size: int = 0,
-            resolution_xy: tuple[int, int] = (0, 0),
+            resolution: tuple[int, int] = (0, 0),
             bounding_box: tuple[int, int, int, int] = (0, 0, 0, 0),
             properties: BdfProperties = None,
             glyphs: list[BdfGlyph] = None,
@@ -250,7 +250,7 @@ class BdfFont:
             or match the 'X logical font description (https://en.wikipedia.org/wiki/X_logical_font_description)'.
         :param point_size:
             The point size of the glyphs.
-        :param resolution_xy:
+        :param resolution:
             The x and y resolutions of the device for which the font is intended.
         :param bounding_box:
             The width in x and height in y of the glyphs in integer pixel values.
@@ -265,7 +265,7 @@ class BdfFont:
         self.spec_version = '2.1'
         self.name = name
         self.point_size = point_size
-        self.resolution_x, self.resolution_y = resolution_xy
+        self.resolution_x, self.resolution_y = resolution
         self.width, self.height, self.origin_x, self.origin_y = bounding_box
         if properties is None:
             properties = BdfProperties()
@@ -278,11 +278,11 @@ class BdfFont:
         self.comments = comments
 
     @property
-    def resolution_xy(self) -> tuple[int, int]:
+    def resolution(self) -> tuple[int, int]:
         return self.resolution_x, self.resolution_y
 
-    @resolution_xy.setter
-    def resolution_xy(self, value: tuple[int, int]):
+    @resolution.setter
+    def resolution(self, value: tuple[int, int]):
         self.resolution_x, self.resolution_y = value
 
     @property
