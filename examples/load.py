@@ -21,7 +21,8 @@ def main():
         print(f'char: {chr(glyph.encoding)} ({glyph.encoding:04X})')
         print(f'glyph_name: {glyph.name}')
         print(f'advance_width: {glyph.device_width_x}')
-        print(f'offset: {glyph.bounding_box_offset}')
+        print(f'dimensions: {glyph.dimensions}')
+        print(f'origin: {glyph.origin}')
         for bitmap_row in glyph.bitmap:
             text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
             print(f'{text}*')

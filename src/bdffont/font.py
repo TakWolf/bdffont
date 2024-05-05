@@ -109,8 +109,7 @@ def _parse_glyph_segment(
     encoding = None
     scalable_width = None
     device_width = None
-    bounding_box_size = None
-    bounding_box_offset = None
+    bounding_box = None
     bitmap = None
     comments = []
     for line_num, word, tail in lines:
@@ -124,8 +123,7 @@ def _parse_glyph_segment(
             device_width = tokens[0], tokens[1]
         elif word == _WORD_BBX:
             tokens = _convert_tail_to_ints(tail)
-            bounding_box_size = tokens[0], tokens[1]
-            bounding_box_offset = tokens[2], tokens[3]
+            bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
@@ -138,16 +136,15 @@ def _parse_glyph_segment(
                 raise BdfMissingLineError(start_line_num, _WORD_SWIDTH)
             if device_width is None:
                 raise BdfMissingLineError(start_line_num, _WORD_DWIDTH)
-            if bounding_box_size is None or bounding_box_offset is None:
+            if bounding_box is None:
                 raise BdfMissingLineError(start_line_num, _WORD_BBX)
-            bitmap = [bitmap_row[:bounding_box_size[0]] for bitmap_row in bitmap]
+            bitmap = [bitmap_row[:bounding_box[0]] for bitmap_row in bitmap]
             return BdfGlyph(
                 name,
                 encoding,
                 scalable_width,
                 device_width,
-                bounding_box_size,
-                bounding_box_offset,
+                bounding_box,
                 bitmap,
                 comments,
             )
@@ -165,8 +162,7 @@ def _parse_font_segment(
     name = None
     point_size = None
     resolution_xy = None
-    bounding_box_size = None
-    bounding_box_offset = None
+    bounding_box = None
     properties = None
     chars_line_num = None
     glyphs_count = None
@@ -181,8 +177,7 @@ def _parse_font_segment(
             resolution_xy = tokens[1], tokens[2]
         elif word == _WORD_FONTBOUNDINGBOX:
             tokens = _convert_tail_to_ints(tail)
-            bounding_box_size = tokens[0], tokens[1]
-            bounding_box_offset = tokens[2], tokens[3]
+            bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == _WORD_STARTPROPERTIES:
             properties = _parse_properties_segment(lines, line_num, int(tail), strict_level)
         elif word == _WORD_CHARS:
@@ -197,7 +192,7 @@ def _parse_font_segment(
                 raise BdfMissingLineError(start_line_num, _WORD_FONT)
             if point_size is None or resolution_xy is None:
                 raise BdfMissingLineError(start_line_num, _WORD_SIZE)
-            if bounding_box_size is None or bounding_box_offset is None:
+            if bounding_box is None:
                 raise BdfMissingLineError(start_line_num, _WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
                 raise BdfMissingLineError(start_line_num, _WORD_CHARS)
@@ -207,8 +202,7 @@ def _parse_font_segment(
                 name,
                 point_size,
                 resolution_xy,
-                bounding_box_size,
-                bounding_box_offset,
+                bounding_box,
                 properties,
                 glyphs,
                 comments,
@@ -245,8 +239,7 @@ class BdfFont:
             name: str = '',
             point_size: int = 0,
             resolution_xy: tuple[int, int] = (0, 0),
-            bounding_box_size: tuple[int, int] = (0, 0),
-            bounding_box_offset: tuple[int, int] = (0, 0),
+            bounding_box: tuple[int, int, int, int] = (0, 0, 0, 0),
             properties: BdfProperties = None,
             glyphs: list[BdfGlyph] = None,
             comments: list[str] = None,
@@ -259,9 +252,8 @@ class BdfFont:
             The point size of the glyphs.
         :param resolution_xy:
             The x and y resolutions of the device for which the font is intended.
-        :param bounding_box_size:
+        :param bounding_box:
             The width in x and height in y of the glyphs in integer pixel values.
-        :param bounding_box_offset:
             The x and y displacement of the lower left corner from origin 0 of the glyphs in integer pixel values.
         :param properties:
             The optional extended properties.
@@ -274,8 +266,7 @@ class BdfFont:
         self.name = name
         self.point_size = point_size
         self.resolution_x, self.resolution_y = resolution_xy
-        self.bounding_box_width, self.bounding_box_height = bounding_box_size
-        self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
+        self.width, self.height, self.origin_x, self.origin_y = bounding_box
         if properties is None:
             properties = BdfProperties()
         self.properties = properties
@@ -295,28 +286,28 @@ class BdfFont:
         self.resolution_x, self.resolution_y = value
 
     @property
-    def bounding_box_size(self) -> tuple[int, int]:
-        return self.bounding_box_width, self.bounding_box_height
+    def dimensions(self) -> tuple[int, int]:
+        return self.width, self.height
 
-    @bounding_box_size.setter
-    def bounding_box_size(self, value: tuple[int, int]):
-        self.bounding_box_width, self.bounding_box_height = value
+    @dimensions.setter
+    def dimensions(self, value: tuple[int, int]):
+        self.width, self.height = value
 
     @property
-    def bounding_box_offset(self) -> tuple[int, int]:
-        return self.bounding_box_offset_x, self.bounding_box_offset_y
+    def origin(self) -> tuple[int, int]:
+        return self.origin_x, self.origin_y
 
-    @bounding_box_offset.setter
-    def bounding_box_offset(self, value: tuple[int, int]):
-        self.bounding_box_offset_x, self.bounding_box_offset_y = value
+    @origin.setter
+    def origin(self, value: tuple[int, int]):
+        self.origin_x, self.origin_y = value
 
     @property
     def bounding_box(self) -> tuple[int, int, int, int]:
-        return self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y
+        return self.width, self.height, self.origin_x, self.origin_y
 
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
-        self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
+        self.width, self.height, self.origin_x, self.origin_y = value
 
     def generate_name_as_xlfd(self):
         self.name = self.properties.to_xlfd()
@@ -333,7 +324,7 @@ class BdfFont:
             output.write(f'{_WORD_COMMENT} {comment}\n')
         output.write(f'{_WORD_FONT} {self.name}\n')
         output.write(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}\n')
-        output.write(f'{_WORD_FONTBOUNDINGBOX} {self.bounding_box_width} {self.bounding_box_height} {self.bounding_box_offset_x} {self.bounding_box_offset_y}\n')
+        output.write(f'{_WORD_FONTBOUNDINGBOX} {self.width} {self.height} {self.origin_x} {self.origin_y}\n')
 
         output.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
         for comment in self.properties.comments:
@@ -353,7 +344,7 @@ class BdfFont:
             output.write(f'{_WORD_ENCODING} {glyph.encoding}\n')
             output.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
             output.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
-            output.write(f'{_WORD_BBX} {glyph.bounding_box_width} {glyph.bounding_box_height} {glyph.bounding_box_offset_x} {glyph.bounding_box_offset_y}\n')
+            output.write(f'{_WORD_BBX} {glyph.width} {glyph.height} {glyph.origin_x} {glyph.origin_y}\n')
             output.write(f'{_WORD_BITMAP}\n')
             for bitmap_row in glyph.bitmap:
                 if len(bitmap_row) % 8 > 0:

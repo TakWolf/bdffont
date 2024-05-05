@@ -6,8 +6,7 @@ class BdfGlyph:
             encoding: int,
             scalable_width: tuple[int, int] = (0, 0),
             device_width: tuple[int, int] = (0, 0),
-            bounding_box_size: tuple[int, int] = (0, 0),
-            bounding_box_offset: tuple[int, int] = (0, 0),
+            bounding_box: tuple[int, int, int, int] = (0, 0, 0, 0),
             bitmap: list[list[int]] = None,
             comments: list[str] = None,
     ):
@@ -34,9 +33,8 @@ class BdfGlyph:
             The width in x and y of the glyph in device pixels. Like the scalable width, this width information is a
             vector indicating the position of the next glyph's origin relative to the origin of this glyph.
             The device width y value should always be zero for a standard X font.
-        :param bounding_box_size:
+        :param bounding_box:
             The width in x and height in y of the bitmap in integer pixel values.
-        :param bounding_box_offset:
             The x and y displacement of the lower left corner from origin 0 of the bitmap in integer pixel values.
         :param bitmap:
             The bitmap of the glyph.
@@ -47,8 +45,7 @@ class BdfGlyph:
         self.encoding = encoding
         self.scalable_width_x, self.scalable_width_y = scalable_width
         self.device_width_x, self.device_width_y = device_width
-        self.bounding_box_width, self.bounding_box_height = bounding_box_size
-        self.bounding_box_offset_x, self.bounding_box_offset_y = bounding_box_offset
+        self.width, self.height, self.origin_x, self.origin_y = bounding_box
         if bitmap is None:
             bitmap = []
         self.bitmap = bitmap
@@ -73,25 +70,25 @@ class BdfGlyph:
         self.device_width_x, self.device_width_y = value
 
     @property
-    def bounding_box_size(self) -> tuple[int, int]:
-        return self.bounding_box_width, self.bounding_box_height
+    def dimensions(self) -> tuple[int, int]:
+        return self.width, self.height
 
-    @bounding_box_size.setter
-    def bounding_box_size(self, value: tuple[int, int]):
-        self.bounding_box_width, self.bounding_box_height = value
+    @dimensions.setter
+    def dimensions(self, value: tuple[int, int]):
+        self.width, self.height = value
 
     @property
-    def bounding_box_offset(self) -> tuple[int, int]:
-        return self.bounding_box_offset_x, self.bounding_box_offset_y
+    def origin(self) -> tuple[int, int]:
+        return self.origin_x, self.origin_y
 
-    @bounding_box_offset.setter
-    def bounding_box_offset(self, value: tuple[int, int]):
-        self.bounding_box_offset_x, self.bounding_box_offset_y = value
+    @origin.setter
+    def origin(self, value: tuple[int, int]):
+        self.origin_x, self.origin_y = value
 
     @property
     def bounding_box(self) -> tuple[int, int, int, int]:
-        return self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y
+        return self.width, self.height, self.origin_x, self.origin_y
 
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
-        self.bounding_box_width, self.bounding_box_height, self.bounding_box_offset_x, self.bounding_box_offset_y = value
+        self.width, self.height, self.origin_x, self.origin_y = value

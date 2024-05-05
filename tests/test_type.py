@@ -12,23 +12,23 @@ def test_font_1():
     assert font.resolution_x == 1
     assert font.resolution_y == 2
 
-    font.bounding_box_size = 3, 4
-    assert font.bounding_box_size == (3, 4)
-    assert font.bounding_box_width == 3
-    assert font.bounding_box_height == 4
+    font.dimensions = 3, 4
+    assert font.dimensions == (3, 4)
+    assert font.width == 3
+    assert font.height == 4
 
-    font.bounding_box_offset = 5, 6
-    assert font.bounding_box_offset == (5, 6)
-    assert font.bounding_box_offset_x == 5
-    assert font.bounding_box_offset_y == 6
+    font.origin = 5, 6
+    assert font.origin == (5, 6)
+    assert font.origin_x == 5
+    assert font.origin_y == 6
     assert font.bounding_box == (3, 4, 5, 6)
 
     font.bounding_box = 7, 8, 9, 10
     assert font.bounding_box == (7, 8, 9, 10)
-    assert font.bounding_box_width == 7
-    assert font.bounding_box_height == 8
-    assert font.bounding_box_offset_x == 9
-    assert font.bounding_box_offset_y == 10
+    assert font.width == 7
+    assert font.height == 8
+    assert font.origin_x == 9
+    assert font.origin_y == 10
 
 
 def test_font_2():
@@ -296,8 +296,7 @@ def test_glyph():
         encoding=ord('A'),
         scalable_width=(0, 0),
         device_width=(0, 0),
-        bounding_box_size=(0, 0),
-        bounding_box_offset=(0, 0),
+        bounding_box=(0, 0, 0, 0),
     )
 
     glyph.scalable_width = 1, 2
@@ -310,20 +309,20 @@ def test_glyph():
     assert glyph.device_width_x == 3
     assert glyph.device_width_y == 4
 
-    glyph.bounding_box_size = 5, 6
-    assert glyph.bounding_box_size == (5, 6)
-    assert glyph.bounding_box_width == 5
-    assert glyph.bounding_box_height == 6
+    glyph.dimensions = 5, 6
+    assert glyph.dimensions == (5, 6)
+    assert glyph.width == 5
+    assert glyph.height == 6
 
-    glyph.bounding_box_offset = 7, 8
-    assert glyph.bounding_box_offset == (7, 8)
-    assert glyph.bounding_box_offset_x == 7
-    assert glyph.bounding_box_offset_y == 8
+    glyph.origin = 7, 8
+    assert glyph.origin == (7, 8)
+    assert glyph.origin_x == 7
+    assert glyph.origin_y == 8
 
     assert glyph.bounding_box == (5, 6, 7, 8)
     glyph.bounding_box = 9, 10, 11, 12
     assert glyph.bounding_box == (9, 10, 11, 12)
-    assert glyph.bounding_box_width == 9
-    assert glyph.bounding_box_height == 10
-    assert glyph.bounding_box_offset_x == 11
-    assert glyph.bounding_box_offset_y == 12
+    assert glyph.width == 9
+    assert glyph.height == 10
+    assert glyph.origin_x == 11
+    assert glyph.origin_y == 12
