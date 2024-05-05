@@ -1,3 +1,4 @@
+import math
 import os
 import re
 from collections.abc import Iterator
@@ -346,9 +347,12 @@ class BdfFont:
             output.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
             output.write(f'{_WORD_BBX} {glyph.width} {glyph.height} {glyph.origin_x} {glyph.origin_y}\n')
             output.write(f'{_WORD_BITMAP}\n')
+            bitmap_row_width = math.ceil(glyph.width / 8) * 8
             for bitmap_row in glyph.bitmap:
-                if len(bitmap_row) % 8 > 0:
-                    bitmap_row = bitmap_row + [0] * (8 - len(bitmap_row) % 8)
+                if len(bitmap_row) < bitmap_row_width:
+                    bitmap_row = bitmap_row + [0] * (bitmap_row_width - len(bitmap_row))
+                elif len(bitmap_row) > bitmap_row_width:
+                    bitmap_row = bitmap_row[:bitmap_row_width]
                 bin_string = ''.join(map(str, bitmap_row))
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 hex_value = hex_format.format(int(bin_string, 2))
