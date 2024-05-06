@@ -47,10 +47,10 @@ class BdfGlyph:
         self.device_width_x, self.device_width_y = device_width
         self.width, self.height, self.origin_x, self.origin_y = bounding_box
         if bitmap is None:
-            bitmap = []
+            bitmap = list[list[int]]()
         self.bitmap = bitmap
         if comments is None:
-            comments = []
+            comments = list[str]()
         self.comments = comments
 
     @property

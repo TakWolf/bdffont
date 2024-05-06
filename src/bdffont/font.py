@@ -272,10 +272,10 @@ class BdfFont:
             properties = BdfProperties()
         self.properties = properties
         if glyphs is None:
-            glyphs = []
+            glyphs = list[BdfGlyph]()
         self.glyphs = glyphs
         if comments is None:
-            comments = []
+            comments = list[str]()
         self.comments = comments
 
     @property

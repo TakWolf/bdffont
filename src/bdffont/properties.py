@@ -121,7 +121,7 @@ class BdfProperties(UserDict[str, str | int]):
         """
         super().__init__(data)
         if comments is None:
-            comments = []
+            comments = list[str]()
         self.comments = comments
 
     def __getitem__(self, key: str) -> str | int:
