@@ -1,4 +1,3 @@
-import os
 import shutil
 
 from bdffont import BdfFont
@@ -6,12 +5,12 @@ from examples import assets_dir, build_dir
 
 
 def main():
-    outputs_dir = os.path.join(build_dir, 'load')
-    if os.path.exists(outputs_dir):
+    outputs_dir = build_dir.joinpath('load')
+    if outputs_dir.exists():
         shutil.rmtree(outputs_dir)
-    os.makedirs(outputs_dir)
+    outputs_dir.mkdir(parents=True)
 
-    font = BdfFont.load(os.path.join(assets_dir, 'unifont', 'unifont-15.1.05.bdf'))
+    font = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
     print(f'name: {font.name}')
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
@@ -27,7 +26,7 @@ def main():
             text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
             print(f'{text}*')
         print()
-    font.save(os.path.join(outputs_dir, 'unifont-15.0.01.bdf'))
+    font.save(outputs_dir.joinpath('unifont-15.0.01.bdf'))
 
 
 if __name__ == '__main__':

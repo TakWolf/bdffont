@@ -1,15 +1,15 @@
-import os
+from pathlib import Path
 
 import pytest
 
 from bdffont import BdfFont
 from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError
 
-project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def _load_damaged_bdf(file_name: str, strict_level: int = 1):
-    file_path = os.path.join(project_root_dir, 'assets', 'damaged', file_name)
+    file_path = project_root_dir.joinpath('assets', 'damaged', file_name)
     BdfFont.load(file_path, strict_level)
 
 

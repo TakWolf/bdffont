@@ -1,8 +1,8 @@
 import math
-import os
 import re
 from collections.abc import Iterator
 from io import StringIO
+from os import PathLike
 
 from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
 from bdffont.glyph import BdfGlyph
@@ -229,7 +229,7 @@ class BdfFont:
 
     @staticmethod
     def load(
-            file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes],
+            file_path: str | bytes | PathLike[str] | PathLike[bytes],
             strict_level: int = 1,
     ) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -362,6 +362,6 @@ class BdfFont:
         output.write(f'{_WORD_ENDFONT}\n')
         return output.getvalue()
 
-    def save(self, file_path: str | bytes | os.PathLike[str] | os.PathLike[bytes]):
+    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(self.dump())

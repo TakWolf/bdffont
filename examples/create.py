@@ -1,4 +1,3 @@
-import os
 import shutil
 
 from bdffont import BdfFont, BdfGlyph
@@ -6,10 +5,10 @@ from examples import build_dir
 
 
 def main():
-    outputs_dir = os.path.join(build_dir, 'create')
-    if os.path.exists(outputs_dir):
+    outputs_dir = build_dir.joinpath('create')
+    if outputs_dir.exists():
         shutil.rmtree(outputs_dir)
-    os.makedirs(outputs_dir)
+    outputs_dir.mkdir(parents=True)
 
     font = BdfFont(
         point_size=16,
@@ -68,7 +67,7 @@ def main():
     font.properties.font_version = '1.0.0'
     font.properties.copyright = 'Copyright (c) TakWolf'
 
-    font.save(os.path.join(outputs_dir, 'my-font.bdf'))
+    font.save(outputs_dir.joinpath('my-font.bdf'))
 
 
 if __name__ == '__main__':

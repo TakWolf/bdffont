@@ -1,12 +1,12 @@
-import os
+from pathlib import Path
 
 from bdffont import BdfFont
 
-project_root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def test_demo():
-    file_path = os.path.join(project_root_dir, 'assets', 'demo.bdf')
+    file_path = project_root_dir.joinpath('assets', 'demo.bdf')
     with open(file_path, 'r', encoding='utf-8') as file:
         bdf_text = file.read()
 
