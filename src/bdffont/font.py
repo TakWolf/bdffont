@@ -235,6 +235,19 @@ class BdfFont:
         with open(file_path, 'r', encoding='utf-8') as file:
             return BdfFont.parse(file.read(), strict_level)
 
+    spec_version: str
+    name: str
+    point_size: int
+    resolution_x: int
+    resolution_y: int
+    width: int
+    height: int
+    origin_x: int
+    origin_y: int
+    properties: BdfProperties
+    glyphs: list[BdfGlyph]
+    comments: list[str]
+
     def __init__(
             self,
             name: str = '',
@@ -272,10 +285,10 @@ class BdfFont:
             properties = BdfProperties()
         self.properties = properties
         if glyphs is None:
-            glyphs = list[BdfGlyph]()
+            glyphs = []
         self.glyphs = glyphs
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
 
     @property

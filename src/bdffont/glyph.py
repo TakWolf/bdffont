@@ -1,5 +1,18 @@
 
 class BdfGlyph:
+    name: str
+    encoding: int
+    scalable_width_x: int
+    scalable_width_y: int
+    device_width_x: int
+    device_width_y: int
+    width: int
+    height: int
+    origin_x: int
+    origin_y: int
+    bitmap: list[list[int]]
+    comments: list[str]
+
     def __init__(
             self,
             name: str,
@@ -47,10 +60,10 @@ class BdfGlyph:
         self.device_width_x, self.device_width_y = device_width
         self.width, self.height, self.origin_x, self.origin_y = bounding_box
         if bitmap is None:
-            bitmap = list[list[int]]()
+            bitmap = []
         self.bitmap = bitmap
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
 
     @property

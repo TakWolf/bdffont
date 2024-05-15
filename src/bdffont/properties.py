@@ -108,6 +108,8 @@ def _check_value(key: str, value: str | int):
 
 
 class BdfProperties(UserDict[str, str | int]):
+    comments: list[str]
+
     def __init__(
             self,
             data: dict[str, str | int] = None,
@@ -121,7 +123,7 @@ class BdfProperties(UserDict[str, str | int]):
         """
         super().__init__(data)
         if comments is None:
-            comments = list[str]()
+            comments = []
         self.comments = comments
 
     def __getitem__(self, key: str) -> str | int:
