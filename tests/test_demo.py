@@ -6,10 +6,7 @@ project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def test_demo():
-    file_path = project_root_dir.joinpath('assets', 'demo.bdf')
-    with open(file_path, 'r', encoding='utf-8') as file:
-        bdf_text = file.read()
-
+    bdf_text = project_root_dir.joinpath('assets', 'demo.bdf').read_text('utf-8')
     font = BdfFont.parse(bdf_text)
     assert font.dump() == bdf_text
     assert font.spec_version == '2.1'

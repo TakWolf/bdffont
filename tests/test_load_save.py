@@ -7,16 +7,14 @@ project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
 
 def _file_sha256(file_path: Path) -> str:
-    with open(file_path, 'rb') as file:
-        return hashlib.sha256(file.read()).hexdigest()
+    return hashlib.sha256(file_path.read_bytes()).hexdigest()
 
 
 def test_unifont(tmp_path: Path):
     load_file_path = project_root_dir.joinpath('assets', 'unifont', 'unifont-15.1.05.bdf')
     save_file_path = tmp_path.joinpath('unifont-15.1.05.bdf')
     font = BdfFont.load(load_file_path)
-    with open(save_file_path, 'w', encoding='utf-8') as file:
-        file.write(font.dump().replace('\nBITMAP\n', '\nBITMAP \n'))
+    save_file_path.write_text(font.dump().replace('\nBITMAP\n', '\nBITMAP \n'), 'utf-8')
     assert _file_sha256(load_file_path) == _file_sha256(save_file_path)
 
 
