@@ -254,9 +254,9 @@ class BdfFont:
             point_size: int = 0,
             resolution: tuple[int, int] = (0, 0),
             bounding_box: tuple[int, int, int, int] = (0, 0, 0, 0),
-            properties: BdfProperties = None,
-            glyphs: list[BdfGlyph] = None,
-            comments: list[str] = None,
+            properties: BdfProperties | None = None,
+            glyphs: list[BdfGlyph] | None = None,
+            comments: list[str] | None = None,
     ):
         """
         :param name:

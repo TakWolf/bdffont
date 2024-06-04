@@ -20,8 +20,8 @@ class BdfGlyph:
             scalable_width: tuple[int, int] = (0, 0),
             device_width: tuple[int, int] = (0, 0),
             bounding_box: tuple[int, int, int, int] = (0, 0, 0, 0),
-            bitmap: list[list[int]] = None,
-            comments: list[str] = None,
+            bitmap: list[list[int]] | None = None,
+            comments: list[str] | None = None,
     ):
         """
         :param name:

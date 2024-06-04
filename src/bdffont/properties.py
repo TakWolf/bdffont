@@ -112,8 +112,8 @@ class BdfProperties(UserDict[str, str | int]):
 
     def __init__(
             self,
-            data: dict[str, str | int] = None,
-            comments: list[str] = None,
+            data: dict[str, str | int] | None = None,
+            comments: list[str] | None = None,
     ):
         """
         :param data:
