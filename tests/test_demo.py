@@ -2,11 +2,9 @@ from pathlib import Path
 
 from bdffont import BdfFont
 
-project_root_dir = Path(__file__).parent.joinpath('..').resolve()
 
-
-def test_demo():
-    bdf_text = project_root_dir.joinpath('assets', 'demo.bdf').read_text('utf-8')
+def test_demo(assets_dir: Path):
+    bdf_text = assets_dir.joinpath('demo.bdf').read_text('utf-8')
     font = BdfFont.parse(bdf_text)
     assert font.dump() == bdf_text
     assert font.spec_version == '2.1'
