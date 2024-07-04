@@ -41,7 +41,7 @@ def main():
         print(f'dimensions: {glyph.dimensions}')
         print(f'origin: {glyph.origin}')
         for bitmap_row in glyph.bitmap:
-            text = ''.join(map(str, bitmap_row)).replace('0', '  ').replace('1', '██')
+            text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
             print(f'{text}*')
         print()
     font.save(outputs_dir.joinpath('unifont-15.0.01.bdf'))
