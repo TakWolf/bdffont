@@ -228,10 +228,7 @@ class BdfFont:
         raise BdfMissingLineError(1, _WORD_STARTFONT)
 
     @staticmethod
-    def load(
-            file_path: str | bytes | PathLike[str] | PathLike[bytes],
-            strict_level: int = 1,
-    ) -> 'BdfFont':
+    def load(file_path: str | PathLike[str], strict_level: int = 1) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
             return BdfFont.parse(file.read(), strict_level)
 
@@ -375,6 +372,6 @@ class BdfFont:
         output.write(f'{_WORD_ENDFONT}\n')
         return output.getvalue()
 
-    def save(self, file_path: str | bytes | PathLike[str] | PathLike[bytes]):
+    def save(self, file_path: str | PathLike[str]):
         with open(file_path, 'w', encoding='utf-8') as file:
             file.write(self.dump())
