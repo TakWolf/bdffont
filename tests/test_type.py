@@ -223,7 +223,7 @@ def test_properties_4():
     with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd(font_name)
     assert info.value.font_name == font_name
-    assert info.value.reason == "there could only be 14 '-' in the name"
+    assert info.value.reason == "must be 14 '-'"
 
 
 def test_properties_5():
@@ -279,7 +279,7 @@ def test_properties_7():
 
     with pytest.raises(BdfPropKeyError) as info:
         properties['abc-def'] = 'abcdef'
-    assert info.value.key == 'ABC-DEF'
+    assert info.value.key == 'abc-def'
 
     properties['NONE_PARAM'] = None
     assert 'NONE_PARAM' not in properties

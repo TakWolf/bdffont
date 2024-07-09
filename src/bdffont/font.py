@@ -221,7 +221,7 @@ class BdfFont:
         for line_num, word, tail in lines:
             if word == _WORD_STARTFONT:
                 if strict_level >= 1 and tail != '2.1':
-                    raise BdfParseError(line_num, f'BDF version not supported: {tail}')
+                    raise BdfParseError(line_num, f'spec version not support: {tail}')
                 font = _parse_font_segment(lines, line_num, strict_level)
                 font.spec_version = tail
                 return font

@@ -7,10 +7,14 @@ class BdfError(Exception):
 
 class BdfParseError(BdfError):
     line_num: int
+    reason: str
 
-    def __init__(self, line_num: int, message: str):
-        super().__init__(f'[line {line_num}] {message}')
+    def __init__(self, line_num: int, reason: str):
         self.line_num = line_num
+        self.reason = reason
+
+    def __str__(self) -> str:
+        return f'[line {self.line_num}] {self.reason}'
 
 
 class BdfMissingLineError(BdfError):
@@ -18,9 +22,11 @@ class BdfMissingLineError(BdfError):
     word: str
 
     def __init__(self, line_num: int, word: str):
-        super().__init__(f"[line {line_num}] Missing line: '{word}'")
         self.line_num = line_num
         self.word = word
+
+    def __str__(self) -> str:
+        return f'[line {self.line_num}] missing line: {repr(self.word)}'
 
 
 class BdfIllegalWordError(BdfError):
@@ -28,9 +34,11 @@ class BdfIllegalWordError(BdfError):
     word: str
 
     def __init__(self, line_num: int, word: str):
-        super().__init__(f"[line {line_num}] Illegal word: '{word}'")
         self.line_num = line_num
         self.word = word
+
+    def __str__(self) -> str:
+        return f'[line {self.line_num}] illegal word: {repr(self.word)}'
 
 
 class BdfCountError(BdfError):
@@ -40,21 +48,25 @@ class BdfCountError(BdfError):
     actual: int
 
     def __init__(self, line_num: int, word: str, expected: int, actual: int):
-        super().__init__(f"[line {line_num}] '{word}' expected to be {expected} but actually {actual}")
         self.line_num = line_num
         self.word = word
         self.expected = expected
         self.actual = actual
 
+    def __str__(self) -> str:
+        return f'[line {self.line_num}] {repr(self.word)} expected to be {self.expected} but actually {self.actual}'
+
 
 class BdfPropKeyError(BdfError):
-    key: str
+    key: Any
     reason: str
 
-    def __init__(self, key: str, reason: str):
-        super().__init__(f"'{key}': {reason}")
+    def __init__(self, key: Any, reason: str):
         self.key = key
         self.reason = reason
+
+    def __str__(self) -> str:
+        return f'{self.reason}: key = {repr(self.key)}'
 
 
 class BdfPropValueError(BdfError):
@@ -63,10 +75,12 @@ class BdfPropValueError(BdfError):
     reason: str
 
     def __init__(self, key: str, value: Any, reason: str):
-        super().__init__(f"'{key}': '{value}': {reason}")
         self.key = key
         self.value = value
         self.reason = reason
+
+    def __str__(self) -> str:
+        return f'{self.reason}: key = {repr(self.key)}, value = {repr(self.value)}'
 
 
 class BdfXlfdError(BdfError):
@@ -74,6 +88,8 @@ class BdfXlfdError(BdfError):
     reason: str
 
     def __init__(self, font_name: str, reason: str):
-        super().__init__(f"'{font_name}': {reason}")
         self.font_name = font_name
         self.reason = reason
+
+    def __str__(self) -> str:
+        return f'{self.reason}: {self.font_name}'
