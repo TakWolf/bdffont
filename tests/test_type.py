@@ -89,7 +89,7 @@ def test_font_3():
     assert font.properties.charset_encoding == '1'
 
 
-def test_properties():
+def test_properties_1():
     properties = BdfProperties({
         'PARAM_1': 1,
         'param_2': '2',
@@ -106,7 +106,9 @@ def test_properties():
     assert properties.comments[0] == 'This is a comment.'
     assert properties.comments[1] == 'This is a comment, too.'
 
-    properties.clear()
+
+def test_properties_2():
+    properties = BdfProperties()
 
     properties.foundry = 'TakWolf Studio'
     assert properties.foundry == 'TakWolf Studio'
@@ -165,9 +167,11 @@ def test_properties():
     assert properties['CHARSET_ENCODING'] == '1'
 
     assert len(properties) == 14
+    assert properties.to_xlfd() == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-240-M-85-ISO8859-1'
 
-    font_name = '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-240-M-85-ISO8859-1'
-    assert properties.to_xlfd() == font_name
+
+def test_properties_3():
+    properties = BdfProperties()
 
     font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
     properties.update_by_xlfd(font_name)
@@ -205,6 +209,10 @@ def test_properties():
     assert properties.charset_encoding is None
     assert properties.to_xlfd() == font_name
 
+
+def test_properties_4():
+    properties = BdfProperties()
+
     font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
     with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd(font_name)
@@ -217,7 +225,9 @@ def test_properties():
     assert info.value.font_name == font_name
     assert info.value.reason == "there could only be 14 '-' in the name"
 
-    properties.clear()
+
+def test_properties_5():
+    properties = BdfProperties()
 
     properties.default_char = -1
     assert properties.default_char == -1
@@ -240,7 +250,10 @@ def test_properties():
     assert properties['CAP_HEIGHT'] == 8
 
     assert len(properties) == 5
-    properties.clear()
+
+
+def test_properties_6():
+    properties = BdfProperties()
 
     properties.font_version = '1.0.0'
     assert properties.font_version == '1.0.0'
@@ -255,7 +268,10 @@ def test_properties():
     assert properties['NOTICE'] == 'This is a notice.'
 
     assert len(properties) == 3
-    properties.clear()
+
+
+def test_properties_7():
+    properties = BdfProperties()
 
     properties['abc'] = 'abc'
     assert properties['ABC'] == 'abc'
