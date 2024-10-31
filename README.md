@@ -28,7 +28,7 @@ def main():
         shutil.rmtree(outputs_dir)
     outputs_dir.mkdir(parents=True)
 
-    font = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-15.1.05.bdf'))
+    font = BdfFont.load(assets_dir.joinpath('unifont', 'unifont-16.0.02.bdf'))
     print(f'name: {font.name}')
     print(f'size: {font.point_size}')
     print(f'ascent: {font.properties.font_ascent}')
@@ -44,7 +44,7 @@ def main():
             text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
             print(f'{text}*')
         print()
-    font.save(outputs_dir.joinpath('unifont-15.0.01.bdf'))
+    font.save(outputs_dir.joinpath('unifont-16.0.02.bdf'))
 
 
 if __name__ == '__main__':
