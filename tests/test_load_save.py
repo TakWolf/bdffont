@@ -11,14 +11,6 @@ def test_unifont(assets_dir: Path, tmp_path: Path):
     assert load_path.read_bytes() == save_path.read_bytes()
 
 
-def test_galmuri9(assets_dir: Path, tmp_path: Path):
-    load_path = assets_dir.joinpath('galmuri', 'galmuri9.bdf')
-    save_path = tmp_path.joinpath('galmuri9.bdf')
-    font = BdfFont.load(load_path)
-    font.save(save_path)
-    assert load_path.read_bytes() == save_path.read_bytes()
-
-
 def test_misaki_gothic(assets_dir: Path, tmp_path: Path):
     load_path = assets_dir.joinpath('misaki', 'misaki_gothic.bdf')
     save_path = tmp_path.joinpath('misaki_gothic.bdf')

@@ -133,7 +133,6 @@ if __name__ == '__main__':
 ## Test Fonts
 
 - [GNU Unifont Glyphs](https://unifoundry.com/unifont/index.html)
-- [Galmuri](https://github.com/quiple/galmuri)
 - [美咲フォント / Misaki](https://littlelimit.net/misaki.htm)
 
 ## References
