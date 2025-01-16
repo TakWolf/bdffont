@@ -278,15 +278,9 @@ class BdfFont:
         self.point_size = point_size
         self.resolution_x, self.resolution_y = resolution
         self.width, self.height, self.origin_x, self.origin_y = bounding_box
-        if properties is None:
-            properties = BdfProperties()
-        self.properties = properties
-        if glyphs is None:
-            glyphs = []
-        self.glyphs = glyphs
-        if comments is None:
-            comments = []
-        self.comments = comments
+        self.properties = BdfProperties() if properties is None else properties
+        self.glyphs = [] if glyphs is None else glyphs
+        self.comments = [] if comments is None else comments
 
     @property
     def resolution(self) -> tuple[int, int]:

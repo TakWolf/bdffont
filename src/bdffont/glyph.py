@@ -59,12 +59,8 @@ class BdfGlyph:
         self.scalable_width_x, self.scalable_width_y = scalable_width
         self.device_width_x, self.device_width_y = device_width
         self.width, self.height, self.origin_x, self.origin_y = bounding_box
-        if bitmap is None:
-            bitmap = []
-        self.bitmap = bitmap
-        if comments is None:
-            comments = []
-        self.comments = comments
+        self.bitmap = [] if bitmap is None else bitmap
+        self.comments = [] if comments is None else comments
 
     @property
     def scalable_width(self) -> tuple[int, int]:
