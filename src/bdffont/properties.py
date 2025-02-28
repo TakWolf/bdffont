@@ -140,6 +140,9 @@ class BdfProperties(UserDict[str, str | int]):
             if matched is not None:
                 raise BdfPropValueError(key, value, f'contains illegal characters {repr(matched.group())}')
 
+        if isinstance(value, str) and '\n' in value:
+            raise BdfPropValueError(key, value, "contains illegal characters '\\n'")
+
         super().__setitem__(key, value)
 
     @property

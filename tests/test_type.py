@@ -305,6 +305,11 @@ def test_properties_7():
     assert info.value.key == 'FAMILY_NAME'
     assert info.value.value == 'Demo-Pixel'
 
+    with pytest.raises(BdfPropValueError) as info:
+        properties['MULTI_LINE'] = 'This is a line.\nThis is another line.'
+    assert info.value.key == 'MULTI_LINE'
+    assert info.value.value == 'This is a line.\nThis is another line.'
+
 
 def test_glyph():
     glyph = BdfGlyph(
