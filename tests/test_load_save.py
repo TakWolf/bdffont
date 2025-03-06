@@ -7,7 +7,7 @@ def test_unifont(assets_dir: Path, tmp_path: Path):
     load_path = assets_dir.joinpath('unifont', 'unifont-16.0.02.bdf')
     save_path = tmp_path.joinpath('unifont-16.0.02.bdf')
     font = BdfFont.load(load_path)
-    save_path.write_text(font.dump().replace('\nBITMAP\n', '\nBITMAP \n'), 'utf-8')
+    save_path.write_text(font.dump_to_string().replace('\nBITMAP\n', '\nBITMAP \n'), 'utf-8')
     assert load_path.read_bytes() == save_path.read_bytes()
 
 
