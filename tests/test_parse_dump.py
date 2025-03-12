@@ -16,9 +16,9 @@ def test_demo(assets_dir: Path):
     assert font.width == 9
     assert font.height == 24
     assert font.dimensions == (9, 24)
-    assert font.origin_x == -2
-    assert font.origin_y == -6
-    assert font.origin == (-2, -6)
+    assert font.offset_x == -2
+    assert font.offset_y == -6
+    assert font.offset == (-2, -6)
     assert font.bounding_box == (9, 24, -2, -6)
     assert len(font.properties) == 19
     assert font.properties.foundry == 'Adobe'
@@ -53,9 +53,9 @@ def test_demo(assets_dir: Path):
     assert glyph.width == 4
     assert glyph.height == 6
     assert glyph.dimensions == (4, 6)
-    assert glyph.origin_x == 2
-    assert glyph.origin_y == 12
-    assert glyph.origin == (2, 12)
+    assert glyph.offset_x == 2
+    assert glyph.offset_y == 12
+    assert glyph.offset == (2, 12)
     assert glyph.bounding_box == (4, 6, 2, 12)
     assert len(glyph.bitmap) == 6
     glyph_bitmap = [

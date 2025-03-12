@@ -21,7 +21,7 @@ def main():
         print(f'glyph_name: {glyph.name}')
         print(f'advance_width: {glyph.device_width_x}')
         print(f'dimensions: {glyph.dimensions}')
-        print(f'origin: {glyph.origin}')
+        print(f'offset: {glyph.offset}')
         for bitmap_row in glyph.bitmap:
             text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
             print(f'{text}*')

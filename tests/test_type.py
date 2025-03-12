@@ -17,18 +17,18 @@ def test_font_1():
     assert font.width == 3
     assert font.height == 4
 
-    font.origin = 5, 6
-    assert font.origin == (5, 6)
-    assert font.origin_x == 5
-    assert font.origin_y == 6
+    font.offset = 5, 6
+    assert font.offset == (5, 6)
+    assert font.offset_x == 5
+    assert font.offset_y == 6
     assert font.bounding_box == (3, 4, 5, 6)
 
     font.bounding_box = 7, 8, 9, 10
     assert font.bounding_box == (7, 8, 9, 10)
     assert font.width == 7
     assert font.height == 8
-    assert font.origin_x == 9
-    assert font.origin_y == 10
+    assert font.offset_x == 9
+    assert font.offset_y == 10
 
 
 def test_font_2():
@@ -335,15 +335,15 @@ def test_glyph():
     assert glyph.width == 5
     assert glyph.height == 6
 
-    glyph.origin = 7, 8
-    assert glyph.origin == (7, 8)
-    assert glyph.origin_x == 7
-    assert glyph.origin_y == 8
+    glyph.offset = 7, 8
+    assert glyph.offset == (7, 8)
+    assert glyph.offset_x == 7
+    assert glyph.offset_y == 8
 
     assert glyph.bounding_box == (5, 6, 7, 8)
     glyph.bounding_box = 9, 10, 11, 12
     assert glyph.bounding_box == (9, 10, 11, 12)
     assert glyph.width == 9
     assert glyph.height == 10
-    assert glyph.origin_x == 11
-    assert glyph.origin_y == 12
+    assert glyph.offset_x == 11
+    assert glyph.offset_y == 12

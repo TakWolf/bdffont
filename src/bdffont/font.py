@@ -243,8 +243,8 @@ class BdfFont:
     resolution_y: int
     width: int
     height: int
-    origin_x: int
-    origin_y: int
+    offset_x: int
+    offset_y: int
     properties: BdfProperties
     glyphs: list[BdfGlyph]
     comments: list[str]
@@ -269,7 +269,7 @@ class BdfFont:
             The x and y resolutions of the device for which the font is intended.
         :param bounding_box:
             The width in x and height in y of the glyphs in integer pixel values.
-            The x and y displacement of the lower left corner from origin 0 of the glyphs in integer pixel values.
+            The x and y displacement of the lower left corner from origin of the glyphs in integer pixel values.
         :param properties:
             The optional extended properties.
         :param glyphs:
@@ -281,7 +281,7 @@ class BdfFont:
         self.name = name
         self.point_size = point_size
         self.resolution_x, self.resolution_y = resolution
-        self.width, self.height, self.origin_x, self.origin_y = bounding_box
+        self.width, self.height, self.offset_x, self.offset_y = bounding_box
         self.properties = BdfProperties() if properties is None else properties
         self.glyphs = [] if glyphs is None else glyphs
         self.comments = [] if comments is None else comments
@@ -303,20 +303,20 @@ class BdfFont:
         self.width, self.height = value
 
     @property
-    def origin(self) -> tuple[int, int]:
-        return self.origin_x, self.origin_y
+    def offset(self) -> tuple[int, int]:
+        return self.offset_x, self.offset_y
 
-    @origin.setter
-    def origin(self, value: tuple[int, int]):
-        self.origin_x, self.origin_y = value
+    @offset.setter
+    def offset(self, value: tuple[int, int]):
+        self.offset_x, self.offset_y = value
 
     @property
     def bounding_box(self) -> tuple[int, int, int, int]:
-        return self.width, self.height, self.origin_x, self.origin_y
+        return self.width, self.height, self.offset_x, self.offset_y
 
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
-        self.width, self.height, self.origin_x, self.origin_y = value
+        self.width, self.height, self.offset_x, self.offset_y = value
 
     def generate_name_as_xlfd(self):
         self.name = self.properties.to_xlfd()
@@ -332,7 +332,7 @@ class BdfFont:
             stream.write(f'{_WORD_COMMENT} {comment}\n')
         stream.write(f'{_WORD_FONT} {self.name}\n')
         stream.write(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}\n')
-        stream.write(f'{_WORD_FONTBOUNDINGBOX} {self.width} {self.height} {self.origin_x} {self.origin_y}\n')
+        stream.write(f'{_WORD_FONTBOUNDINGBOX} {self.width} {self.height} {self.offset_x} {self.offset_y}\n')
 
         stream.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
         for comment in self.properties.comments:
@@ -352,7 +352,7 @@ class BdfFont:
             stream.write(f'{_WORD_ENCODING} {glyph.encoding}\n')
             stream.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
             stream.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
-            stream.write(f'{_WORD_BBX} {glyph.width} {glyph.height} {glyph.origin_x} {glyph.origin_y}\n')
+            stream.write(f'{_WORD_BBX} {glyph.width} {glyph.height} {glyph.offset_x} {glyph.offset_y}\n')
             stream.write(f'{_WORD_BITMAP}\n')
             bitmap_row_width = math.ceil(glyph.width / 8) * 8
             for bitmap_row in glyph.bitmap:

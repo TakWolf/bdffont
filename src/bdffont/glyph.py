@@ -8,8 +8,8 @@ class BdfGlyph:
     device_width_y: int
     width: int
     height: int
-    origin_x: int
-    origin_y: int
+    offset_x: int
+    offset_y: int
     bitmap: list[list[int]]
     comments: list[str]
 
@@ -48,7 +48,7 @@ class BdfGlyph:
             The device width y value should always be zero for a standard X font.
         :param bounding_box:
             The width in x and height in y of the bitmap in integer pixel values.
-            The x and y displacement of the lower left corner from origin 0 of the bitmap in integer pixel values.
+            The x and y displacement of the lower left corner from origin of the bitmap in integer pixel values.
         :param bitmap:
             The bitmap of the glyph.
         :param comments:
@@ -58,7 +58,7 @@ class BdfGlyph:
         self.encoding = encoding
         self.scalable_width_x, self.scalable_width_y = scalable_width
         self.device_width_x, self.device_width_y = device_width
-        self.width, self.height, self.origin_x, self.origin_y = bounding_box
+        self.width, self.height, self.offset_x, self.offset_y = bounding_box
         self.bitmap = [] if bitmap is None else bitmap
         self.comments = [] if comments is None else comments
 
@@ -87,17 +87,17 @@ class BdfGlyph:
         self.width, self.height = value
 
     @property
-    def origin(self) -> tuple[int, int]:
-        return self.origin_x, self.origin_y
+    def offset(self) -> tuple[int, int]:
+        return self.offset_x, self.offset_y
 
-    @origin.setter
-    def origin(self, value: tuple[int, int]):
-        self.origin_x, self.origin_y = value
+    @offset.setter
+    def offset(self, value: tuple[int, int]):
+        self.offset_x, self.offset_y = value
 
     @property
     def bounding_box(self) -> tuple[int, int, int, int]:
-        return self.width, self.height, self.origin_x, self.origin_y
+        return self.width, self.height, self.offset_x, self.offset_y
 
     @bounding_box.setter
     def bounding_box(self, value: tuple[int, int, int, int]):
-        self.width, self.height, self.origin_x, self.origin_y = value
+        self.width, self.height, self.offset_x, self.offset_y = value
