@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
@@ -347,3 +349,10 @@ def test_glyph():
     assert glyph.height == 10
     assert glyph.offset_x == 11
     assert glyph.offset_y == 12
+
+
+def test_eq(assets_dir: Path):
+    file_path = assets_dir.joinpath('demo.bdf')
+    font_1 = BdfFont.load(file_path)
+    font_2 = BdfFont.load(file_path)
+    assert font_1 == font_2

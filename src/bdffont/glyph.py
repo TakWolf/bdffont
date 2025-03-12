@@ -1,3 +1,5 @@
+from typing import Any
+
 
 class BdfGlyph:
     name: str
@@ -61,6 +63,22 @@ class BdfGlyph:
         self.width, self.height, self.offset_x, self.offset_y = bounding_box
         self.bitmap = [] if bitmap is None else bitmap
         self.comments = [] if comments is None else comments
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, BdfGlyph):
+            return False
+        return (self.name == other.name and
+                self.encoding == other.encoding and
+                self.scalable_width_x == other.scalable_width_x and
+                self.scalable_width_y == other.scalable_width_y and
+                self.device_width_x == other.device_width_x and
+                self.device_width_y == other.device_width_y and
+                self.width == other.width and
+                self.height == other.height and
+                self.offset_x == other.offset_x and
+                self.offset_y == other.offset_y and
+                self.bitmap == other.bitmap and
+                self.comments == other.comments)
 
     @property
     def scalable_width(self) -> tuple[int, int]:

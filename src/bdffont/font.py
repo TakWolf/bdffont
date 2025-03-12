@@ -3,7 +3,7 @@ import re
 from collections.abc import Iterator
 from io import StringIO
 from os import PathLike
-from typing import TextIO
+from typing import Any, TextIO
 
 from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
 from bdffont.glyph import BdfGlyph
@@ -285,6 +285,22 @@ class BdfFont:
         self.properties = BdfProperties() if properties is None else properties
         self.glyphs = [] if glyphs is None else glyphs
         self.comments = [] if comments is None else comments
+
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, BdfFont):
+            return False
+        return (self.spec_version == other.spec_version and
+                self.name == other.name and
+                self.point_size == other.point_size and
+                self.resolution_x == other.resolution_x and
+                self.resolution_y == other.resolution_y and
+                self.width == other.width and
+                self.height == other.height and
+                self.offset_x == other.offset_x and
+                self.offset_y == other.offset_y and
+                self.properties == other.properties and
+                self.glyphs == other.glyphs and
+                self.comments == other.comments)
 
     @property
     def resolution(self) -> tuple[int, int]:

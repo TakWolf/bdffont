@@ -145,6 +145,12 @@ class BdfProperties(UserDict[str, str | int]):
 
         super().__setitem__(key, value)
 
+    def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, BdfProperties):
+            return False
+        return (self.comments == other.comments and
+                super().__eq__(other))
+
     @property
     def foundry(self) -> str | None:
         return self.get(_KEY_FOUNDRY, None)
