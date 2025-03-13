@@ -5,7 +5,7 @@ from io import StringIO
 from os import PathLike
 from typing import Any, TextIO
 
-from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError, BdfPropKeyError, BdfPropValueError
+from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
@@ -63,29 +63,23 @@ def _parse_properties_segment(
         lines: Iterator[tuple[int, str, str | None]],
         start_line_num: int,
         count: int,
-        strict_level: int,
 ) -> BdfProperties:
     properties = BdfProperties()
     for _line_num, word, tail in lines:
         if word == _WORD_ENDPROPERTIES:
-            if strict_level >= 2 and len(properties) != count:
+            if len(properties) != count:
                 raise BdfCountError(start_line_num, _WORD_STARTPROPERTIES, count, len(properties))
             return properties
         elif word == _WORD_COMMENT:
             properties.comments.append(tail)
         else:
-            try:
-                properties[word] = _convert_tail_to_properties_value(tail)
-            except (BdfPropKeyError, BdfPropValueError) as e:
-                if strict_level >= 1:
-                    raise e
+            properties[word] = _convert_tail_to_properties_value(tail)
     raise BdfMissingLineError(start_line_num, _WORD_ENDPROPERTIES)
 
 
 def _parse_bitmap_segment(
         lines: Iterator[tuple[int, str, str | None]],
         start_line_num: int,
-        _strict_level: int,
 ) -> tuple[list[list[int]], list[str]]:
     bitmap = []
     comments = []
@@ -106,7 +100,6 @@ def _parse_glyph_segment(
         lines: Iterator[tuple[int, str, str | None]],
         start_line_num: int,
         name: str,
-        strict_level: int,
 ) -> BdfGlyph:
     encoding = None
     scalable_width = None
@@ -130,7 +123,7 @@ def _parse_glyph_segment(
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
             if word == _WORD_BITMAP:
-                bitmap, bitmap_comments = _parse_bitmap_segment(lines, line_num, strict_level)
+                bitmap, bitmap_comments = _parse_bitmap_segment(lines, line_num)
                 comments.extend(bitmap_comments)
             if encoding is None:
                 raise BdfMissingLineError(start_line_num, _WORD_ENCODING)
@@ -151,15 +144,13 @@ def _parse_glyph_segment(
                 comments,
             )
         else:
-            if strict_level >= 2:
-                raise BdfIllegalWordError(line_num, word)
+            raise BdfIllegalWordError(line_num, word)
     raise BdfMissingLineError(start_line_num, _WORD_ENDCHAR)
 
 
 def _parse_font_segment(
         lines: Iterator[tuple[int, str, str | None]],
         start_line_num: int,
-        strict_level: int,
 ) -> 'BdfFont':
     name = None
     point_size = None
@@ -181,12 +172,12 @@ def _parse_font_segment(
             tokens = _convert_tail_to_ints(tail)
             bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
         elif word == _WORD_STARTPROPERTIES:
-            properties = _parse_properties_segment(lines, line_num, int(tail), strict_level)
+            properties = _parse_properties_segment(lines, line_num, int(tail))
         elif word == _WORD_CHARS:
             chars_line_num = line_num
             glyphs_count = int(tail)
         elif word == _WORD_STARTCHAR:
-            glyphs.append(_parse_glyph_segment(lines, line_num, tail, strict_level))
+            glyphs.append(_parse_glyph_segment(lines, line_num, tail))
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_ENDFONT:
@@ -198,7 +189,7 @@ def _parse_font_segment(
                 raise BdfMissingLineError(start_line_num, _WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
                 raise BdfMissingLineError(start_line_num, _WORD_CHARS)
-            if strict_level >= 2 and len(glyphs) != glyphs_count:
+            if len(glyphs) != glyphs_count:
                 raise BdfCountError(chars_line_num, _WORD_CHARS, glyphs_count, len(glyphs))
             return BdfFont(
                 name,
@@ -210,31 +201,30 @@ def _parse_font_segment(
                 comments,
             )
         else:
-            if strict_level >= 2:
-                raise BdfIllegalWordError(line_num, word)
+            raise BdfIllegalWordError(line_num, word)
     raise BdfMissingLineError(start_line_num, _WORD_ENDFONT)
 
 
 class BdfFont:
     @staticmethod
-    def parse(stream: str | TextIO, strict_level: int = 1) -> 'BdfFont':
+    def parse(stream: str | TextIO) -> 'BdfFont':
         if isinstance(stream, str):
             stream = StringIO(stream)
         lines = _iter_as_lines(stream)
 
         for line_num, word, tail in lines:
             if word == _WORD_STARTFONT:
-                if strict_level >= 1 and tail != '2.1':
+                if tail != '2.1':
                     raise BdfParseError(line_num, f'spec version not support: {tail}')
-                font = _parse_font_segment(lines, line_num, strict_level)
+                font = _parse_font_segment(lines, line_num)
                 font.spec_version = tail
                 return font
         raise BdfMissingLineError(1, _WORD_STARTFONT)
 
     @staticmethod
-    def load(file_path: str | PathLike[str], strict_level: int = 1) -> 'BdfFont':
+    def load(file_path: str | PathLike[str]) -> 'BdfFont':
         with open(file_path, 'r', encoding='utf-8') as file:
-            return BdfFont.parse(file, strict_level)
+            return BdfFont.parse(file)
 
     spec_version: str
     name: str

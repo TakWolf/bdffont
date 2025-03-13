@@ -94,29 +94,27 @@ def test_no_line_end_font(assets_dir: Path):
 
 def test_illegal_word_in_font(assets_dir: Path):
     with pytest.raises(BdfIllegalWordError) as info:
-        BdfFont.load(assets_dir.joinpath('damaged', 'illegal_word_in_font.bdf'), strict_level=2)
+        BdfFont.load(assets_dir.joinpath('damaged', 'illegal_word_in_font.bdf'))
     assert info.value.line_num == 2
     assert info.value.word == 'ABC'
 
 
 def test_illegal_word_in_char(assets_dir: Path):
     with pytest.raises(BdfIllegalWordError) as info:
-        BdfFont.load(assets_dir.joinpath('damaged', 'illegal_word_in_char.bdf'), strict_level=2)
+        BdfFont.load(assets_dir.joinpath('damaged', 'illegal_word_in_char.bdf'))
     assert info.value.line_num == 30
     assert info.value.word == 'DEF'
 
 
 def test_incorrect_properties_count(assets_dir: Path):
-    BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_properties_count.bdf'))
     with pytest.raises(BdfCountError) as info:
-        BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_properties_count.bdf'), strict_level=2)
+        BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_properties_count.bdf'))
     assert info.value.line_num == 6
     assert info.value.word == 'STARTPROPERTIES'
 
 
 def test_incorrect_chars_count(assets_dir: Path):
-    BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_chars_count.bdf'))
     with pytest.raises(BdfCountError) as info:
-        BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_chars_count.bdf'), strict_level=2)
+        BdfFont.load(assets_dir.joinpath('damaged', 'incorrect_chars_count.bdf'))
     assert info.value.line_num == 28
     assert info.value.word == 'CHARS'
