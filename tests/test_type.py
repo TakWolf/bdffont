@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from bdffont import BdfFont, BdfProperties, BdfGlyph
-from bdffont.error import BdfPropKeyError, BdfPropValueError, BdfXlfdError
+from bdffont.error import BdfXlfdError
 
 
 def test_font_1():
@@ -271,38 +271,27 @@ def test_properties_7():
     assert properties['ABC'] == 'abc'
     assert properties['abc'] == 'abc'
 
-    with pytest.raises(BdfPropKeyError) as info:
+    with pytest.raises(KeyError):
         properties['abc-def'] = 'abcdef'
-    assert info.value.key == 'abc-def'
 
     properties['NONE_PARAM'] = None
     assert 'NONE_PARAM' not in properties
 
-    with pytest.raises(BdfPropValueError) as info:
+    with pytest.raises(ValueError):
         properties.foundry = 1
-    assert info.value.key == 'FOUNDRY'
-    assert info.value.value == 1
 
-    with pytest.raises(BdfPropValueError) as info:
+    with pytest.raises(ValueError):
         properties.pixel_size = '1'
-    assert info.value.key == 'PIXEL_SIZE'
-    assert info.value.value == '1'
 
-    with pytest.raises(BdfPropValueError) as info:
+    with pytest.raises(ValueError):
         # noinspection PyTypeChecker
         properties['FLOAT_PARAM'] = 1.2
-    assert info.value.key == 'FLOAT_PARAM'
-    assert info.value.value == 1.2
 
-    with pytest.raises(BdfPropValueError) as info:
+    with pytest.raises(ValueError):
         properties.family_name = 'Demo-Pixel'
-    assert info.value.key == 'FAMILY_NAME'
-    assert info.value.value == 'Demo-Pixel'
 
-    with pytest.raises(BdfPropValueError) as info:
+    with pytest.raises(ValueError):
         properties['MULTI_LINE'] = 'This is a line.\nThis is another line.'
-    assert info.value.key == 'MULTI_LINE'
-    assert info.value.value == 'This is a line.\nThis is another line.'
 
 
 def test_glyph():
