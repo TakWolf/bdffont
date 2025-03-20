@@ -7,7 +7,7 @@ class BdfParseError(BdfError):
     pass
 
 
-class BdfMissingWordError(BdfError):
+class BdfMissingWordError(BdfParseError):
     word: str
 
     def __init__(self, word: str):
@@ -17,7 +17,7 @@ class BdfMissingWordError(BdfError):
         return f'missing word: {repr(self.word)}'
 
 
-class BdfIllegalWordError(BdfError):
+class BdfIllegalWordError(BdfParseError):
     word: str
 
     def __init__(self, word: str):
@@ -27,7 +27,7 @@ class BdfIllegalWordError(BdfError):
         return f'illegal word: {repr(self.word)}'
 
 
-class BdfCountError(BdfError):
+class BdfCountError(BdfParseError):
     word: str
     expected: int
     actual: int
@@ -39,6 +39,10 @@ class BdfCountError(BdfError):
 
     def __str__(self) -> str:
         return f'the count of {repr(self.word)} is incorrect: {self.expected} -> {self.actual}'
+
+
+class BdfDumpError(BdfError):
+    pass
 
 
 class BdfXlfdError(BdfError):

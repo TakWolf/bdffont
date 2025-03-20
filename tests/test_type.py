@@ -290,9 +290,6 @@ def test_properties_7():
     with pytest.raises(ValueError):
         properties.family_name = 'Demo-Pixel'
 
-    with pytest.raises(ValueError):
-        properties['MULTI_LINE'] = 'This is a line.\nThis is another line.'
-
 
 def test_glyph():
     glyph = BdfGlyph(

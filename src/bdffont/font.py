@@ -5,7 +5,7 @@ from io import StringIO
 from os import PathLike
 from typing import Any, TextIO
 
-from bdffont.error import BdfParseError, BdfMissingWordError, BdfIllegalWordError, BdfCountError
+from bdffont.error import BdfParseError, BdfMissingWordError, BdfIllegalWordError, BdfCountError, BdfDumpError
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
@@ -193,6 +193,33 @@ def _parse_stream(stream: TextIO) -> 'BdfFont':
     raise BdfMissingWordError(_WORD_STARTFONT)
 
 
+def _dump_word_str_line(stream: TextIO, word: str, tail: str | None = None):
+    stream.write(word)
+    if tail is not None:
+        tail = tail.strip()
+        if tail != '':
+            if len(tail.splitlines()) > 1:
+                raise BdfDumpError('tail cannot be multi-line string')
+            stream.write(f' {tail}')
+    stream.write('\n')
+
+
+def _dump_word_ints_line(stream: TextIO, word: str, *values: int):
+    stream.write(word)
+    for value in values:
+        stream.write(f' {value}')
+    stream.write('\n')
+
+
+def _dump_properties_line(stream: TextIO, key: str, value: str | int):
+    if isinstance(value, str):
+        value = value.replace('"', '""')
+        value = f'"{value}"'
+        if len(value.splitlines()) > 1:
+            raise BdfDumpError('properties value cannot be multi-line string')
+    stream.write(f'{key} {value}\n')
+
+
 class BdfFont:
     @staticmethod
     def parse(stream: str | TextIO) -> 'BdfFont':
@@ -309,33 +336,30 @@ class BdfFont:
         self.resolution_y = self.properties.resolution_y or 0
 
     def dump(self, stream: TextIO):
-        stream.write(f'{_WORD_STARTFONT} {_SPEC_VERSION}\n')
+        _dump_word_str_line(stream, _WORD_STARTFONT, _SPEC_VERSION)
         for comment in self.comments:
-            stream.write(f'{_WORD_COMMENT} {comment}\n')
-        stream.write(f'{_WORD_FONT} {self.name}\n')
-        stream.write(f'{_WORD_SIZE} {self.point_size} {self.resolution_x} {self.resolution_y}\n')
-        stream.write(f'{_WORD_FONTBOUNDINGBOX} {self.width} {self.height} {self.offset_x} {self.offset_y}\n')
+            _dump_word_str_line(stream, _WORD_COMMENT, comment)
+        _dump_word_str_line(stream, _WORD_FONT, self.name)
+        _dump_word_ints_line(stream, _WORD_SIZE, self.point_size, self.resolution_x, self.resolution_y)
+        _dump_word_ints_line(stream, _WORD_FONTBOUNDINGBOX, self.width, self.height, self.offset_x, self.offset_y)
 
-        stream.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
+        _dump_word_ints_line(stream, _WORD_STARTPROPERTIES, len(self.properties))
         for comment in self.properties.comments:
-            stream.write(f'{_WORD_COMMENT} {comment}\n')
+            _dump_word_str_line(stream, _WORD_COMMENT, comment)
         for key, value in self.properties.items():
-            if isinstance(value, str):
-                value = value.replace('"', '""')
-                value = f'"{value}"'
-            stream.write(f'{key} {value}\n')
-        stream.write(f'{_WORD_ENDPROPERTIES}\n')
+            _dump_properties_line(stream, key, value)
+        _dump_word_str_line(stream, _WORD_ENDPROPERTIES)
 
-        stream.write(f'{_WORD_CHARS} {len(self.glyphs)}\n')
+        _dump_word_ints_line(stream, _WORD_CHARS, len(self.glyphs))
         for glyph in self.glyphs:
-            stream.write(f'{_WORD_STARTCHAR} {glyph.name}\n')
+            _dump_word_str_line(stream, _WORD_STARTCHAR, glyph.name)
             for comment in glyph.comments:
-                stream.write(f'{_WORD_COMMENT} {comment}\n')
-            stream.write(f'{_WORD_ENCODING} {glyph.encoding}\n')
-            stream.write(f'{_WORD_SWIDTH} {glyph.scalable_width_x} {glyph.scalable_width_y}\n')
-            stream.write(f'{_WORD_DWIDTH} {glyph.device_width_x} {glyph.device_width_y}\n')
-            stream.write(f'{_WORD_BBX} {glyph.width} {glyph.height} {glyph.offset_x} {glyph.offset_y}\n')
-            stream.write(f'{_WORD_BITMAP}\n')
+                _dump_word_str_line(stream, _WORD_COMMENT, comment)
+            _dump_word_ints_line(stream, _WORD_ENCODING, glyph.encoding)
+            _dump_word_ints_line(stream, _WORD_SWIDTH, glyph.scalable_width_x, glyph.scalable_width_y)
+            _dump_word_ints_line(stream, _WORD_DWIDTH, glyph.device_width_x, glyph.device_width_y)
+            _dump_word_ints_line(stream, _WORD_BBX, glyph.width, glyph.height, glyph.offset_x, glyph.offset_y)
+            _dump_word_str_line(stream, _WORD_BITMAP)
             bitmap_row_width = math.ceil(glyph.width / 8) * 8
             for bitmap_row in glyph.bitmap:
                 if len(bitmap_row) < bitmap_row_width:
@@ -346,9 +370,9 @@ class BdfFont:
                 hex_format = '{:0' + str(len(bitmap_row) // 4) + 'X}'
                 hex_value = hex_format.format(int(bin_string, 2))
                 stream.write(f'{hex_value}\n')
-            stream.write(f'{_WORD_ENDCHAR}\n')
+            _dump_word_str_line(stream, _WORD_ENDCHAR)
 
-        stream.write(f'{_WORD_ENDFONT}\n')
+        _dump_word_str_line(stream, _WORD_ENDFONT)
 
     def dump_to_string(self) -> str:
         stream = StringIO()
