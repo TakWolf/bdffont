@@ -89,7 +89,6 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyp
     scalable_width = None
     device_width = None
     bounding_box = None
-    bitmap = None
     comments = []
     for word, tail in lines:
         if word == _WORD_ENCODING:
@@ -106,8 +105,6 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyp
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
-            if word == _WORD_BITMAP:
-                bitmap = _parse_bitmap_segment(lines)
             if encoding is None:
                 raise BdfMissingWordError(_WORD_ENCODING)
             if scalable_width is None:
@@ -116,7 +113,11 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyp
                 raise BdfMissingWordError(_WORD_DWIDTH)
             if bounding_box is None:
                 raise BdfMissingWordError(_WORD_BBX)
-            bitmap = [bitmap_row[:bounding_box[0]] for bitmap_row in bitmap]
+            if word == _WORD_BITMAP:
+                bitmap = _parse_bitmap_segment(lines)
+                bitmap = [bitmap_row[:bounding_box[0]] for bitmap_row in bitmap]
+            else:
+                bitmap = None
             return BdfGlyph(
                 name,
                 encoding,
