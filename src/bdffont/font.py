@@ -5,7 +5,7 @@ from io import StringIO
 from os import PathLike
 from typing import Any, TextIO
 
-from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordError, BdfCountError
+from bdffont.error import BdfParseError, BdfMissingWordError, BdfIllegalWordError, BdfCountError
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
@@ -68,7 +68,7 @@ def _parse_properties_segment(lines: Iterator[tuple[str, str]], count: int) -> B
             properties.comments.append(tail)
         else:
             properties[word] = _convert_tail_to_properties_value(tail)
-    raise BdfMissingLineError(_WORD_ENDPROPERTIES)
+    raise BdfMissingWordError(_WORD_ENDPROPERTIES)
 
 
 def _parse_bitmap_segment(lines: Iterator[tuple[str, str]]) -> tuple[list[list[int]], list[str]]:
@@ -84,7 +84,7 @@ def _parse_bitmap_segment(lines: Iterator[tuple[str, str]]) -> tuple[list[list[i
             bin_string = bin_format.format(int(word, 16))
             bitmap_row = [int(c) for c in bin_string]
             bitmap.append(bitmap_row)
-    raise BdfMissingLineError(_WORD_ENDCHAR)
+    raise BdfMissingWordError(_WORD_ENDCHAR)
 
 
 def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyph:
@@ -113,13 +113,13 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyp
                 bitmap, bitmap_comments = _parse_bitmap_segment(lines)
                 comments.extend(bitmap_comments)
             if encoding is None:
-                raise BdfMissingLineError(_WORD_ENCODING)
+                raise BdfMissingWordError(_WORD_ENCODING)
             if scalable_width is None:
-                raise BdfMissingLineError(_WORD_SWIDTH)
+                raise BdfMissingWordError(_WORD_SWIDTH)
             if device_width is None:
-                raise BdfMissingLineError(_WORD_DWIDTH)
+                raise BdfMissingWordError(_WORD_DWIDTH)
             if bounding_box is None:
-                raise BdfMissingLineError(_WORD_BBX)
+                raise BdfMissingWordError(_WORD_BBX)
             bitmap = [bitmap_row[:bounding_box[0]] for bitmap_row in bitmap]
             return BdfGlyph(
                 name,
@@ -132,7 +132,7 @@ def _parse_glyph_segment(lines: Iterator[tuple[str, str]], name: str) -> BdfGlyp
             )
         else:
             raise BdfIllegalWordError(word)
-    raise BdfMissingLineError(_WORD_ENDCHAR)
+    raise BdfMissingWordError(_WORD_ENDCHAR)
 
 
 def _parse_font_segment(lines: Iterator[tuple[str, str]]) -> 'BdfFont':
@@ -164,13 +164,13 @@ def _parse_font_segment(lines: Iterator[tuple[str, str]]) -> 'BdfFont':
             comments.append(tail)
         elif word == _WORD_ENDFONT:
             if name is None:
-                raise BdfMissingLineError(_WORD_FONT)
+                raise BdfMissingWordError(_WORD_FONT)
             if point_size is None or resolution is None:
-                raise BdfMissingLineError(_WORD_SIZE)
+                raise BdfMissingWordError(_WORD_SIZE)
             if bounding_box is None:
-                raise BdfMissingLineError(_WORD_FONTBOUNDINGBOX)
+                raise BdfMissingWordError(_WORD_FONTBOUNDINGBOX)
             if glyphs_count is None:
-                raise BdfMissingLineError(_WORD_CHARS)
+                raise BdfMissingWordError(_WORD_CHARS)
             if len(glyphs) != glyphs_count:
                 raise BdfCountError(_WORD_CHARS, glyphs_count, len(glyphs))
             return BdfFont(
@@ -184,7 +184,7 @@ def _parse_font_segment(lines: Iterator[tuple[str, str]]) -> 'BdfFont':
             )
         else:
             raise BdfIllegalWordError(word)
-    raise BdfMissingLineError(_WORD_ENDFONT)
+    raise BdfMissingWordError(_WORD_ENDFONT)
 
 
 def _parse_stream(stream: TextIO) -> 'BdfFont':
@@ -194,7 +194,7 @@ def _parse_stream(stream: TextIO) -> 'BdfFont':
             if tail != _SPEC_VERSION:
                 raise BdfParseError(f'spec version not support: {tail}')
             return _parse_font_segment(lines)
-    raise BdfMissingLineError(_WORD_STARTFONT)
+    raise BdfMissingWordError(_WORD_STARTFONT)
 
 
 class BdfFont:

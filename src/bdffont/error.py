@@ -9,14 +9,14 @@ class BdfParseError(BdfError):
     pass
 
 
-class BdfMissingLineError(BdfError):
+class BdfMissingWordError(BdfError):
     word: str
 
     def __init__(self, word: str):
         self.word = word
 
     def __str__(self) -> str:
-        return f'missing line: {repr(self.word)}'
+        return f'missing word: {repr(self.word)}'
 
 
 class BdfIllegalWordError(BdfError):
