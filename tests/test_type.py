@@ -60,10 +60,8 @@ def test_font_2():
 def test_font_3():
     font = BdfFont()
 
-    with pytest.raises(BdfXlfdError) as info:
+    with pytest.raises(BdfXlfdError):
         font.update_by_name_as_xlfd()
-    assert info.value.font_name == ''
-    assert info.value.reason == "not starts with '-'"
 
     font.name = '--------------'
     font.update_by_name_as_xlfd()
@@ -215,17 +213,11 @@ def test_properties_3():
 def test_properties_4():
     properties = BdfProperties()
 
-    font_name = 'Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1'
-    with pytest.raises(BdfXlfdError) as info:
-        properties.update_by_xlfd(font_name)
-    assert info.value.font_name == font_name
-    assert info.value.reason == "not starts with '-'"
+    with pytest.raises(BdfXlfdError):
+        properties.update_by_xlfd('Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1')
 
-    font_name = '-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-'
-    with pytest.raises(BdfXlfdError) as info:
-        properties.update_by_xlfd(font_name)
-    assert info.value.font_name == font_name
-    assert info.value.reason == "must be 14 '-'"
+    with pytest.raises(BdfXlfdError):
+        properties.update_by_xlfd('-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-')
 
 
 def test_properties_5():

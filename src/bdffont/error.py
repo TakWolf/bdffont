@@ -70,12 +70,4 @@ class BdfPropValueError(BdfError):
 
 
 class BdfXlfdError(BdfError):
-    font_name: str
-    reason: str
-
-    def __init__(self, font_name: str, reason: str):
-        self.font_name = font_name
-        self.reason = reason
-
-    def __str__(self) -> str:
-        return f'{self.reason}: {self.font_name}'
+    pass
