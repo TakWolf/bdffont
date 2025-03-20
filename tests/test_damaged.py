@@ -7,10 +7,10 @@ from bdffont.error import BdfParseError, BdfMissingWordError, BdfIllegalWordErro
 
 
 def test_not_a_bdf(assets_dir: Path):
-    with pytest.raises(BdfMissingWordError) as info:
+    with pytest.raises(BdfIllegalWordError) as info:
         BdfFont.load(assets_dir.joinpath('damaged', 'not_a_bdf.bdf'))
-    assert info.value.word == 'STARTFONT'
-    assert str(info.value) == "missing word: 'STARTFONT'"
+    assert info.value.word == 'This'
+    assert str(info.value) == "illegal word: 'This'"
 
 
 def test_not_support_version(assets_dir: Path):
