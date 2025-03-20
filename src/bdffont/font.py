@@ -9,6 +9,8 @@ from bdffont.error import BdfParseError, BdfMissingLineError, BdfIllegalWordErro
 from bdffont.glyph import BdfGlyph
 from bdffont.properties import BdfProperties
 
+_SPEC_VERSION = '2.1'
+
 _WORD_STARTFONT = 'STARTFONT'
 _WORD_ENDFONT = 'ENDFONT'
 _WORD_COMMENT = 'COMMENT'
@@ -214,11 +216,9 @@ class BdfFont:
 
         for line_num, word, tail in lines:
             if word == _WORD_STARTFONT:
-                if tail != '2.1':
+                if tail != _SPEC_VERSION:
                     raise BdfParseError(line_num, f'spec version not support: {tail}')
-                font = _parse_font_segment(lines, line_num)
-                font.spec_version = tail
-                return font
+                return _parse_font_segment(lines, line_num)
         raise BdfMissingLineError(1, _WORD_STARTFONT)
 
     @staticmethod
@@ -226,7 +226,6 @@ class BdfFont:
         with open(file_path, 'r', encoding='utf-8') as file:
             return BdfFont.parse(file)
 
-    spec_version: str
     name: str
     point_size: int
     resolution_x: int
@@ -267,7 +266,6 @@ class BdfFont:
         :param comments:
             The comments.
         """
-        self.spec_version = '2.1'
         self.name = name
         self.point_size = point_size
         self.resolution_x, self.resolution_y = resolution
@@ -279,8 +277,7 @@ class BdfFont:
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, BdfFont):
             return False
-        return (self.spec_version == other.spec_version and
-                self.name == other.name and
+        return (self.name == other.name and
                 self.point_size == other.point_size and
                 self.resolution_x == other.resolution_x and
                 self.resolution_y == other.resolution_y and
@@ -333,7 +330,7 @@ class BdfFont:
         self.resolution_y = self.properties.resolution_y or 0
 
     def dump(self, stream: TextIO):
-        stream.write(f'{_WORD_STARTFONT} {self.spec_version}\n')
+        stream.write(f'{_WORD_STARTFONT} {_SPEC_VERSION}\n')
         for comment in self.comments:
             stream.write(f'{_WORD_COMMENT} {comment}\n')
         stream.write(f'{_WORD_FONT} {self.name}\n')

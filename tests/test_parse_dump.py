@@ -7,7 +7,6 @@ def test_demo(assets_dir: Path):
     data = assets_dir.joinpath('demo.bdf').read_text('utf-8')
     font = BdfFont.parse(data)
     assert font.dump_to_string() == data
-    assert font.spec_version == '2.1'
     assert font.name == '-Adobe-Helvetica-Bold-R-Normal--24-240-75-75-P-65-ISO8859-1'
     assert font.point_size == 24
     assert font.resolution_x == 75
