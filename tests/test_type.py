@@ -60,8 +60,9 @@ def test_font_2():
 def test_font_3():
     font = BdfFont()
 
-    with pytest.raises(BdfXlfdError):
+    with pytest.raises(BdfXlfdError) as info:
         font.update_by_name_as_xlfd()
+    assert info.value.args[0] == "not starts with '-'"
 
     font.name = '--------------'
     font.update_by_name_as_xlfd()
@@ -213,11 +214,13 @@ def test_properties_3():
 def test_properties_4():
     properties = BdfProperties()
 
-    with pytest.raises(BdfXlfdError):
+    with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd('Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1')
+    assert info.value.args[0] == "not starts with '-'"
 
-    with pytest.raises(BdfXlfdError):
+    with pytest.raises(BdfXlfdError) as info:
         properties.update_by_xlfd('-Bitstream-Charter-Medium-R-Normal--12-120-75-75-P-68-ISO8859-1-')
+    assert info.value.args[0] == "must be 14 '-'"
 
 
 def test_properties_5():
@@ -271,34 +274,40 @@ def test_properties_7():
     assert properties['ABC'] == 'abc'
     assert properties['abc'] == 'abc'
 
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError) as info:
         properties['abc-def'] = 'abcdef'
+    assert info.value.args[0] == 'contains illegal characters'
 
     properties['NONE_PARAM'] = None
     assert 'NONE_PARAM' not in properties
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as info:
         properties.foundry = 1
+    assert info.value.args[0] == "expected type 'str', got 'int' instead"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as info:
         properties.pixel_size = '1'
+    assert info.value.args[0] == "expected type 'int', got 'str' instead"
 
-    with pytest.raises(ValueError):
-        # noinspection PyTypeChecker
+    with pytest.raises(ValueError) as info:
+
         properties['FLOAT_PARAM'] = 1.2
+    assert info.value.args[0] == "expected type 'str | int', got 'float' instead"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as info:
         properties.family_name = 'Demo-Pixel'
+    assert info.value.args[0] == "contains illegal characters '-'"
 
 
 def test_glyph():
-    glyph = BdfGlyph(
-        name='A',
-        encoding=ord('A'),
-        scalable_width=(0, 0),
-        device_width=(0, 0),
-        bounding_box=(0, 0, 0, 0),
-    )
+    glyph = BdfGlyph(name='A', encoding=65)
+    assert glyph.name == 'A'
+    assert glyph.encoding == 65
+    assert glyph.scalable_width == (0, 0)
+    assert glyph.device_width == (0, 0)
+    assert glyph.bounding_box == (0, 0, 0, 0)
+    assert glyph.bitmap == []
+    assert glyph.comments == []
 
     glyph.scalable_width = 1, 2
     assert glyph.scalable_width == (1, 2)
@@ -320,7 +329,6 @@ def test_glyph():
     assert glyph.offset_x == 7
     assert glyph.offset_y == 8
 
-    assert glyph.bounding_box == (5, 6, 7, 8)
     glyph.bounding_box = 9, 10, 11, 12
     assert glyph.bounding_box == (9, 10, 11, 12)
     assert glyph.width == 9
