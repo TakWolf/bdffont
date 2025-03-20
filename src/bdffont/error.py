@@ -6,55 +6,41 @@ class BdfError(Exception):
 
 
 class BdfParseError(BdfError):
-    line_num: int
-    reason: str
-
-    def __init__(self, line_num: int, reason: str):
-        self.line_num = line_num
-        self.reason = reason
-
-    def __str__(self) -> str:
-        return f'[line {self.line_num}] {self.reason}'
+    pass
 
 
 class BdfMissingLineError(BdfError):
-    line_num: int
     word: str
 
-    def __init__(self, line_num: int, word: str):
-        self.line_num = line_num
+    def __init__(self, word: str):
         self.word = word
 
     def __str__(self) -> str:
-        return f'[line {self.line_num}] missing line: {repr(self.word)}'
+        return f'missing line: {repr(self.word)}'
 
 
 class BdfIllegalWordError(BdfError):
-    line_num: int
     word: str
 
-    def __init__(self, line_num: int, word: str):
-        self.line_num = line_num
+    def __init__(self, word: str):
         self.word = word
 
     def __str__(self) -> str:
-        return f'[line {self.line_num}] illegal word: {repr(self.word)}'
+        return f'illegal word: {repr(self.word)}'
 
 
 class BdfCountError(BdfError):
-    line_num: int
     word: str
     expected: int
     actual: int
 
-    def __init__(self, line_num: int, word: str, expected: int, actual: int):
-        self.line_num = line_num
+    def __init__(self, word: str, expected: int, actual: int):
         self.word = word
         self.expected = expected
         self.actual = actual
 
     def __str__(self) -> str:
-        return f'[line {self.line_num}] {repr(self.word)} expected to be {self.expected} but actually {self.actual}'
+        return f'{repr(self.word)} expected to be {self.expected} but actually {self.actual}'
 
 
 class BdfPropKeyError(BdfError):
