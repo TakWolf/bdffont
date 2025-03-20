@@ -44,8 +44,8 @@ def _iter_as_lines(stream: TextIO) -> Iterator[tuple[int, str, str | None]]:
 
 def _convert_tail_to_ints(tail: str) -> list[int]:
     tokens = re.split(r' +', tail)
-    ints = [int(token) for token in tokens]
-    return ints
+    values = [int(token) for token in tokens]
+    return values
 
 
 def _convert_tail_to_properties_value(tail: str) -> str | int:
@@ -111,14 +111,14 @@ def _parse_glyph_segment(
         if word == _WORD_ENCODING:
             encoding = int(tail)
         elif word == _WORD_SWIDTH:
-            tokens = _convert_tail_to_ints(tail)
-            scalable_width = tokens[0], tokens[1]
+            values = _convert_tail_to_ints(tail)
+            scalable_width = values[0], values[1]
         elif word == _WORD_DWIDTH:
-            tokens = _convert_tail_to_ints(tail)
-            device_width = tokens[0], tokens[1]
+            values = _convert_tail_to_ints(tail)
+            device_width = values[0], values[1]
         elif word == _WORD_BBX:
-            tokens = _convert_tail_to_ints(tail)
-            bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
+            values = _convert_tail_to_ints(tail)
+            bounding_box = values[0], values[1], values[2], values[3]
         elif word == _WORD_COMMENT:
             comments.append(tail)
         elif word == _WORD_BITMAP or word == _WORD_ENDCHAR:
@@ -165,12 +165,12 @@ def _parse_font_segment(
         if word == _WORD_FONT:
             name = tail
         elif word == _WORD_SIZE:
-            tokens = _convert_tail_to_ints(tail)
-            point_size = tokens[0]
-            resolution = tokens[1], tokens[2]
+            values = _convert_tail_to_ints(tail)
+            point_size = values[0]
+            resolution = values[1], values[2]
         elif word == _WORD_FONTBOUNDINGBOX:
-            tokens = _convert_tail_to_ints(tail)
-            bounding_box = tokens[0], tokens[1], tokens[2], tokens[3]
+            values = _convert_tail_to_ints(tail)
+            bounding_box = values[0], values[1], values[2], values[3]
         elif word == _WORD_STARTPROPERTIES:
             properties = _parse_properties_segment(lines, line_num, int(tail))
         elif word == _WORD_CHARS:
@@ -343,11 +343,11 @@ class BdfFont:
         stream.write(f'{_WORD_STARTPROPERTIES} {len(self.properties)}\n')
         for comment in self.properties.comments:
             stream.write(f'{_WORD_COMMENT} {comment}\n')
-        for word, value in self.properties.items():
+        for key, value in self.properties.items():
             if isinstance(value, str):
                 value = value.replace('"', '""')
                 value = f'"{value}"'
-            stream.write(f'{word} {value}\n')
+            stream.write(f'{key} {value}\n')
         stream.write(f'{_WORD_ENDPROPERTIES}\n')
 
         stream.write(f'{_WORD_CHARS} {len(self.glyphs)}\n')
