@@ -38,7 +38,7 @@ class BdfCountError(BdfError):
         self.actual = actual
 
     def __str__(self) -> str:
-        return f'{repr(self.word)} expected to be {self.expected} but actually {self.actual}'
+        return f'the count of {repr(self.word)} is incorrect: {self.expected} -> {self.actual}'
 
 
 class BdfXlfdError(BdfError):
