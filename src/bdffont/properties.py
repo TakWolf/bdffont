@@ -336,8 +336,7 @@ class BdfProperties(UserDict[str, str | int]):
         if font_name.count('-') != 14:
             raise BdfXlfdError("must be 14 '-'")
         tokens = font_name.removeprefix('-').split('-')
-        for index, token in enumerate(tokens):
-            key = _XLFD_FONT_NAME_KEYS_ORDER[index]
+        for key, token in zip(_XLFD_FONT_NAME_KEYS_ORDER, tokens):
             if token == '':
                 value = None
             else:
