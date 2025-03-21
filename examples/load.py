@@ -23,7 +23,7 @@ def main():
         print(f'dimensions: {glyph.dimensions}')
         print(f'offset: {glyph.offset}')
         for bitmap_row in glyph.bitmap:
-            text = ''.join('  ' if alpha == 0 else '██' for alpha in bitmap_row)
+            text = ''.join('  ' if color == 0 else '██' for color in bitmap_row)
             print(f'{text}*')
         print()
     font.save(outputs_dir.joinpath('unifont-16.0.02.bdf'))

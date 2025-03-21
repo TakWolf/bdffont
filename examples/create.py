@@ -18,7 +18,7 @@ def main():
 
     font.glyphs.append(BdfGlyph(
         name='A',
-        encoding=ord('A'),
+        encoding=65,
         scalable_width=(500, 0),
         device_width=(8, 0),
         bounding_box=(8, 16, 0, -2),
