@@ -57,7 +57,7 @@ _INT_VALUE_KEYS = {
     _KEY_X_HEIGHT,
 }
 
-_XLFD_FONT_NAME_STR_VALUE_KEYS = {
+_XLFD_STR_VALUE_KEYS = {
     _KEY_FOUNDRY,
     _KEY_FAMILY_NAME,
     _KEY_WEIGHT_NAME,
@@ -69,7 +69,7 @@ _XLFD_FONT_NAME_STR_VALUE_KEYS = {
     _KEY_CHARSET_ENCODING,
 }
 
-_XLFD_FONT_NAME_KEYS_ORDER = [
+_XLFD_KEYS_ORDER = [
     _KEY_FOUNDRY,
     _KEY_FAMILY_NAME,
     _KEY_WEIGHT_NAME,
@@ -135,7 +135,7 @@ class BdfProperties(UserDict[str, str | int]):
             if not isinstance(value, str) and not isinstance(value, int):
                 raise ValueError(f"expected type 'str | int', got '{type(value).__name__}' instead")
 
-        if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+        if key in _XLFD_STR_VALUE_KEYS:
             matched = re.search(r'[-?*,"]', value)
             if matched is not None:
                 raise ValueError(f'contains illegal characters {repr(matched.group())}')
@@ -326,7 +326,7 @@ class BdfProperties(UserDict[str, str | int]):
 
     def to_xlfd(self) -> str:
         tokens = ['']
-        for key in _XLFD_FONT_NAME_KEYS_ORDER:
+        for key in _XLFD_KEYS_ORDER:
             tokens.append(str(self.get(key, '')))
         return '-'.join(tokens)
 
@@ -336,11 +336,11 @@ class BdfProperties(UserDict[str, str | int]):
         if font_name.count('-') != 14:
             raise BdfXlfdError("must be 14 '-'")
         tokens = font_name.removeprefix('-').split('-')
-        for key, token in zip(_XLFD_FONT_NAME_KEYS_ORDER, tokens):
+        for key, token in zip(_XLFD_KEYS_ORDER, tokens):
             if token == '':
                 value = None
             else:
-                if key in _XLFD_FONT_NAME_STR_VALUE_KEYS:
+                if key in _XLFD_STR_VALUE_KEYS:
                     value = token
                 else:
                     value = int(token)
