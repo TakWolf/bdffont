@@ -37,7 +37,7 @@ def test_font_2():
     font = BdfFont()
 
     font.point_size = 16
-    font.resolution = (75, 75)
+    font.resolution = 75, 75
 
     font.properties.foundry = 'TakWolf Studio'
     font.properties.family_name = 'Demo Pixel'
@@ -53,6 +53,7 @@ def test_font_2():
     font.properties.average_width = 80
     font.properties.charset_registry = 'ISO10646'
     font.properties.charset_encoding = '1'
+
     font.generate_name_as_xlfd()
     assert font.name == '-TakWolf Studio-Demo Pixel-Medium-R-Normal-Sans Serif-16-160-75-75-P-80-ISO10646-1'
 
