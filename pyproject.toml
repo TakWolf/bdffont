@@ -23,9 +23,9 @@ classifiers = [
 ]
 
 [project.urls]
-homepage = "https://github.com/TakWolf/bdffont"
-source = "https://github.com/TakWolf/bdffont"
-issues = "https://github.com/TakWolf/bdffont/issues"
+homepage = "https://github.com/TakWolf/bdffont-python"
+source = "https://github.com/TakWolf/bdffont-python"
+issues = "https://github.com/TakWolf/bdffont-python/issues"
 
 [tool.pytest.ini_options]
 pythonpath = "src"

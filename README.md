@@ -1,4 +1,4 @@
-# BdfFont
+# BdfFont.Python
 
 [![Python](https://img.shields.io/badge/python-3.10-brightgreen)](https://www.python.org)
 [![PyPI](https://img.shields.io/pypi/v/bdffont)](https://pypi.org/project/bdffont/)
