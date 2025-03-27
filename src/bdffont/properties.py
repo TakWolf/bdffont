@@ -104,26 +104,22 @@ class BdfProperties(UserDict[str, str | int]):
         super().__init__(data)
         self.comments = [] if comments is None else comments
 
-    def __contains__(self, key: Any) -> bool:
-        if isinstance(key, str):
-            key = key.upper()
-        return super().__contains__(key)
-
     def __getitem__(self, key: Any) -> str | int:
         if isinstance(key, str):
             key = key.upper()
         return super().__getitem__(key)
 
     def __setitem__(self, key: Any, value: Any):
-        if not isinstance(key, str):
-            raise KeyError(f"expected type 'str', got '{type(key).__name__}' instead")
-        if not key.replace('_', '').isalnum():
-            raise KeyError('contains illegal characters')
-        key = key.upper()
-
         if value is None:
             self.pop(key, None)
             return
+
+        if not isinstance(key, str):
+            raise KeyError(f"expected type 'str', got '{type(key).__name__}' instead")
+        key = key.upper()
+
+        if not key.replace('_', '').isalnum():
+            raise KeyError('contains illegal characters')
 
         if key in _STR_VALUE_KEYS:
             if not isinstance(value, str):
@@ -141,6 +137,16 @@ class BdfProperties(UserDict[str, str | int]):
                 raise ValueError(f'contains illegal characters {repr(matched.group())}')
 
         super().__setitem__(key, value)
+
+    def __delitem__(self, key: Any):
+        if isinstance(key, str):
+            key = key.upper()
+        super().__delitem__(key)
+
+    def __contains__(self, key: Any) -> bool:
+        if isinstance(key, str):
+            key = key.upper()
+        return super().__contains__(key)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, BdfProperties):
